@@ -1,5 +1,3 @@
-## Pull Request Title
-
 ### Description
 Please include a summary of the changes made, and why these changes are necessary.
 
@@ -8,7 +6,6 @@ Please include a summary of the changes made, and why these changes are necessar
 <!-- related to #4, closes #9 -->
 
 ### Type of Change
-Please check all relevant options:
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
