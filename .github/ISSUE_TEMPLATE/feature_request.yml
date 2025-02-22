@@ -1,6 +1,6 @@
 name: "Feature"
 description: "Suggest an idea for the Oakcan app."
-labels: [ "feature-request" ]
+labels: ["feature-request"]
 body:
     -   type: textarea
         attributes:
