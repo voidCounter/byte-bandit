@@ -1,8 +1,6 @@
 spring:
-
   application:
     name: user-service
-
   datasource:
     url: ${secrets.datasource.url}
     username: ${secrets.datasource.username}
@@ -11,7 +9,6 @@ spring:
   config:
     import: classpath:secrets.yml
 
-
 server:
     port: 8083
 
@@ -19,4 +16,3 @@ eureka:
     client:
         service-url:
             defaultZone: http://localhost:8761/eureka/
-
