@@ -1,0 +1,36 @@
+name: "Feature"
+description: "Suggest an idea for the Oakcan app."
+labels: ["feature-request"]
+body:
+    - type: textarea
+      attributes:
+          label: Describe the Feature
+          description: |
+              Please provide a clear and concise description of the feature you are requesting. Include any relevant 
+              details such as what the feature should do, where it should be located in the app, and why you think it
+              would be helpful to have.
+      validations:
+          required: true
+    - type: textarea
+      attributes:
+          label: Acceptance Criteria
+          description: |
+              Please provide a list of criteria that must be met in order for this feature to be considered complete.
+              This could include things like specific functionality, user interactions, or other requirements that
+              need to be implemented.
+    - type: textarea
+      attributes:
+          label: Attachments
+          description: |
+              If helpful, please attach any images, screenshots, or other files that you think would be useful to get a
+                better understanding of the feature you are requesting.
+      validations:
+          required: false
+    - type: textarea
+      attributes:
+          label: Additional Context
+          description: |
+              If there is any additional context or information that you think would be helpful to include, please provide
+              it here.
+      validations:
+          required: false
