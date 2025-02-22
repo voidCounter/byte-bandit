@@ -1,0 +1,43 @@
+name: "Spike Task"
+description: "Research task for technical exploration or feasibility analysis."
+labels: [ "spike", "research" ]
+body:
+    -   type: textarea
+        id: objectives
+        attributes:
+            label: "Objectives"
+            description: "Describe what needs to be researched and why it’s important."
+        validations:
+            required: true
+
+    -   type: textarea
+        id: key-questions
+        attributes:
+            label: "Key Questions"
+            description: "What needs to be answered? Consider best approaches, tools/services, risks, and trade-offs."
+        validations:
+            required: true
+    -   type: textarea
+        id: scope
+        attributes:
+            label: "What areas should be explored?"
+            description: "Define the boundaries of research, including API design, security, and comparisons of different approaches."
+            validations:
+            required: true
+
+    -   type: textarea
+        id: acceptance-criteria
+        attributes:
+            label: "Acceptance Criteria"
+            description: "Summarize findings with recommendations. List clear next steps. Include PoC if needed."
+        validations:
+            required: true
+
+    -   type: textarea
+        id: deliverables
+        attributes:
+            label: "Deliverables"
+            description: "Provide a summary of research, implementation steps, and follow-up issues if necessary."
+            value: "Research task for technical exploration or feasibility analysis."
+        validations:
+            required: true
