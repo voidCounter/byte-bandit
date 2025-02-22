@@ -1,6 +1,6 @@
 name: "Spike Task"
 description: "Research task for technical exploration or feasibility analysis."
-labels: [ "spike", "research" ]
+labels: [ "spike"]
 body:
     -   type: textarea
         id: objectives
@@ -23,7 +23,7 @@ body:
             label: "What areas should be explored?"
             description: "Define the boundaries of research, including API design, security, and comparisons of different approaches."
             validations:
-            required: true
+            required: false
 
     -   type: textarea
         id: acceptance-criteria

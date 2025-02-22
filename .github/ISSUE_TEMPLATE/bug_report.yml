@@ -1,46 +1,46 @@
 name: "Bug Report"
 description: "Create a report for an issue you've encountered in the app."
-labels: ["bug"]
+labels: [ "bug" ]
 body:
-    - type: markdown
-      attributes:
-          value: |
-              Thanks for taking the time to report an issue you've found in the app!
-    - type: textarea
-      attributes:
-          label: Steps to Reproduce
-          description: |
-              Please provide the steps that may reproduce the issue you are experiencing. The more concise the reproduction, the easier it will be to identify the issue and provide a solution.
-          placeholder: |
-              1. Go to '...'
-              2. Click on '....'
-              3. Scroll down to '....'
-              4. See error
-      validations:
-          required: true
-    - type: textarea
-      attributes:
-          label: Attachments
-          description: |
-              If possible, please provide any images or videos to help explain the issue you are experiencing. This can include screenshots, screen recordings, or any other relevant files that you think may be helpful.
-      validations:
-          required: false
-    - type: dropdown
-      id: browsers
-      attributes:
-        label: What browsers are you seeing the problem on?
-        multiple: true
-        options:
-            - Firefox
-            - Chrome
-            - Brave
-            - Vivaldi
-            - Safari
-            - Microsoft Edge
-    - type: textarea
-      attributes:
-          label: Additional Information
-          description: |
-              Please provide any additional information that you think may be helpful in identifying the issue you are experiencing. This can include error messages, logs, or any other relevant details.
-      validations:
-          required: false
+    -   type: markdown
+        attributes:
+            value: |
+                Thanks for taking the time to report an issue you've found in the app!
+    -   type: textarea
+        attributes:
+            label: Steps to Reproduce
+            description: |
+                Please provide the steps that may reproduce the issue you are experiencing. The more concise the reproduction, the easier it will be to identify the issue and provide a solution.
+            placeholder: |
+                1. Go to '...'
+                2. Click on '....'
+                3. Scroll down to '....'
+                4. See error
+        validations:
+            required: true
+    -   type: textarea
+        attributes:
+            label: Attachments
+            description: |
+                If possible, please provide any images or videos to help explain the issue you are experiencing. This can include screenshots, screen recordings, or any other relevant files that you think may be helpful.
+        validations:
+            required: false
+    -   type: dropdown
+        id: browsers
+        attributes:
+            label: What browsers are you seeing the problem on?
+            multiple: true
+            options:
+                - Firefox
+                - Chrome
+                - Brave
+                - Vivaldi
+                - Safari
+                - Microsoft Edge
+    -   type: textarea
+        attributes:
+            label: Additional Information
+            description: |
+                Please provide any additional information that you think may be helpful in identifying the issue you are experiencing. This can include error messages, logs, or any other relevant details.
+        validations:
+            required: false
