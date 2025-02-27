@@ -15,7 +15,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning={true}>
         <body
             className={`${dm_Sans.className} antialiased flex flex-col justify-center items-center`}
         >

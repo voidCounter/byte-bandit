@@ -5,6 +5,7 @@ import NavigationBar from "@/app/components/navigation-bar";
 import {motion} from "framer-motion";
 import {TEXTS} from "@/lib/constants";
 import {MoveRight} from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
     return (
@@ -25,19 +26,21 @@ export default function Home() {
                     <h1 className={"text-4xl md:text-5xl font-black"}>{TEXTS.LANDING_PAGE.MAIN_HEADING}</h1>
                     <h5 className={"text-foreground/55"}>{TEXTS.LANDING_PAGE.SUB_HEADING}</h5>
                 </motion.section>
-                <Button className="w-min">
-                    <motion.div whileHover={"hover"} className={"flex fle-row  items-center"}>
-                        {TEXTS.LANDING_PAGE.CTA_TEXT}
-                        <motion.div
-                            variants={{
-                                hover: {x: 5, transition: {duration: 0.2}}
-                            }}
-                            className="ml-2"
-                        >
-                            <MoveRight/>
+                <Link href={"/login"}>
+                    <Button className="w-min">
+                        <motion.div whileHover={"hover"} className={"flex fle-row  items-center"}>
+                            {TEXTS.LANDING_PAGE.CTA_TEXT}
+                            <motion.div
+                                variants={{
+                                    hover: {x: 5, transition: {duration: 0.2}}
+                                }}
+                                className="ml-2"
+                            >
+                                <MoveRight/>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                </Button>
+                    </Button>
+                </Link>
             </motion.section>
             <ModeToggle className={"hidden sm:flex absolute right-0 top-0 m-2"}/>
         </div>
