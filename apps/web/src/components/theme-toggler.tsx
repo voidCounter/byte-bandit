@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button"
 import {cn} from "@/lib/utils";
 
 export function ModeToggle({className}: { className?: string }) {
-    const {theme, setTheme, systemTheme} = useTheme()
+    const {theme, setTheme} = useTheme()
     const [mounted, setMounted] = React.useState(false);
 
 

@@ -3,8 +3,6 @@ import React from 'react';
 import {Button} from "@/components/ui/button";
 import Image from "next/image";
 import logo from "../../../public/logo.svg";
-import {dm_Mono} from "@/app/fonts";
-import {ModeToggle} from "@/components/theme-toggler";
 import Link from "next/link";
 import {motion} from 'framer-motion';
 
