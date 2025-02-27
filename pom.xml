@@ -10,11 +10,11 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>discovery</module>
-        <module>file-service</module>
-        <module>sync-service</module>
-        <module>gateway</module>
-        <module>user-service</module>
+        <module>apps/discovery</module>
+        <module>apps/file-service</module>
+        <module>apps/sync-service</module>
+        <module>apps/gateway</module>
+        <module>apps/user-service</module>
     </modules>
 
 

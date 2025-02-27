@@ -17,10 +17,12 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body
-            className={`${dm_Sans.className} antialiased`}
+            className={`${dm_Sans.className} antialiased flex flex-col justify-center items-center`}
         >
         <ThemeProvider attribute={"class"} defaultTheme={"system"} enableSystem={true} disableTransitionOnChange={true}>
-            {children}
+            <div className={"max-w-[900px]"}>
+                {children}
+            </div>
         </ThemeProvider>
         </body>
         </html>
