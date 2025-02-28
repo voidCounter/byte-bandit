@@ -27,12 +27,12 @@ public class UserEntity {
     private UUID id;
 
     @Column(name = "email", unique = true)
-    @Email(message = "INVALID EMAIL FORMAT DETECTED")
-    @NotNull(message = "EMAIL FIELD CANNOT BE NULL")
+    @Email(message = "Invalid email format detected")
+    @NotNull(message = "Email field cannot be null")
     private String email;
 
-    @Column(name = "password", length = 60)
-    @NotNull(message = "PASSWORD FIELD CANNOT BE NULL")
+    @Column(name = "password", length = 72)
+    @NotNull(message = "Password field cannot be null")
     private String password;
 
     @Column(name = "oauth_id")
