@@ -1,7 +1,13 @@
 {
-  "name": "web",
+  "name": "oakcan",
   "version": "0.1.0",
   "private": true,
+  "description": "Frontend web application for the oakcan project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Learnathon-By-Geeky-Solutions/byte-bandit.git"
+  },
+  "author": "Byte Bandit Team",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
