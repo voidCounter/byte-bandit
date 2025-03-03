@@ -20,15 +20,15 @@ export default function Home() {
                 <motion.section
                     className={"flex flex-col gap-2"}
                     initial={{opacity: 0, y: 20, filter: 'blur(10px)'}}
-                    animate={{opacity: 1, y: 0, filter: 'blur(0px'}}
+                    animate={{opacity: 1, y: 0, filter: 'blur(0px)'}}
                     transition={{duration: 0.5, ease: "easeInOut", delay: 0.3}}
                 >
                     <h1 className={"text-4xl md:text-5xl font-black"}>{TEXTS.LANDING_PAGE.MAIN_HEADING}</h1>
                     <h5 className={"text-foreground/55"}>{TEXTS.LANDING_PAGE.SUB_HEADING}</h5>
                 </motion.section>
                 <Link href={"/login"}>
-                    <Button className="w-min">
-                        <motion.div whileHover={"hover"} className={"flex fle-row  items-center"}>
+                    <motion.div whileHover={"hover"} className={"flex fle-row  items-center"}>
+                        <Button className="w-min">
                             {TEXTS.LANDING_PAGE.CTA_TEXT}
                             <motion.div
                                 variants={{
@@ -38,8 +38,8 @@ export default function Home() {
                             >
                                 <MoveRight/>
                             </motion.div>
-                        </motion.div>
-                    </Button>
+                        </Button>
+                    </motion.div>
                 </Link>
             </motion.section>
             <ModeToggle className={"hidden sm:flex absolute right-0 top-0 m-2"}/>

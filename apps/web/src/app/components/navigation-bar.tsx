@@ -5,12 +5,14 @@ import Image from "next/image";
 import logo from "../../../public/logo.svg";
 import Link from "next/link";
 import {motion} from 'framer-motion';
+import {cn} from "@/lib/utils";
 
+const variants = {
+    hidden: {opacity: 0, y: -20, scale: 1.2, filter: 'blur(10px)'},
+    visible: {opacity: 1, y: 0, scale: 1, filter: 'blur(0px)'}
+};
 function NavigationBar() {
-    const variants = {
-        hidden: {opacity: 0, y: -20, scale: 1.2, filter: 'blur(10px)'},
-        visible: {opacity: 1, y: 0, scale: 1, filter: 'blur(0px)'}
-    };
+
 
     return (
         <motion.div
@@ -31,7 +33,7 @@ function NavigationBar() {
                     <Link href={"/pricing"}>Pricing</Link>
                 </div>
                 <Link href="/login" className={"flex gap-4"}>
-                    <Button className={""} variant={"link"}>Log in</Button>
+                    <Button className={cn("text-foreground")} variant={"link"}>Log in</Button>
                 </Link>
             </nav>
         </motion.div>

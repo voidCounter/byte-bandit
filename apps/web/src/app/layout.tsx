@@ -20,7 +20,7 @@ export default function RootLayout({
             className={`${dm_Sans.className} antialiased flex flex-col justify-center items-center`}
         >
         <ThemeProvider attribute={"class"} defaultTheme={"system"} enableSystem={true} disableTransitionOnChange={true}>
-            <div className={"max-w-[900px]"}>
+            <div className={"max-w-full md:max-w-3xl lg:max-w-4xl"}>
                 {children}
             </div>
         </ThemeProvider>

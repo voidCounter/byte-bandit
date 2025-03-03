@@ -1,11 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-
-
-
 :root  {
+  /* Main color scheme using HSL format: hue saturation lightness */
+  /* Primary color: Amber/Orange-based with varied brightness levels */
   --background: 27 100% 97%;
   --foreground: 27 5% 10%;
   --card: 27 50% 97%;
@@ -49,8 +47,6 @@
   --ring: 27 58.4% 34.9%;
   --radius: 0.5rem;
 }
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
