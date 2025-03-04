@@ -5,7 +5,6 @@ import Image from "next/image";
 import logo from "../../../public/logo.svg";
 import Link from "next/link";
 import {motion} from 'framer-motion';
-import {cn} from "@/lib/utils";
 
 const variants = {
     hidden: {opacity: 0, y: -20, scale: 1.2, filter: 'blur(10px)'},
