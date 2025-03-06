@@ -2,6 +2,7 @@ import type {Metadata} from "next";
 import "./globals.css";
 import {ThemeProvider} from "next-themes";
 import {dmSans} from "@/app/fonts";
+import QueryProvider from "@/layouts/QueryProvider";
 
 
 export const metadata: Metadata = {
@@ -21,7 +22,9 @@ export default function RootLayout({
         >
         <ThemeProvider attribute={"class"} defaultTheme={"system"} enableSystem={true} disableTransitionOnChange={true}>
             <div className={"max-w-full md:max-w-3xl lg:max-w-4xl"}>
-                {children}
+                <QueryProvider>
+                    {children}
+                </QueryProvider>
             </div>
         </ThemeProvider>
         </body>
