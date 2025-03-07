@@ -1,20 +1,14 @@
 "use client";
 import {z} from "zod";
-import React, {useEffect} from "react";
+import React from "react";
 import {useAuthStore} from "@/store/AuthStore";
 import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {AxiosError, AxiosResponse} from "axios";
+import {AxiosResponse} from "axios";
 import {User} from "@/types/User";
 import {AxiosInstance} from "@/utils/AxiosInstance";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage
-} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {PasswordInput} from "@/components/ui/PasswordInput";
 import Link from "next/link";
@@ -23,8 +17,8 @@ import {useMutation} from "@tanstack/react-query";
 import Loading from "@/components/ui/loading";
 
 const loginSchema = z.object({
-    email: z.string(),
-    password: z.string(),
+    email: z.string().email(),
+    password: z.string().min(1, {message: "Must have at least 1 character."}).max(16),
 });
 
 
@@ -80,6 +74,7 @@ export default function Login() {
                                            <FormControl
                                            >
                                                <Input
+                                                   type={"email"}
                                                    placeholder={"Email"} {...field}/>
                                            </FormControl>
                                            <FormMessage className={"text-sm" +

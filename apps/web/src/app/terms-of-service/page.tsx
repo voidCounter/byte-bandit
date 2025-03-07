@@ -3,7 +3,7 @@ import {dmMono} from "@/app/fonts";
 
 const TermsOfService = () => {
     return (
-        <div className={`max-w-4xl mx-auto p-8 shadow-lg text-foreground/90 rounded-lg ${dmMono.className}`}>
+        <div className={`max-w-4xl mx-auto p-8 text-foreground/90 rounded-lg ${dmMono.className}`}>
             <h1 className="text-4xl font-bold text-center mb-6">Terms of Service</h1>
             <p className="text-center text-primary mb-8">Effective Date: March 7, 2025</p>
 
@@ -75,7 +75,7 @@ const TermsOfService = () => {
                     <h2 className="text-2xl font-semibold mb-4">8. Indemnification</h2>
                     <p className="text-lg">
                         You agree to indemnify, defend, and hold harmless oakcan and its affiliates from any
-                        and all claims, liabilities, damages, and expenses (including reasonable attorneys' fees)
+                        and all claims, liabilities, damages, and expenses (including reasonable attorneys&apos; fees)
                         arising from your use of the services or violation of these Terms.
                     </p>
                 </section>

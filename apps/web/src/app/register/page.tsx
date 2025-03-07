@@ -9,17 +9,13 @@ import {Button} from "@/components/ui/button";
 import React from "react";
 import {PasswordInput} from "@/components/ui/PasswordInput";
 import {AxiosInstance} from "@/utils/AxiosInstance";
-import {HttpStatus} from "@/types/HttpStatus";
 import {useRouter} from "next/navigation";
 import {useMutation} from "@tanstack/react-query";
-import {AxiosResponse} from "axios";
-import {User} from "@/types/User";
 import Loading from "@/components/ui/loading";
 
 const registerSchema = z.object({
-    name: z.string(),
+name: z.string().min(1, {message: "Must have at least 1 character."}).regex(/^[A-Za-z\s]+$/, {message: "Name must contain only letters and spaces."}),
     email: z.string().email(),
-    // TODO: The password validation should be handled by the backend
     password: z.string().min(8, {
         message: "Password length must be greater" +
             " than 7."
@@ -39,9 +35,7 @@ export default function Register() {
     const {mutate: register, isPending, isError} = useMutation({
         mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/auth/register", data),
         onSuccess: data => {
-            const response: AxiosResponse<User> = data;
-            if (data.status === HttpStatus.CREATED)
-                router.push("/login");
+            // TODO: handle success
         },
         onError: error => {
             // TODO: handle error
@@ -80,7 +74,7 @@ export default function Register() {
                                                    placeholder={"Name"} {...field}/>
                                            </FormControl>
                                            <FormMessage
-                                               className={"bg-destructive text-sm text-background p-2 rounded-md" +
+                                               className={"text-destructive text-sm rounded-md" +
                                                    " font-normal"}/>
                                        </FormItem>
                                    )}>
@@ -95,7 +89,7 @@ export default function Register() {
                                                    placeholder={"Email"} {...field}/>
                                            </FormControl>
                                            <FormMessage
-                                               className={"bg-destructive text-sm text-background p-2 rounded-md" +
+                                               className={"text-destructive text-sm rounded-md" +
                                                    " font-normal"}/>
                                        </FormItem>
                                    )}>
@@ -112,7 +106,7 @@ export default function Register() {
                                                />
                                            </FormControl>
                                            <FormMessage
-                                               className={"bg-destructive text-sm text-background p-2 rounded-md" +
+                                               className={"text-destructive text-sm rounded-md" +
                                                    " font-normal"}/>
                                        </FormItem>
                                    )}>
