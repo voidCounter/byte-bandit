@@ -23,14 +23,14 @@ function NavigationBar() {
                 className={"w-full max-w-[400px] bg-primary/[0.1] flex justify-between items-center p-2 rounded-xl"}>
                 <Link href={"/"} className={"flex flex-row gap-2 justify-center items-center"}>
                     <Image src={logo} alt={"logo"} width={30} height={30}/>
-                    <h1 className={`text-base font-bold`}>Oakcan</h1>
+                    <h1 className={"text-base font-bold"}>Oakcan</h1>
                 </Link>
                 <div className={"flex flex-row gap-4 text-foreground/55 text-sm"}>
                     <Link href={"/docs"}>Docs</Link>
                     <Link href={"/pricing"}>Pricing</Link>
                 </div>
                 <Link href="/login" className={"flex gap-4"}>
-                    <Button className={"text-foreground"} variant={"link"}>Log in</Button>
+                    <Button className={"text-foreground"} variant="link">Log in</Button>
                 </Link>
             </nav>
         </motion.div>

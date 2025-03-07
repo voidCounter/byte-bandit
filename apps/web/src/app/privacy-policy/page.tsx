@@ -1,5 +1,5 @@
 import React from 'react';
-import { dmMono } from "@/app/fonts";
+import {dmMono} from "@/app/fonts";
 
 const PrivacyPolicy = () => {
     return (
@@ -11,7 +11,8 @@ const PrivacyPolicy = () => {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4">1. Introduction</h2>
                     <p className="text-lg">
-                        At oakcan, we value your privacy and are committed to protecting your personal data. This Privacy
+                        At oakcan, we value your privacy and are committed to protecting your personal data. This
+                        Privacy
                         Policy explains how we collect, use, and share your information when you use our services.
                     </p>
                 </section>
@@ -74,8 +75,10 @@ const PrivacyPolicy = () => {
                 <section>
                     <h2 className="text-2xl font-semibold mb-4">8. Changes to the Privacy Policy</h2>
                     <p className="text-lg">
-                        We may update this Privacy Policy from time to time. Any changes will be posted on this page with
-                        the updated effective date. By continuing to use our services after these changes, you accept the
+                        We may update this Privacy Policy from time to time. Any changes will be posted on this page
+                        with
+                        the updated effective date. By continuing to use our services after these changes, you accept
+                        the
                         revised policy.
                     </p>
                 </section>
@@ -92,7 +95,7 @@ const PrivacyPolicy = () => {
             <div className="mt-8 text-center">
                 <p className="text-lg">
                     Thank you for trusting oakcan with your personal information. If you have any questions or concerns,
-                    please contact us at <a href={"."}>oakcan</a>.
+                    please contact us at <a href="mailto:contact@oakcan.com">oakcan</a>.
                 </p>
             </div>
         </div>

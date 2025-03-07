@@ -18,7 +18,7 @@ import Loading from "@/components/ui/loading";
 
 const loginSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(1, {message: "Must have at least 1 character."}).max(16),
+    password: z.string().min(8, {message: "Must have at least 8 character."}).max(16),
 });
 
 
