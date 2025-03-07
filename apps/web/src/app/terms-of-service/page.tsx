@@ -100,7 +100,7 @@ const TermsOfService = () => {
 
             <div className="mt-8 text-center">
                 <p className="text-lg">
-                    Thank you for using oakcan. If you have any questions or concerns, please contact us at please
+                    Thank you for using oakcan. If you have any questions or concerns, please
                     contact us at <a href="mailto:contact@oakcan.com">oakcan</a>.
                 </p>
             </div>
