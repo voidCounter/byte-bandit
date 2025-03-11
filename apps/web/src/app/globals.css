@@ -47,6 +47,13 @@
   --ring: 27 58.4% 34.9%;
   --radius: 0.5rem;
 }
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
