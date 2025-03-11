@@ -3,6 +3,7 @@
     "types": [
       "node",
       "jest",
+      "next",
       "@testing-library/jest-dom"
     ],
     "target": "ES2017",

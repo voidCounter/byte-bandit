@@ -1,7 +1,13 @@
 {
-  "name": "web",
+  "name": "oakcan",
   "version": "0.1.0",
   "private": true,
+  "description": "Frontend web application for the oakcan project",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Learnathon-By-Geeky-Solutions/byte-bandit.git"
+  },
+  "author": "Byte Bandit Team",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -9,17 +15,26 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^4.1.3",
+    "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
+    "@tanstack/react-query": "^5.67.1",
+    "@tanstack/react-query-devtools": "^5.67.1",
+    "axios": "^1.8.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.4.7",
     "lucide-react": "^0.476.0",
     "next": "15.1.7",
+    "next-auth": "^5.0.0-beta.25",
     "next-themes": "^0.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.54.2",
     "tailwind-merge": "^3.0.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.24.2",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
