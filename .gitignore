@@ -37,7 +37,7 @@ build/
 ### Mac OS ###
 .DS_Store
 
-### venv for python ###
+### Python venv ###
 venv/
 
 ### .secrets for nektos/act ###

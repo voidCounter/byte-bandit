@@ -23,19 +23,6 @@ theme:
     favicon: assets/favicon.png
 nav:
     -   Home: index.md
-    -   Getting Started:
-            -   Installation: getting-started/installation.md
-            -   Configuration: getting-started/configuration.md
-    -   Features:
-            -   Feature 1: features/feature1.md
-            -   Feature 2: features/feature2.md
-    -   About:
-            -   License: about/license.md
-            -   Release Notes: about/release-notes.md
-    -   Support:
-            -   Community: support/community.md
-            -   Professional Services: support/professional-services.md
-    -   Contact: contact.md
     -   For Developers:
             -   Branching Strategy: branching-strategy.md
 
