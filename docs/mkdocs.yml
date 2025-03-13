@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+site_name: Oakcan Documentation
+docs_dir: ./mkdocs
+repo_url: https://github.com/Learnathon-By-Geeky-Solutions/byte-bandit
+repo_name: Oakcan
+theme:
+    font:
+        text: DM Sans
+        code: DM Mono
+    palette:
+        -   scheme: default
+            primary: custom
+            toggle:
+                icon: material/brightness-7
+                name: Switch to dark mode
+        -   scheme: slate
+            primary: custom
+            toggle:
+                icon: material/brightness-4
+                name: Switch to light mode
+    name: material
+    logo: assets/logo.svg
+    favicon: assets/favicon.png
+nav:
+    -   Home: index.md
+    -   Getting Started:
+            -   Installation: getting-started/installation.md
+            -   Configuration: getting-started/configuration.md
+    -   Features:
+            -   Feature 1: features/feature1.md
+            -   Feature 2: features/feature2.md
+    -   About:
+            -   License: about/license.md
+            -   Release Notes: about/release-notes.md
+    -   Support:
+            -   Community: support/community.md
+            -   Professional Services: support/professional-services.md
+    -   Contact: contact.md
+    -   For Developers:
+            -   Branching Strategy: branching-strategy.md
+
+
+extra_css:
+    - stylesheets/extra.css
+markdown_extensions:
+    -   pymdownx.highlight:
+            line_spans: __span
+            use_pygments: true
+            pygments_lang_class: true
+    -   pymdownx.superfences:
+           custom_fences:
+            -   name: mermaid
+                class: mermaid
+                format: !!python/name:pymdownx.superfences.fence_code_format

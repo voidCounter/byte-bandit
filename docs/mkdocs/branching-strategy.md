@@ -1,5 +1,3 @@
-# Branching Strategy
-
 This document outlines the Git branching strategy for the project, ensuring a structured and efficient development workflow. The strategy is based on GitFlow but modified to include a `develop-snapshot` branch for weekly mentor reviews.
 
 ## Core Branches
