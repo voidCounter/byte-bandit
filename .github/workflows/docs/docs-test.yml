@@ -20,9 +20,7 @@ jobs:
                     python-version: '3.9'
             -   name: Install MkDocs and Dependencies
                 working-directory: docs
-                run: |
-                    pip install -r requirements.txt
-                    npm install -g markdownlint-cli
+                run: pip install -r requirements.txt
             -   name: Validate MkDocs Configuration
                 working-directory: docs
                 run: mkdocs build --strict
@@ -30,10 +28,11 @@ jobs:
             -   name: Install markdown-link-check
                 run: npm install -g markdown-link-check
             # To check for typos in the documentation
-            -   name: Install codespell and markdown-lint
+            -   name: Install codespell
                 run: pip install codespell
             -   name: Install markdownlint-cli
                 run: npm install -g markdownlint-cli
+
             -   name: Check Markdown Links
                 working-directory: docs
                 run: find . -name "*.md" | xargs markdown-link-check
