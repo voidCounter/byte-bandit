@@ -1,0 +1,45 @@
+name: Test Docs
+on:
+    push:
+        branches:
+            - '**'
+        paths:
+            - 'docs/**'
+    pull_request:
+        paths:
+            - 'docs/**'
+jobs:
+    test-docs:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout Repository
+                uses: actions/checkout@v4
+            -   name: Set Up Python
+                uses: actions/setup-python@v4
+                with:
+                    python-version: '3.9'
+            -   name: Install MkDocs and Dependencies
+                working-directory: docs
+                run: |
+                    pip install -r requirements.txt
+                    npm install -g markdownlint-cli
+            -   name: Validate MkDocs Configuration
+                working-directory: docs
+                run: mkdocs build --strict
+            # To check for broken links in the documentation
+            -   name: Install markdown-link-check
+                run: npm install -g markdown-link-check
+            # To check for typos in the documentation
+            -   name: Install codespell and markdown-lint
+                run: pip install codespell
+            -   name: Install markdownlint-cli
+                run: npm install -g markdownlint-cli
+            -   name: Check Markdown Links
+                working-directory: docs
+                run: find . -name "*.md" | xargs markdown-link-check
+            -   name: Check for Typos
+                run: codespell --ignore-words-list="nd" --skip="docs/site/*" -- *.md docs/**/*.md
+            -   name: Run Markdown Lint and Format Output
+                run: |
+                    npx markdownlint-cli "docs/**/*.md" || true
+                    echo "::warning::Markdown linting completed with warnings."
