@@ -1,17 +1,28 @@
-# Welcome to MkDocs
+---
+hide:
+  - navigation
+  - toc
+---
+![Oakcan_Banner](../assets/banner.svg)
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+**Oakcan** is a secure and efficient file storage and sharing platform designed for individuals and teams who need a reliable way to store, manage, and share files. With a web-based interface, Oakcan ensures seamless access from anywhere with an internet connection.
 
-## Commands
+## Key Features
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+- **Secure Storage** – Upload files securely.
+- **Folder Organization** – Manage files efficiently with structured folders.
+- **Shareable Links** – Generate customizable links with permissions.
+- **Role-Based Access Control (RBAC)** – Define access levels based on user roles.
+- **Web Client Integration** – Access and manage files through an intuitive web interface.
 
-## Project layout
+## Getting Started
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+To start using Oakcan, follow these guides:
+
+- [Local Setup](get-started/local-setup.md) – Setting up Oakcan for development.
+- [Usage Guide](get-started/usage.md) – Detailed instructions on file management and sharing.
+
+## Additional Resources
+
+- [API Documentation](api/api.md)
+- [Contribution Guide](developers/before-you-start.md)

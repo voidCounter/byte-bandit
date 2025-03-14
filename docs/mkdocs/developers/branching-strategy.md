@@ -1,37 +1,46 @@
 # Branching Strategy
+
 This document outlines the Git branching strategy for the project, ensuring a structured and efficient development
 workflow. The strategy is based on GitFlow but modified to include a `develop-snapshot` branch for weekly mentor
 reviews.
+
 ## Core Branches
-![gitflow-workflow.png](gitflow-workflow.png)
+
+![gitflow-workflow.png](../gitflow-workflow.png)
+
 ### `main`
+
 - Contains production-ready code.
 - Direct commits are disabled; only merges from `develop-snapshot` and `hotfix/*` are allowed.
 - Managed by the mentor, who merges reviewed changes from `develop-snapshot`.
+
 ### `develop`
+
 - Primary branch for active development.
 - All feature branches are merged into `develop` via Pull Requests.
 - Represents the latest but unreviewed development progress.
 
 ### `develop-snapshot`
+
 - Aggregates weekly work from `develop`.
 - Pull Requests from `develop` are reviewed by the mentor before merging into `main`.
 - Serves as a staging branch for mentor validation.
 
 ## Supporting Branches
+
 ### `feature/*`
 
 - Used for developing new features or improvements.
 - Created from `develop`.
 - Naming convention: `feature/<short-description>` (e.g., `feature/user-authentication`).
 - Merged back into `develop` via Pull Request.
-| Branch       | Purpose                                       |
-|--------------|-----------------------------------------------|
-| `docs/*`     | Documentation changes. Merges into `develop`. |
-| `refactor/*` | Code refactoring. Merges into `develop`.      |
-| `test/*`     | Test-related changes. Merges into `develop`.  |
-| `chore/*`    | Maintenance tasks. Merges into `develop`.     |
-| `bugfix/*`   | Bug fixes. Merges into `develop`.             |
+  | Branch | Purpose |
+  |--------------|-----------------------------------------------|
+  | `docs/*`     | Documentation changes. Merges into `develop`. |
+  | `refactor/*` | Code refactoring. Merges into `develop`. |
+  | `test/*`     | Test-related changes. Merges into `develop`. |
+  | `chore/*`    | Maintenance tasks. Merges into `develop`. |
+  | `bugfix/*`   | Bug fixes. Merges into `develop`. |
 
 ### `hotfix/*`
 
@@ -77,7 +86,6 @@ reviews.
    git checkout main
    git checkout -b hotfix/fix-login-error
    ```
-
 2. Implement the fix and test it.
 3. Create a PR to merge it into both `main` and `develop`.
 
