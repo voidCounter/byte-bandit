@@ -1,4 +1,4 @@
-name: Deploy Docs to Vercel
+name: Test and Deploy Docs
 env:
     VERCEL_ORG_ID: ${{secrets.VERCEL_ORG_ID}}
     VERCEL_PROJECT_ID: ${{secrets.VERCEL_DOC_PROJECT_ID}}
@@ -14,6 +14,46 @@ on:
         paths:
             - 'docs/**'
 jobs:
+    test-docs:
+        name: Test and Lint Docs
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout Repository
+                uses: actions/checkout@v4
+            -   name: Ensure `docs/` exists
+                run: |
+                    if [ ! -d "docs" ]; then
+                      echo "::error::The 'docs/' folder is missing. This workflow requires documentation to be present."
+                      exit 1
+                    fi
+            -   name: Set Up Python
+                uses: actions/setup-python@v4
+                with:
+                    python-version: '3.9'
+            -   name: Install MkDocs and Dependencies
+                working-directory: docs
+                run: pip install -r requirements.txt
+            -   name: Validate MkDocs Configuration
+                working-directory: docs
+                run: mkdocs build --strict
+            # To check for broken links in the documentation
+            -   name: Install markdown-link-check
+                run: npm install -g markdown-link-check
+            # To check for typos in the documentation
+            -   name: Install codespell
+                run: pip install codespell
+            -   name: Install markdownlint-cli
+                run: npm install -g markdownlint-cli
+
+            -   name: Check Markdown Links
+                working-directory: docs
+                run: find . -name "*.md" | xargs markdown-link-check
+            -   name: Check for Typos
+                run: codespell --ignore-words-list="nd" --skip="docs/site/*" -- *.md docs/**/*.md
+            -   name: Run Markdown Lint and Format Output
+                run: |
+                    npx markdownlint-cli "docs/**/*.md" || true
+                    echo "::warning::Markdown linting completed with warnings."
     deploy-docs:
         name: Deploy Docs to Vercel
         needs: test-docs
