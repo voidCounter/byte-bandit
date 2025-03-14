@@ -15,8 +15,9 @@ on:
             - 'docs/**'
 jobs:
     deploy-docs:
+        name: Deploy Docs to Vercel
+        needs: test-docs
         runs-on: ubuntu-latest
-        # TODO: Add the needs key to ensure that the test-docs job runs before the deploy-docs job.
         steps:
             -   name: Checkout Repository
                 uses: actions/checkout@v4
