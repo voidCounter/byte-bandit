@@ -3,7 +3,7 @@ hide:
   - navigation
   - toc
 ---
-![Oakcan_Banner](../assets/banner.svg)
+![Oakcan_Banner](./assets/banner.svg)
 
 **Oakcan** is a secure and efficient file storage and sharing platform designed for individuals and teams who need a reliable way to store, manage, and share files. With a web-based interface, Oakcan ensures seamless access from anywhere with an internet connection.
 
