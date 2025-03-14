@@ -42,3 +42,5 @@ venv/
 
 ### .secrets for nektos/act ###
 .secrets
+
+node_modules/
