@@ -88,7 +88,7 @@ jobs:
         run: rm -rf .vercel
       - name: Link Vercel Project
         working-directory: docs/site
-        run: vercel link --yes --project ${{ secrets.VERCEL_DOC_PROJECT_ID }} --token ${{ secrets.VERCEL_TOKEN }}
+        run: vercel link --yes --project="${{ secrets.VERCEL_DOC_PROJECT_ID }}" --token="${{ secrets.VERCEL_TOKEN }}"
       - name: Deploy to Vercel
         working-directory: docs/site
         run: |
