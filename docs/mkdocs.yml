@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+site_name: Oakcan Documentation
+site_url: http://127.0.0.1:8000/
+docs_dir: ./mkdocs
+repo_url: https://github.com/Learnathon-By-Geeky-Solutions/byte-bandit
+repo_name: Oakcan
+theme:
+  font:
+    text: DM Sans
+    code: DM Mono
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  name: material
+  logo: assets/logo_small.svg
+  favicon: assets/favicon.png
+  features:
+    - navigation.instant
+    - navigation.instant.prefetch
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - navigation.instant.progress
+    - navigation.tabs
+    - navigation.sections
+    - navigation.tracking
+    - navigation.indexes
+    - navigation.top
+nav:
+  - Home: index.md
+  - Get Started:
+      - Local Setup: get-started/local-setup.md
+      - Usage: get-started/usage.md
+  - Documentation:
+      - Introduction: documentation/introduction.md
+      - Requirements:
+          - Overview: documentation/requirements/overview.md
+          - Functional Requirements: documentation/requirements/functional-requirements.md
+          - Non-Functional Requirements: documentation/requirements/non-functional-requirements.md
+          - Use Cases: documentation/requirements/use-cases.md
+      - Design:
+          - Architecture:
+              - Overview: documentation/design/architecture/architecture-overview.md
+              - Architecture Rationale: documentation/design/architecture/architecture-rationale.md
+              - Core Principles: documentation/design/architecture/core-principles.md
+          - Component Description:
+              - Overview: documentation/design/components/components-overview.md
+              - API Gateway: documentation/design/components/api-gateway.md
+              - Discovery Service: documentation/design/components/discovery-service.md
+              - User Service: documentation/design/components/user-service.md
+              - Auth Service: documentation/design/components/auth-service.md
+              - File Service: documentation/design/components/file-service.md
+              - Notification Service: documentation/design/components/notification-service.md
+              - Kafka: documentation/design/components/kafka.md
+              - Logging Infrastructure: documentation/design/components/logging-infrastructure.md
+          - Data Model: documentation/design/data-model.md
+          - Security:
+              - Overview: documentation/design/security/security-overview.md
+              - Authentication: documentation/design/security/authentication.md
+              - Authorization: documentation/design/security/authorization.md
+              - Data Protection: documentation/design/security/data-protection.md
+          - Deployment:
+              - Overview: documentation/design/deployment/deployment-overview.md
+              - Deployment Strategy: documentation/design/deployment/deployment-strategy.md
+              - Containerization: documentation/design/deployment/containerization.md
+              - CI/CD Pipeline: documentation/design/deployment/ci-cd-pipeline.md
+              - Monitoring: documentation/design/deployment/monitoring.md
+              - Logging: documentation/design/deployment/logging.md
+  - API:
+      - Overview: api/api.md
+      - Authentication: api/authentication.md
+      - Rate Limiting: api/rate-limiting.md
+      - Reference: api/swagger.md
+  - For Developers:
+      - Before You Start: developers/before-you-start.md
+      - Starting Development: developers/starting-development.md
+      - Project Structure: developers/project-structure.md
+      - Branching Strategy: developers/branching-strategy.md
+      - Code Style: developers/code-style.md
+  - Changelog: changelog.md
+
+extra_css:
+  - stylesheets/extra.css
+markdown_extensions:
+  - tables
+  - admonition
+  - pymdownx.highlight:
+      line_spans: __span
+      use_pygments: true
+      pygments_lang_class: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+plugins:
+  - git-authors
