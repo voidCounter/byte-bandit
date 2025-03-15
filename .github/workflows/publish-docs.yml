@@ -87,7 +87,6 @@ jobs:
       - name: Deploy to Vercel
         working-directory: docs/site
         run: |
-          cd site
           if [[ "${{ env.DEPLOY_PROD }}" == "true" ]]; then
               echo "Deploying to production (main branch)..."
               vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
