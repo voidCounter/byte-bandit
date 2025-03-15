@@ -1,4 +1,7 @@
 name: Test and Deploy Docs
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOC_PROJECT_ID }}
 on:
   push:
     branches:
@@ -69,7 +72,7 @@ jobs:
           name: mkdocs-site
           path: docs/site
       - name: Install Vercel CLI
-        run: npm install -g vercel
+        run: npm install -g vercel@latest
 
       - name: Determine environment
         id: vars
@@ -82,7 +85,7 @@ jobs:
               echo "DEPLOY_PROD=false" >> $GITHUB_ENV
           fi
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ env.ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }} --org ${{ secrets.VERCEL_ORG_ID }} --project ${{ secrets.VERCEL_DOC_PROJECT_ID }}
+        run: vercel pull --yes --environment=${{ env.ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy to Vercel
         working-directory: docs/site
         run: |
