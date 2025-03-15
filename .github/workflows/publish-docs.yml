@@ -84,8 +84,6 @@ jobs:
               echo "ENVIRONMENT=preview" >> $GITHUB_ENV
               echo "DEPLOY_PROD=false" >> $GITHUB_ENV
           fi
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ env.ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy to Vercel
         working-directory: docs/site
         run: |
