@@ -1,6 +1,7 @@
 package com.bytebandit.userservice.entity;
 
 import com.bytebandit.userservice.model.UserEntity;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -44,7 +45,7 @@ public class UserEntityTest {
         user2.setEmail("user2@example.com");
         user2.setUsername("duplicate");
         user2.setPassword("ValidPass1@");
-        assertThrows(Exception.class, () -> {
+        assertThrows(ConstraintViolationException.class, () -> {
             entityManager.persist(user2);
             entityManager.flush();
         });
@@ -61,5 +62,23 @@ public class UserEntityTest {
         entityManager.flush();
 
         assertFalse(user.isEnabled());
+    }
+
+    @Test
+    void whenUserIsEnabled_thenIsEnabledUpdatesCorrectly() {
+        UserEntity user = new UserEntity();
+        user.setEmail("user@example.com");
+        user.setPassword("ValidPass1@");
+        user.setUsername("testuser");
+
+        entityManager.persist(user);
+        entityManager.flush();
+
+        user.setEnabled(true);
+        entityManager.persist(user);
+        entityManager.flush();
+
+        UserEntity foundUser = entityManager.find(UserEntity.class, user.getId());
+        assertTrue(foundUser.isEnabled());
     }
 }
