@@ -27,7 +27,7 @@ public class UserEntityTest {
         user2.setEmail("duplicate@example.com");
         user2.setUsername("user2");
         user2.setPassword("ValidPass1@");
-        assertThrows(Exception.class, () -> {
+        assertThrows(ConstraintViolationException.class, () -> {
             entityManager.persist(user2);
             entityManager.flush();
         });
@@ -54,9 +54,9 @@ public class UserEntityTest {
     @Test
     void whenUserIsCreated_thenIsEnabledIsFalse() {
         UserEntity user = new UserEntity();
-        user.setEmail("user@example.com");
+        user.setEmail("user3@example.com");
         user.setPassword("ValidPass1@");
-        user.setUsername("testuser");
+        user.setUsername("testuser1");
 
         entityManager.persist(user);
         entityManager.flush();
@@ -67,9 +67,9 @@ public class UserEntityTest {
     @Test
     void whenUserIsEnabled_thenIsEnabledUpdatesCorrectly() {
         UserEntity user = new UserEntity();
-        user.setEmail("user@example.com");
+        user.setEmail("user4@example.com");
         user.setPassword("ValidPass1@");
-        user.setUsername("testuser");
+        user.setUsername("testuser2");
 
         entityManager.persist(user);
         entityManager.flush();
