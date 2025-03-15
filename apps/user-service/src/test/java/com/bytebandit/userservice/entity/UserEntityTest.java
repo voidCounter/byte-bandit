@@ -88,4 +88,14 @@ public class UserEntityTest {
         assertEquals(1, violations.size());
         assertEquals("Username field cannot be null", violations.iterator().next().getMessage());
     }
+
+    @Test
+    void whenAllFieldsValid_thenNoViolations() {
+        UserEntity user = new UserEntity();
+        user.setEmail("valid@example.com");
+        user.setPassword("ValidPass1@");
+        user.setUsername("validUser");
+        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
+        assertEquals(0, violations.size());
+    }
 }
