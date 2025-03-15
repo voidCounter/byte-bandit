@@ -1,14 +1,16 @@
 package com.bytebandit.userservice.model;
 
+import com.bytebandit.userservice.annotation.ValidEmail;
+import com.bytebandit.userservice.annotation.ValidPassword;
+import com.bytebandit.userservice.annotation.ValidUsername;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -19,6 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
 
     @Id
@@ -27,16 +30,19 @@ public class UserEntity {
     private UUID id;
 
     @Column(name = "email", unique = true)
-    @Email(message = "Invalid email format detected")
-    @NotNull(message = "Email field cannot be null")
+    @ValidEmail
     private String email;
 
     @Column(name = "password", length = 72)
-    @NotNull(message = "Password field cannot be null")
+    @ValidPassword
     private String password;
 
     @Column(name = "oauth_id")
     private String oauthId;
+
+    @Column(name = "username")
+    @ValidUsername
+    private String username;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
