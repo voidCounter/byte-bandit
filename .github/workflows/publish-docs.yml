@@ -55,24 +55,23 @@ jobs:
         with:
           name: mkdocs-site
           path: docs/site
-
-deploy-docs:
-  name: Deploy Docs to cloudflare
-  needs: test-docs
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-    - name: Download Build Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: mkdocs-site
-        path: docs/site
-    - name: Deploy
-      uses: cloudflare/wrangler-action@v3
-      with:
-        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        command: pages deploy ./docs/site --project-name=oakcan-docs
-        gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+  deploy-docs:
+    name: Deploy Docs to cloudflare
+    needs: test-docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: mkdocs-site
+          path: docs/site
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./docs/site --project-name=oakcan-docs
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
