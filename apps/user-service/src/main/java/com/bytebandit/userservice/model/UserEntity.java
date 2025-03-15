@@ -45,7 +45,7 @@ public class UserEntity implements UserDetails, Principal {
     @Column(name = "oauth_id")
     private String oauthId;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     @ValidUsername
     private String username;
 
