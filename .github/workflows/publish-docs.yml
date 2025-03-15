@@ -57,7 +57,7 @@ jobs:
           path: docs/site
 
   deploy-docs:
-    name: Deploy Docs to Vercel
+    name: Deploy Docs to cloudflare
     needs: test-docs
     runs-on: ubuntu-latest
     steps:
@@ -68,38 +68,11 @@ jobs:
         with:
           name: mkdocs-site
           path: docs/site
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./docs/site --project-name=oakcan-docs
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Determine environment
-        id: vars
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-              echo "ENVIRONMENT=production" >> $GITHUB_ENV
-              echo "DEPLOY_PROD=true" >> $GITHUB_ENV
-          else
-              echo "ENVIRONMENT=preview" >> $GITHUB_ENV
-              echo "DEPLOY_PROD=false" >> $GITHUB_ENV
-          fi
-      - name: Remove .vercel directory
-        working-directory: docs/site
-        run: rm -rf .vercel
-      - name: Link Vercel Project
-        working-directory: docs/site
-        env:
-            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOC_PROJECT_ID}}
-            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-            VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        run: vercel link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN
-      - name: Deploy to Vercel
-        working-directory: docs/site
-        env:
-            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          if [[ "${{ env.DEPLOY_PROD }}" == "true" ]]; then
-              echo "Deploying to production (main branch)..."
-              vercel deploy --prod --token $VERCEL_TOKEN --yes
-          else
-              echo "Deploying to preview for branch: ${{ github.ref }}"
-              vercel deploy --token $VERCEL_TOKEN --yes
-          fi
