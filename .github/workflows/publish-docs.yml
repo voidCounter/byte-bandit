@@ -1,7 +1,4 @@
 name: Test and Deploy Docs
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOC_PROJECT_ID }}
 on:
   push:
     branches:
@@ -85,17 +82,23 @@ jobs:
               echo "DEPLOY_PROD=false" >> $GITHUB_ENV
           fi
       - name: Remove .vercel directory
+        working-directory: docs/site
         run: rm -rf .vercel
       - name: Link Vercel Project
         working-directory: docs/site
-        run: vercel link --yes --project="${{ secrets.VERCEL_DOC_PROJECT_ID }}" --token="${{ secrets.VERCEL_TOKEN }}"
+        env:
+            VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOC_PROJECT_ID}}
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: vercel link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN
       - name: Deploy to Vercel
         working-directory: docs/site
+        env:
+            VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
           if [[ "${{ env.DEPLOY_PROD }}" == "true" ]]; then
               echo "Deploying to production (main branch)..."
-              vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
+              vercel deploy --prod --token $VERCEL_TOKEN --yes
           else
               echo "Deploying to preview for branch: ${{ github.ref }}"
-              vercel deploy --token ${{ secrets.VERCEL_TOKEN }} --yes
+              vercel deploy --token $VERCEL_TOKEN --yes
           fi
