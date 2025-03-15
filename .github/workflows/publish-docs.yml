@@ -85,8 +85,8 @@ jobs:
               echo "DEPLOY_PROD=false" >> $GITHUB_ENV
           fi
       - name: Link Vercel Project
-      - working-directory: docs/site
-      - run: vercel link --yes --project ${{ secrets.VERCEL_DOC_PROJECT_NAME }} --token ${{ secrets.VERCEL_TOKEN }}
+        working-directory: docs/site
+        run: vercel link --yes --project ${{ secrets.VERCEL_DOC_PROJECT_NAME }} --token ${{ secrets.VERCEL_TOKEN }}
 
       - name: Deploy to Vercel
         working-directory: docs/site
