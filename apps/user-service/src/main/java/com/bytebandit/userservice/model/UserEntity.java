@@ -4,15 +4,20 @@ import com.bytebandit.userservice.annotation.ValidEmail;
 import com.bytebandit.userservice.annotation.ValidPassword;
 import com.bytebandit.userservice.annotation.ValidUsername;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.security.Principal;
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,7 +27,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-public class UserEntity {
+public class UserEntity implements UserDetails, Principal {
 
     @Id
     @Column(name = "id")
@@ -44,6 +49,10 @@ public class UserEntity {
     @ValidUsername
     private String username;
 
+    @Column(name = "is_enabled", nullable = false)
+    @ColumnDefault(value = "false")
+    private boolean isEnabled;
+
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
@@ -51,4 +60,14 @@ public class UserEntity {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private Timestamp updatedAt;
+
+    @Override
+    public String getName() {
+        return this.username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
 }
