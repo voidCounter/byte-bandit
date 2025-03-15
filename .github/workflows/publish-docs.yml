@@ -1,7 +1,4 @@
 name: Test and Deploy Docs
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOC_PROJECT_ID }}
 on:
   push:
     branches:
@@ -33,18 +30,14 @@ jobs:
       - name: Install MkDocs and Dependencies
         working-directory: docs
         run: pip install -r requirements.txt
-      - name: Validate MkDocs Configuration
-        working-directory: docs
-        run: mkdocs build --strict
-      # To check for broken links in the documentation
+        # To check for broken links in the documentation
       - name: Install markdown-link-check
         run: npm install -g markdown-link-check
-      # To check for typos in the documentation
+        # To check for typos in the documentation
       - name: Install codespell
         run: pip install codespell
       - name: Install markdownlint-cli
         run: npm install -g markdownlint-cli
-
       - name: Check Markdown Links
         working-directory: docs
         run: find . -name "*.md" | xargs markdown-link-check
@@ -54,6 +47,15 @@ jobs:
         run: |
           npx markdownlint-cli "docs/**/*.md" || true
           echo "::warning::Markdown linting completed with warnings."
+      - name: Validate MkDocs Configuration
+        working-directory: docs
+        run: mkdocs build --strict
+      - name: upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mkdocs-site
+          path: docs/site
+
   deploy-docs:
     name: Deploy Docs to Vercel
     needs: test-docs
@@ -61,22 +63,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Set Up Python 3.9
-        uses: actions/setup-python@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
-          python-version: '3.9'
-
-      - name: Install MkDocs Dependencies
-        working-directory: docs
-        run: |
-          pip install -r requirements.txt
-
-      - name: Build MkDocs Site
-        working-directory: docs
-        run: |
-          mkdocs build
-
+          name: mkdocs-site
+          path: docs/site
       - name: Install Vercel CLI
         run: npm install -g vercel
 
@@ -91,11 +82,9 @@ jobs:
               echo "DEPLOY_PROD=false" >> $GITHUB_ENV
           fi
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ env.ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=${{ env.ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }} --org ${{ secrets.VERCEL_ORG_ID }} --project ${{ secrets.VERCEL_DOC_PROJECT_ID }}
       - name: Deploy to Vercel
-        working-directory: docs
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        working-directory: docs/site
         run: |
           cd site
           if [[ "${{ env.DEPLOY_PROD }}" == "true" ]]; then
