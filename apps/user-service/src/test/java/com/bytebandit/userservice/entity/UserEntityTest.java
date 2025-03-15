@@ -1,101 +1,65 @@
 package com.bytebandit.userservice.entity;
 
 import com.bytebandit.userservice.model.UserEntity;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.util.Set;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+@DataJpaTest
 public class UserEntityTest {
 
-    private static Validator validator;
+    @Autowired
+    private TestEntityManager entityManager;
 
-    @BeforeAll
-    static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
+    @Test
+    void whenEmailIsDuplicate_thenConstraintViolation() {
+        UserEntity user1 = new UserEntity();
+        user1.setEmail("duplicate@example.com");
+        user1.setUsername("user1");
+        user1.setPassword("ValidPass1@");
+        entityManager.persist(user1);
+        entityManager.flush();
+        UserEntity user2 = new UserEntity();
+        user2.setEmail("duplicate@example.com");
+        user2.setUsername("user2");
+        user2.setPassword("ValidPass1@");
+        assertThrows(Exception.class, () -> {
+            entityManager.persist(user2);
+            entityManager.flush();
+        });
     }
 
     @Test
-    void whenEmailIsInvalid_thenEmailViolation() {
+    void whenUsernameIsDuplicate_thenConstraintViolation() {
+        UserEntity user1 = new UserEntity();
+        user1.setEmail("user1@example.com");
+        user1.setUsername("duplicate");
+        user1.setPassword("ValidPass1@");
+        entityManager.persist(user1);
+        entityManager.flush();
+        UserEntity user2 = new UserEntity();
+        user2.setEmail("user2@example.com");
+        user2.setUsername("duplicate");
+        user2.setPassword("ValidPass1@");
+        assertThrows(Exception.class, () -> {
+            entityManager.persist(user2);
+            entityManager.flush();
+        });
+    }
+
+    @Test
+    void whenUserIsCreated_thenIsEnabledIsFalse() {
         UserEntity user = new UserEntity();
-        user.setEmail("invalid-email");
+        user.setEmail("user@example.com");
         user.setPassword("ValidPass1@");
-        user.setUsername("validUser");
-        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
-        assertEquals(1, violations.size());
-        assertEquals("Invalid email format detected", violations.iterator().next().getMessage());
-    }
+        user.setUsername("testuser");
 
-    @Test
-    void whenEmailIsNull_thenNotNullViolation() {
-        UserEntity user = new UserEntity();
-        user.setEmail(null); // Null value
-        user.setPassword("ValidPass1@");
-        user.setUsername("validUser");
-        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
-        assertEquals(1, violations.size());
-        assertEquals("Email field cannot be null", violations.iterator().next().getMessage());
-    }
+        entityManager.persist(user);
+        entityManager.flush();
 
-    @Test
-    void whenPasswordIsWeak_thenPasswordViolation() {
-        UserEntity user = new UserEntity();
-        user.setEmail("valid@example.com");
-        user.setPassword("weak");
-        user.setUsername("validUser");
-        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
-        assertEquals(1, violations.size());
-        assertTrue(violations.iterator().next().getMessage().contains("Password must be at least 8 characters"));
-    }
-
-    @Test
-    void whenPasswordIsNull_thenNotNullViolation() {
-        UserEntity user = new UserEntity();
-        user.setEmail("valid@example.com");
-        user.setPassword(null);
-        user.setUsername("validUser");
-        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
-        assertEquals(1, violations.size());
-        assertEquals("Password field cannot be null", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    void whenUsernameTooShort_thenSizeViolation() {
-        UserEntity user = new UserEntity();
-        user.setEmail("valid@example.com");
-        user.setPassword("ValidPass1@");
-        user.setUsername("abc");
-        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
-        assertEquals(1, violations.size());
-        assertEquals("Username must be between 4 and 15 characters", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    void whenUsernameIsNull_thenNotNullViolation() {
-        UserEntity user = new UserEntity();
-        user.setEmail("valid@example.com");
-        user.setPassword("ValidPass1@");
-        user.setUsername(null);
-        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
-        assertEquals(1, violations.size());
-        assertEquals("Username field cannot be null", violations.iterator().next().getMessage());
-    }
-
-    @Test
-    void whenAllFieldsValid_thenNoViolations() {
-        UserEntity user = new UserEntity();
-        user.setEmail("valid@example.com");
-        user.setPassword("ValidPass1@");
-        user.setUsername("validUser");
-        Set<ConstraintViolation<UserEntity>> violations = validator.validate(user);
-        assertEquals(0, violations.size());
+        assertFalse(user.isEnabled());
     }
 }

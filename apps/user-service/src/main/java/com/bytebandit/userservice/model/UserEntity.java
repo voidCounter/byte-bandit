@@ -1,8 +1,5 @@
 package com.bytebandit.userservice.model;
 
-import com.bytebandit.userservice.annotation.ValidEmail;
-import com.bytebandit.userservice.annotation.ValidPassword;
-import com.bytebandit.userservice.annotation.ValidUsername;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -35,23 +32,19 @@ public class UserEntity implements UserDetails, Principal {
     private UUID id;
 
     @Column(name = "email", unique = true)
-    @ValidEmail
     private String email;
 
     @Column(name = "password", length = 72)
-    @ValidPassword
     private String password;
 
     @Column(name = "oauth_id")
     private String oauthId;
 
     @Column(name = "username", unique = true)
-    @ValidUsername
     private String username;
 
     @Column(name = "is_enabled", nullable = false)
-    @ColumnDefault(value = "false")
-    private boolean isEnabled;
+    private boolean isEnabled = false;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
