@@ -90,7 +90,7 @@ jobs:
             VERCEL_PROJECT_ID: ${{ secrets.VERCEL_DOC_PROJECT_ID}}
             VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
             VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        run: vercel link --yes --project $VERCEL_PROJECT_ID --org $VERCEL_ORG_ID --token $VERCEL_TOKEN
+        run: vercel link --yes --project $VERCEL_PROJECT_ID --token $VERCEL_TOKEN
       - name: Deploy to Vercel
         working-directory: docs/site
         env:
