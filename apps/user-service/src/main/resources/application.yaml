@@ -8,7 +8,14 @@ spring:
     driver-class-name: org.postgresql.Driver
   config:
     import: classpath:secrets.yml
-
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    active: dev
 server:
   port: 8083
 eureka:
