@@ -2,6 +2,7 @@ package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.dto.UserRegistrationResponse;
+import com.bytebandit.userservice.exception.UserAlreadyExistsException;
 import com.bytebandit.userservice.mapper.UserMapper;
 import com.bytebandit.userservice.model.UserEntity;
 import com.bytebandit.userservice.repository.UserRepository;
@@ -37,7 +38,7 @@ public class UserRegistrationService {
             );
             return userMapper.toUserRegistrationResponse(savedUser);
         } catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException(e.getMessage());
+            throw new UserAlreadyExistsException("User with provided email already exists.", e);
         }
     }
 }
