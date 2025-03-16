@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/test_oakcandb
+    url: ${secrets.datasource.url}
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: 12345
+    username: ${secrets.datasource.username}
+    password: ${secrets.datasource.password}
   cloud:
     discovery:
       enabled: false
@@ -12,3 +12,5 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+  config:
+    import: classpath:secret.yml
