@@ -34,17 +34,17 @@ public class UserEntity implements UserDetails, Principal {
     @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "password", length = 72)
-    private String password;
+    @Column(name = "password_hash", length = 72)
+    private String passwordHash;
 
     @Column(name = "oauth_id")
     private String oauthId;
 
-    @Column(name = "username", unique = true)
-    private String username;
+    @Column(name = "name")
+    private String fullName;
 
-    @Column(name = "is_enabled", nullable = false)
-    private boolean isEnabled = false;
+    @Column(name = "verified", nullable = false)
+    private boolean verified = false;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
@@ -56,11 +56,28 @@ public class UserEntity implements UserDetails, Principal {
 
     @Override
     public String getName() {
-        return this.username;
+        return this.email;
+    } // take note here
+
+    @Override
+    public String getPassword() {
+        return this.passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(); // for now we don't have any roles
     }
+
+    @Override
+    public boolean isEnabled() {
+        return this.verified;
+    }
+
+
 }
