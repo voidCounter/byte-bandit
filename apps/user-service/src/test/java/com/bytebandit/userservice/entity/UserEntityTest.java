@@ -1,18 +1,24 @@
 package com.bytebandit.userservice.entity;
 
 import com.bytebandit.userservice.model.UserEntity;
+import jakarta.transaction.Transactional;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.annotation.Rollback;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@Transactional
+@Rollback
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(BCryptPasswordEncoder.class)
 public class UserEntityTest {
 
@@ -43,7 +49,6 @@ public class UserEntityTest {
             entityManager.flush();
         });
     }
-
 
     @Test
     void whenUserIsCreated_thenVerifiedIsFalse() {
