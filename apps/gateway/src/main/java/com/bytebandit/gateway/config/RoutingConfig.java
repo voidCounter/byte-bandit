@@ -14,7 +14,7 @@ import static org.springframework.cloud.gateway.server.mvc.filter.LoadBalancerFi
 @Configuration
 public class RoutingConfig {
 
-private RouterFunction<ServerResponse> createServiceRoute(String serviceName, String pathPattern) {
+    private RouterFunction<ServerResponse> createServiceRoute(String serviceName, String pathPattern) {
         return GatewayRouterFunctions.route(serviceName)
                 .route(GatewayRequestPredicates.path(pathPattern), HandlerFunctions.http())
                 .filter(lb(serviceName))
