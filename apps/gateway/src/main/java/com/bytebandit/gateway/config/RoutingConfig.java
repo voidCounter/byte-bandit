@@ -14,30 +14,26 @@ import static org.springframework.cloud.gateway.server.mvc.filter.LoadBalancerFi
 @Configuration
 public class RoutingConfig {
 
-    @Bean
-    public RouterFunction<ServerResponse> userServiceRouterFunction() {
-        return GatewayRouterFunctions.route("user-service")
-                .route(GatewayRequestPredicates.path("/api/v1/user/**"), HandlerFunctions.http())
-                .filter(lb("user-service"))
+private RouterFunction<ServerResponse> createServiceRoute(String serviceName, String pathPattern) {
+        return GatewayRouterFunctions.route(serviceName)
+                .route(GatewayRequestPredicates.path(pathPattern), HandlerFunctions.http())
+                .filter(lb(serviceName))
                 .before(BeforeFilterFunctions.stripPrefix(3))
                 .build();
+        }
+
+    @Bean
+    public RouterFunction<ServerResponse> userServiceRouterFunction() {
+        return createServiceRoute("user-service", "/api/v1/user/**");
     }
 
     @Bean
     public RouterFunction<ServerResponse> fileServiceRouterFunction() {
-        return GatewayRouterFunctions.route("file-service")
-                .route(GatewayRequestPredicates.path("/api/v1/file/**"), HandlerFunctions.http())
-                .filter(lb("file-service"))
-                .before(BeforeFilterFunctions.stripPrefix(3))
-                .build();
+        return createServiceRoute("file-service", "/api/v1/file/**");
     }
 
     @Bean
     public RouterFunction<ServerResponse> syncServiceRouterFunction() {
-        return GatewayRouterFunctions.route("sync-service")
-                .route(GatewayRequestPredicates.path("/api/v1/sync/**"), HandlerFunctions.http())
-                .filter(lb("sync-service"))
-                .before(BeforeFilterFunctions.stripPrefix(3))
-                .build();
+        return createServiceRoute("sync-service", "/api/v1/sync/**");
     }
 }
