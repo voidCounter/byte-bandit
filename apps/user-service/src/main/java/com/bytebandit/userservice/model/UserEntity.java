@@ -1,5 +1,11 @@
 package com.bytebandit.userservice.model;
 
+import java.security.Principal;
+import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -7,12 +13,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.security.Principal;
-import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,12 +27,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
-public class UserEntity implements UserDetails, Principal
-{
+public class UserEntity implements UserDetails, Principal {
 
     @Id
     @Column(name = "id")
@@ -61,32 +63,27 @@ public class UserEntity implements UserDetails, Principal
     private Timestamp updatedAt;
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return this.email;
     } // take note here
 
     @Override
-    public String getPassword()
-    {
+    public String getPassword() {
         return this.passwordHash;
     }
 
     @Override
-    public String getUsername()
-    {
+    public String getUsername() {
         return this.email;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities()
-    {
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(); // for now we don't have any roles
     }
 
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return this.verified;
     }
 

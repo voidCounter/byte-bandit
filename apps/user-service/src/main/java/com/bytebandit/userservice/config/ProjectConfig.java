@@ -13,4 +13,9 @@ public class ProjectConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(STRENGTH);
     }
+
+    @Bean
+    public UserMapper userMapper() {
+        return Mappers.getMapper(UserMapper.class);
+    }
 }
