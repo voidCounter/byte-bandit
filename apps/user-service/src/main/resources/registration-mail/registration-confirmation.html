@@ -1,53 +1,66 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title th:text="#{email.title}">Confirm Your Registration</title>
+        <title>Registration Confirmed</title>
         <style>
-            /* Basic Reset */
-            body, table, td, h1, p {
+            body {
                 margin: 0;
                 padding: 0;
+                background-color: #f4f4f4;
                 font-family: Arial, sans-serif;
             }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                background-color: #f4f4f4;
-            }
+
             .container {
-                width: 100%;
-                padding: 20px 0;
-                display: flex;
-                justify-content: center;
-            }
-            .content {
-                width: 600px;
+                max-width: 600px;
+                margin: 40px auto;
                 background-color: #ffffff;
                 border: 1px solid #cccccc;
-                padding: 40px 30px;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             }
+
             .header {
                 background-color: #007BFF;
+                color: #ffffff;
                 text-align: center;
-                padding: 40px 0;
+                padding: 40px 20px;
             }
+
             .header h1 {
                 margin: 0;
                 font-size: 24px;
-                color: #ffffff;
             }
+
+            .content {
+                padding: 36px 30px;
+                text-align: left;
+                color: #333333;
+            }
+
+            .content p {
+                margin-bottom: 24px;
+                font-size: 16px;
+                line-height: 24px;
+            }
+
+            .button-container {
+                display: flex;
+                justify-content: center;
+                margin: 24px 0;
+            }
+
             .button {
                 background-color: #28a745;
-                border: none;
-                color: white;
-                padding: 12px 24px;
+                color: #ffffff;
                 text-decoration: none;
-                display: inline-block;
+                padding: 12px 24px;
                 font-size: 16px;
                 border-radius: 5px;
                 font-weight: bold;
             }
+
             .footer {
                 background-color: #f4f4f4;
                 text-align: center;
@@ -55,51 +68,44 @@
                 color: #aaaaaa;
                 padding: 30px;
             }
-            .footer p {
-                margin: 0;
+
+            .link-container {
+                font-size: 14px;
+                color: #666;
+                text-align: center;
             }
-            .link {
+
+            .link-container a {
                 color: #007BFF;
+                word-break: break-all;
             }
+
         </style>
     </head>
     <body>
         <div class="container">
-            <table role="presentation" class="content">
-                <tr class="header">
-                    <td>
-                        <h1 th:text="#{email.header}">Welcome to Oakcan</h1>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:36px 30px 42px 30px;">
-                        <p style="font-size:16px; line-height:24px; color:#333333;">
-                            <span th:text="#{email.greeting(${recipientName})}">Hello User,</span>
-                        </p>
-                        <p style="font-size:16px; line-height:24px; color:#333333;" th:text="#{email.instruction}">
-                            Thank you for registering with us! Please confirm your registration by clicking the button below.
-                        </p>
-                        <p style="text-align:center;">
-                            <a th:href="@{${confirmationUrl}}" class="button" th:text="#{email.button}">
-                                Confirm Registration
-                            </a>
-                        </p>
-                        <p style="margin-top:24px; font-size:14px; color:#666;" th:text="#{email.link.instruction}">
-                            If the button doesn’t work, copy and paste this link into your browser:
-                        </p>
-                        <p style="font-size:14px; color:#007BFF;">
-                            <a th:href="@{${confirmationUrl}}" th:text="${confirmationUrl}" class="link">confirmation link</a>
-                        </p>
-                    </td>
-                </tr>
-                <tr class="footer">
-                    <td>
-                        <p th:text="#{footer.signature}">
-                            Best regards, The Oakcan Team
-                        </p>
-                    </td>
-                </tr>
-            </table>
+            <div class="header">
+                <h1>Welcome to Oakcan</h1>
+            </div>
+
+            <div class="content">
+                <p>Hello <span th:text="${recipientName}">User</span>,</p>
+
+                <p>Thank you for registering with us! Please confirm your registration by clicking the button below.</p>
+
+                <div class="button-container">
+                    <a th:href="@{${confirmationUrl}}" class="button">Confirm Registration</a>
+                </div>
+
+                <div class="link-container">
+                    <p>If the button doesn’t work, copy and paste this link into your browser:</p>
+                    <a th:href="@{${confirmationUrl}}" th:text="${confirmationUrl}">confirmation link</a>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p th:text="#{footer.signature}">Best regards, The Oakcan Team</p>
+            </div>
         </div>
     </body>
 </html>
