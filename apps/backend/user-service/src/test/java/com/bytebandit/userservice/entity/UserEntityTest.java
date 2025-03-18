@@ -32,6 +32,7 @@ public class UserEntityTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /** Test that the email is unique. */
     @Test
     void whenEmailIsDuplicate_thenConstraintViolation() {
         UserEntity user1 = new UserEntity();
@@ -50,6 +51,7 @@ public class UserEntityTest {
         });
     }
 
+    /** Test that the password is valid. */
     @Test
     void whenUserIsCreated_thenVerifiedIsFalse() {
         UserEntity user = new UserEntity();
@@ -61,6 +63,7 @@ public class UserEntityTest {
         assertFalse(user.isEnabled());
     }
 
+    /** Test that the verified status is updated correctly. */
     @Test
     void whenUserIsVerified_thenVerifiedIsUpdatesCorrectly() {
         UserEntity user = new UserEntity();
@@ -76,6 +79,7 @@ public class UserEntityTest {
         assertTrue(foundUser.isEnabled());
     }
 
+    /** Test that the password is hashed. */
     @Test
     void whenUserIsSaved_thenPasswordIsHashed() {
         UserEntity user = new UserEntity();

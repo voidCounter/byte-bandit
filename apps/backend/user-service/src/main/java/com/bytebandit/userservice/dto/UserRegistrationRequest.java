@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserRegistrationRequest {
-
     @Nullable
     @Size(max = 20, message = "Username must be less than 20 characters")
     private String fullName;

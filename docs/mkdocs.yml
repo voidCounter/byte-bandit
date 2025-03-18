@@ -92,6 +92,9 @@ nav:
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
   - tables
   - admonition
   - pymdownx.highlight:
@@ -104,4 +107,6 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
 plugins:
-  - git-authors
+  - glightbox
+  - git-authors:
+      show_email: false

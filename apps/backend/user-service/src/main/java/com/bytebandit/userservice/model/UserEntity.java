@@ -23,7 +23,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-/** Entity class for the user. */
 @Entity
 @Getter
 @Setter

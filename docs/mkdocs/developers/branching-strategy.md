@@ -34,6 +34,7 @@ reviews.
 - Created from `develop`.
 - Naming convention: `feature/<short-description>` (e.g., `feature/user-authentication`).
 - Merged back into `develop` via Pull Request.
+ 
   | Branch | Purpose |
   |--------------|-----------------------------------------------|
   | `docs/*`     | Documentation changes. Merges into `develop`. |
