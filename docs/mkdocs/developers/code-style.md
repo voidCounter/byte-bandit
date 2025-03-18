@@ -1,4 +1,4 @@
-# Code Style
+# Code Style Guideline
 
 To maintain code quality and consistency across the project, we follow a set of coding standards and guidelines. This
 page explains how we enforce coding standards using [Checkstyle](https://checkstyle.org/) with the
@@ -90,7 +90,7 @@ according to the Checkstyle rules.
 
 To run Checkstyle from the command line, you need to install
 the [maven-checkstyle-plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/usage.html). We've already added
-the plugin to the `pom.xml` file inside `backend` directory. You can run Checkstyle using the following command:
+the plugin to the `pom.xml` file inside `backend` directory with proper configuration. You can run Checkstyle using the following command:
 
 ```shell
 mvn checkstyle:check

@@ -86,7 +86,7 @@ nav:
       - Starting Development: developers/starting-development.md
       - Project Structure: developers/project-structure.md
       - Branching Strategy: developers/branching-strategy.md
-      - Code Style: developers/code-style.md
+      - Code Style Guideline: developers/code-style.md
   - Changelog: changelog.md
 
 extra_css:
