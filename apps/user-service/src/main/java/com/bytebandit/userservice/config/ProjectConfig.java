@@ -7,11 +7,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ProjectConfig {
+    private static final int STRENGTH = 12;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder(STRENGTH);
     }
-
-
 }

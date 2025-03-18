@@ -1,5 +1,11 @@
 package com.bytebandit.userservice.entity;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.bytebandit.userservice.model.UserEntity;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
@@ -10,11 +16,10 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @DataJpaTest
 @Import(BCryptPasswordEncoder.class)
-public class UserEntityTest {
+public class UserEntityTest
+{
 
     @Autowired
     private TestEntityManager entityManager;
@@ -23,12 +28,13 @@ public class UserEntityTest {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    void whenEmailIsDuplicate_thenConstraintViolation() {
+    void whenEmailIsDuplicate_thenConstraintViolation()
+    {
         UserEntity user1 = new UserEntity();
         user1.setEmail("duplicate@example.com");
         user1.setFullName("John Doe");
         user1.setPasswordHash(
-                passwordEncoder.encode("ValidPass1@")
+            passwordEncoder.encode("ValidPass1@")
         );
         entityManager.persist(user1);
         entityManager.flush();
@@ -36,7 +42,7 @@ public class UserEntityTest {
         user2.setEmail("duplicate@example.com");
         user2.setFullName("John Doe");
         user2.setPasswordHash(
-                passwordEncoder.encode("ValidPass1@")
+            passwordEncoder.encode("ValidPass1@")
         );
         assertThrows(ConstraintViolationException.class, () -> {
             entityManager.persist(user2);
@@ -46,11 +52,12 @@ public class UserEntityTest {
 
 
     @Test
-    void whenUserIsCreated_thenVerifiedIsFalse() {
+    void whenUserIsCreated_thenVerifiedIsFalse()
+    {
         UserEntity user = new UserEntity();
         user.setEmail("user3@example.com");
         user.setPasswordHash(
-                passwordEncoder.encode("ValidPass1@")
+            passwordEncoder.encode("ValidPass1@")
         );
         user.setFullName("Test User");
         entityManager.persist(user);
@@ -59,11 +66,12 @@ public class UserEntityTest {
     }
 
     @Test
-    void whenUserIsVerified_thenVerifiedIsUpdatesCorrectly() {
+    void whenUserIsVerified_thenVerifiedIsUpdatesCorrectly()
+    {
         UserEntity user = new UserEntity();
         user.setEmail("user4@example.com");
         user.setPasswordHash(
-                passwordEncoder.encode("ValidPass1@")
+            passwordEncoder.encode("ValidPass1@")
         );
         user.setFullName("Test User");
         entityManager.persist(user);
@@ -76,7 +84,8 @@ public class UserEntityTest {
     }
 
     @Test
-    void whenUserIsSaved_thenPasswordIsHashed() {
+    void whenUserIsSaved_thenPasswordIsHashed()
+    {
         UserEntity user = new UserEntity();
         user.setEmail("user@example.com");
         user.setFullName("John Doe");

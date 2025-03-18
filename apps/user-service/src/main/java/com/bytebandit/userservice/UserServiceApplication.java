@@ -6,12 +6,13 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication(exclude = {
-        SecurityAutoConfiguration.class,
+    SecurityAutoConfiguration.class,
 })
 @EnableDiscoveryClient
-public class UserServiceApplication {
-
-    public static void main(String[] args) {
+public class UserServiceApplication
+{
+    public static void main(String[] args)
+    {
         SpringApplication.run(UserServiceApplication.class, args);
     }
 
