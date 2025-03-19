@@ -43,7 +43,7 @@ in the **`checkstyle.xml`** file.
 
 ## Setting Up IntelliJ IDEA
 
-There is two parts of the setup, firstly you need to install the
+There are two parts of the setup, firstly you need to install the
 [`CheckStyle-IDEA`](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) plugin and then configure it to use the
 project-specific Checkstyle configuration(`checkstyle.xml`) given inside `backend` directory. This will allow IntelliJ
 IDEA to highlight any code that doesn't comply with the Checkstyle rules.
@@ -68,7 +68,7 @@ the project-specific code style settings in the **`oakcan-code-style.xml`** file
    ![check_file.png](assets/check_file.png)
 8. Checkstyle will highlight any code that doesn't comply with the Checkstyle rules.
    ![checkstyle-error.png](assets/checkstyle-error.png)
-9. Now you can fix the issues by following the Checkstyle rules.
+9. Now you can resolve the issues by following the Checkstyle rules.
    ![checkstyle-fix.png](assets/checkstyle-fix.png)
 
 ### Setting Up Code Style
