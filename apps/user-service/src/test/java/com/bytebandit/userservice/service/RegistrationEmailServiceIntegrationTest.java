@@ -26,7 +26,11 @@ class RegistrationEmailServiceIntegrationTest {
     static GreenMailExtension greenMailExtension = new GreenMailExtension(ServerSetupTest.SMTP_IMAP)
             .withConfiguration(GreenMailConfiguration
                     .aConfig()
-                    .withUser("foo@localhost", "foo", "foo-pwd"))
+                    .withUser(
+                            "test-user@localhost",
+                            "test-user",
+                            "test-user-pwd"
+                    ))
                     .withPerMethodLifecycle(false);
 
     @Test
