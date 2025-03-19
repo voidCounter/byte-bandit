@@ -28,13 +28,13 @@ public class SecurityFilterChainConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // don't need CSRF for stateless sessions
                 .authorizeHttpRequests(
-                    (req) -> req.requestMatchers(
+                    req -> req.requestMatchers(
                         getAllPermittedRoutes(permittedRoutes)
                 ).permitAll()
                         .anyRequest()
                         .authenticated()
                 )
-                .sessionManagement((session) -> session.sessionCreationPolicy(
+                .sessionManagement(session -> session.sessionCreationPolicy(
                         SessionCreationPolicy.STATELESS
                 ))
                 .build();

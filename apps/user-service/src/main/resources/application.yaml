@@ -16,9 +16,22 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   profiles:
     active: dev
+  mail:
+    host: ${secrets.mail.host}
+    port: ${secrets.mail.port}
+    username: ${secrets.mail.username}
+    password: ${secrets.mail.password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 server:
   port: 8083
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
