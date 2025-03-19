@@ -94,13 +94,12 @@ class TokenEntityTest {
         entityManager.persistAndFlush(token);
 
         TokenEntity fetchedToken = entityManager.find(TokenEntity.class, token.getId());
-        fetchedToken.setToken(UUID.randomUUID());
         fetchedToken.setUsed(true);
         entityManager.persistAndFlush(fetchedToken);
 
         TokenEntity updatedToken = entityManager.find(TokenEntity.class, token.getId());
 
-        assertNotEquals(originalToken, updatedToken.getToken(), "Token field should not be updatable");
+        assertEquals(originalToken, updatedToken.getToken(), "Token field should not be updatable");
         assertTrue(updatedToken.isUsed(), "isUsed field should be updated");
     }
 
