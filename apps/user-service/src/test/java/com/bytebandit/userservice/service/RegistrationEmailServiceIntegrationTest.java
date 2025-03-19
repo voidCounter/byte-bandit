@@ -1,7 +1,6 @@
 package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.enums.EmailTemplate;
-import com.bytebandit.userservice.exception.ErrorSendingEmailException;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -22,7 +21,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-
 
 class RegistrationEmailServiceIntegrationTest {
 
