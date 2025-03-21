@@ -5,6 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Standardized API response structure.
+ * status HTTP status code
+ * message Response message
+ * data Payload container
+ * timestamp Response generation time
+ * path Request URI path
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

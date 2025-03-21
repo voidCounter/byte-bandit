@@ -1,13 +1,10 @@
 package com.bytebandit.userservice.response;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Singular;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Value

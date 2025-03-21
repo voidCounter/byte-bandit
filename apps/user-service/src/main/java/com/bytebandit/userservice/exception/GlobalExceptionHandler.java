@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.CONFLICT, ErrorCode.INTERNAL_SERVER_ERROR,  request, ex.getMostSpecificCause().getMessage());
+                return buildResponse(HttpStatus.CONFLICT, ErrorCode.USER_INVALID_INPUT, request, ex.getMostSpecificCause().getMessage());
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
