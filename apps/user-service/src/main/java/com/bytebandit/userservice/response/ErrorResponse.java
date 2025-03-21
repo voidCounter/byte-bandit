@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Value
 @Builder
@@ -19,9 +20,9 @@ public class ErrorResponse {
     String details;
     String path;
 
-    public static ErrorResponse create(HttpStatus status, String error, String message, String errorCode, String details, String path) {
+    public static ErrorResponse create(HttpStatus status, String error, String message, String errorCode, String details, String path, Supplier<UUID> uuidSupplier) {
         return ErrorResponse.builder()
-                .errorId(UUID.randomUUID().toString())
+                .errorId(uuidSupplier.get().toString())
                 .timestamp(Instant.now())
                 .status(status.value())
                 .error(error)

@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -26,10 +29,9 @@ public class GlobalExceptionHandler {
         String details = ex.getBindingResult().getFieldErrors()
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation error");
+                .collect(Collectors.joining(", "));
 
-        return buildResponse(HttpStatus.BAD_REQUEST, ErrorCode.REQUEST_VALIDATION_FAILED,  request, details);
+        return buildResponse(HttpStatus.BAD_REQUEST, ErrorCode.REQUEST_VALIDATION_FAILED, request, details);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -79,7 +81,7 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode, HttpServletRequest request, String details) {
         return ResponseEntity.status(status).body(
-                ErrorResponse.create(status, status.getReasonPhrase(), errorCode.getMessage(), errorCode.getCode(), details, request.getRequestURI())
+                ErrorResponse.create(status, status.getReasonPhrase(), errorCode.getMessage(), errorCode.getCode(), details, request.getRequestURI(), UUID::randomUUID)
         );
     }
 }
