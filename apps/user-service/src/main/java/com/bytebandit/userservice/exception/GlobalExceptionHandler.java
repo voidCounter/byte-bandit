@@ -3,6 +3,8 @@ package com.bytebandit.userservice.exception;
 import com.bytebandit.userservice.enums.ErrorCode;
 import com.bytebandit.userservice.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.CONFLICT, ErrorCode.USER_ALREADY_EXISTS, request, ex.getMessage());
@@ -30,6 +34,13 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
+
+        String globalErrors = ex.getBindingResult().getGlobalErrors()
+                .stream()
+                .map(error -> error.getObjectName() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+
+        details = details.isEmpty() ? globalErrors : details + ", " + globalErrors;
 
         return buildResponse(HttpStatus.BAD_REQUEST, ErrorCode.REQUEST_VALIDATION_FAILED, request, details);
     }
@@ -46,7 +57,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
-                return buildResponse(HttpStatus.CONFLICT, ErrorCode.USER_INVALID_INPUT, request, ex.getMostSpecificCause().getMessage());
+                return buildResponse(HttpStatus.CONFLICT, ErrorCode.DB_CONSTRAINT_VIOLATION, request, ex.getMostSpecificCause().getMessage());
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
@@ -80,6 +91,7 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode, HttpServletRequest request, String details) {
+        logger.error("Error occurred: status={}, errorCode={}, details={}", status, errorCode, details);
         return ResponseEntity.status(status).body(
                 ErrorResponse.create(status, status.getReasonPhrase(), errorCode.getMessage(), errorCode.getCode(), details, request.getRequestURI(), UUID::randomUUID)
         );

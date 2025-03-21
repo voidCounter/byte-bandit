@@ -36,6 +36,8 @@ public enum ErrorCode {
     // System Errors
     INTERNAL_SERVER_ERROR("SYS-01", "An internal server error occurred."),
     SERVICE_UNAVAILABLE("SYS-02", "The service is temporarily unavailable."),
+    // Database Errors
+    DB_CONSTRAINT_VIOLATION("DB-01", "Database constraint violation."),
 
     // Unknown Error
     UNKNOWN_ERROR("UNKNOWN", "An unknown error has occurred.");

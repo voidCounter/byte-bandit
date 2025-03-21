@@ -7,7 +7,11 @@ import org.springframework.http.HttpStatus;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
-
+/**
+ + * Standardized error response format for API errors.
+ + * Used by GlobalExceptionHandler to create consistent error responses across the application.
+ + * Includes unique error ID, timestamp, HTTP status, error details and path information.
+ + */
 @Value
 @Builder
 public class ErrorResponse {
