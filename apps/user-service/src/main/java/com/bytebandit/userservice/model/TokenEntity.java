@@ -25,8 +25,8 @@ public class TokenEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true, updatable = false)
-    private UUID token;
+    @Column(name= "token_hash",nullable = false, unique = true, length = 72)
+    private String tokenHash;
 
     @Column(name = "is_used", nullable = false, updatable = false)
     private boolean isUsed;

@@ -1,6 +1,7 @@
 package com.bytebandit.userservice.model;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.*;
@@ -10,9 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -52,6 +51,9 @@ public class UserEntity implements UserDetails, Principal {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TokenEntity> tokens = new HashSet<>();
+
     @Override
     public String getName() {
         return this.email;
@@ -76,6 +78,4 @@ public class UserEntity implements UserDetails, Principal {
     public boolean isEnabled() {
         return this.verified;
     }
-
-
 }
