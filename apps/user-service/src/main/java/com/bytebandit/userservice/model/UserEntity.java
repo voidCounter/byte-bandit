@@ -52,7 +52,7 @@ public class UserEntity implements UserDetails, Principal {
     private Timestamp updatedAt;
 
     /**
-     * One-to-many relationship with TokenEntity.4
+     * One-to-many relationship with TokenEntity.
      * cascade = CascadeType.ALL - This means that any operation (persist, merge, remove, refresh, detach)
      * performed on the UserEntity will also be applied to the associated TokenEntity instances.
      * orphanRemoval = true - This means that if a TokenEntity instance is removed from the UserEntity's tokens collection,

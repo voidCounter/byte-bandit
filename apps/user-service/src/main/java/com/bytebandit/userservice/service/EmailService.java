@@ -31,8 +31,7 @@ public abstract class EmailService {
 
     public abstract void sendEmail(
         String sendEmailTo,
-        String emailSubject,
-        EmailTemplate emailTemplate,
-        Map<String, Object> templateModel
+        String fullName,
+        String token
     ) ;
 }
