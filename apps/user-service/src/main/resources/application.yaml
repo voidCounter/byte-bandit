@@ -9,11 +9,10 @@ spring:
   config:
     import: classpath:secrets.yml
   jpa:
-    hibernate:
-      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
   profiles:
     active: dev
   mail:

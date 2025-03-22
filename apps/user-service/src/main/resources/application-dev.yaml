@@ -1,3 +1,7 @@
 spring:
   jpa:
     show-sql: true
+
+backend:
+  host:
+    url: http://localhost:8084
