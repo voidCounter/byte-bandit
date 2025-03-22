@@ -25,8 +25,8 @@ public class TokenEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true, updatable = false)
-    private UUID token;
+    @Column(name= "token_hash",nullable = false, unique = true, length = 72)
+    private String tokenHash;
 
     @Column(name = "is_used", nullable = false, updatable = false)
     private boolean isUsed;
@@ -42,6 +42,10 @@ public class TokenEntity {
     @Column(name = "expires_at", nullable = false, updatable = false)
     private Timestamp expiresAt;
 
+    /**
+     * Many-to-one relationship with the UserEntity.
+     * Fetches the user lazily and joins on the 'user_id' column.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
