@@ -1,7 +1,6 @@
 package com.bytebandit.userservice.model;
 
 import jakarta.persistence.*;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Table;
 import lombok.*;
 import org.hibernate.annotations.*;

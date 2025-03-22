@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Rollback
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(BCryptPasswordEncoder.class)
-public class UserEntityTest {
+class UserEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;

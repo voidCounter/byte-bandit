@@ -21,6 +21,9 @@ CREATE TABLE tokens (
     CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE INDEX idx_tokens_user_id ON tokens(user_id);
+CREATE INDEX idx_tokens_type ON tokens(type);
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 -- to insert both user and token in a single transaction

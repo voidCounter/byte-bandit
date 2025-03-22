@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
@@ -50,6 +51,35 @@ class UserAndTokenEntityIntegrationTest {
 
         TokenEntity deletedToken = entityManager.find(TokenEntity.class, tokenId);
         assertNull(deletedToken);
+    }
+
+    @Test
+    void whenMultipleTokensAreAddedToUser_thenAllTokensArePersisted() {
+        UserEntity user = createAndPersistUser();
+
+        TokenEntity token1 = TokenEntity.builder()
+                .tokenHash(passwordEncoder.encode(UUID.randomUUID().toString()))
+                .type(TokenType.EMAIL_VERIFICATION)
+                .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
+                .user(user)
+                .isUsed(false)
+                .build();
+
+        TokenEntity token2 = TokenEntity.builder()
+                .tokenHash(passwordEncoder.encode(UUID.randomUUID().toString()))
+                .type(TokenType.PASSWORD_RESET)
+                .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(2)))
+                .user(user)
+                .isUsed(false)
+                .build();
+
+        user.getTokens().add(token1);
+        user.getTokens().add(token2);
+
+        entityManager.persistAndFlush(user);
+
+        UserEntity retrievedUser = entityManager.find(UserEntity.class, user.getId());
+        assertEquals(2, retrievedUser.getTokens().size());
     }
 
     private UserEntity createAndPersistUser() {
