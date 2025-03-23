@@ -20,7 +20,8 @@ public class SecurityFilterChainConfig {
 
     private final List<String> permittedRoutes = List.of(
             "/api/v1/user/login",
-            "/api/v1/user/register"
+            "/api/v1/user/register",
+            "/api/v1/user/verify"
     );
 
     @Bean
