@@ -5,7 +5,6 @@ import com.bytebandit.userservice.exception.FailedEmailVerificationAttemptExcept
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,37 +15,31 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class TokenVerificationService {
 
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
 
-
-    public boolean verifyToken(
+    public void verifyToken(
             String token,
             String userId,
             TokenType tokenType
     ) {
 
-        TokenEntity tokenEntity = tokenRepository.findByUserIdAndTypeAndExpiresAtAfterAndUsedIsFalse(
+        TokenEntity tokenEntity = tokenRepository.findByUserIdAndTypeAndCreatedAtBeforeAndExpiresAtAfterAndUsedIsFalse(
                 UUID.fromString(userId),
                 tokenType,
+                Timestamp.from(Instant.now()),
                 Timestamp.from(Instant.now())
         ).orElseThrow(
                 () -> new FailedEmailVerificationAttemptException("Token is corrupted.")
         );
 
-        if (!passwordEncoder.matches(token, tokenEntity.getTokenHash()) ||
-                tokenEntity.getExpiresAt().before(Timestamp.from(Instant.now()))
-        ) {
+        if (!passwordEncoder.matches(token, tokenEntity.getTokenHash())) {
             throw new FailedEmailVerificationAttemptException("Token is invalid");
         }
 
-        log.info("Verifying email for token {}", tokenEntity);
         tokenEntity.setUsed(true);
-        tokenEntity = tokenRepository.save(tokenEntity);
-        log.info("Verified email for token {}", tokenEntity);
-        return true;
+        tokenRepository.save(tokenEntity);
     }
 }

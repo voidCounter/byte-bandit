@@ -48,7 +48,8 @@ public class RegistrationEmailService extends EmailService {
                 javaMailSender,
                 sendEmailTo,
                 "REGISTRATION CONFIRMATION",
-                emailBody);
+                emailBody
+        );
     }
 
     private String confirmationUrl(String token, UUID userId) {
