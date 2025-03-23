@@ -4,9 +4,9 @@ import com.bytebandit.userservice.enums.PasswordValidationError;
 import lombok.Getter;
 
 /**
- * + * EXCEPTION THROWN WHEN PASSWORD VALIDATION FAILS.
- * + * EXAMPLES: PASSWORD TOO SHORT, MISSING REQUIRED CHARACTERS, ETC.
- * +
+ * * EXCEPTION THROWN WHEN PASSWORD VALIDATION FAILS.
+ * * EXAMPLES: PASSWORD TOO SHORT, MISSING REQUIRED CHARACTERS, ETC.
+ *
  */
 @Getter
 public class InvalidPasswordException extends RuntimeException {
