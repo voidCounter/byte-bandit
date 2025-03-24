@@ -1,7 +1,10 @@
 spring:
   jpa:
     show-sql: true
-
-backend:
+api:
+  prefix: /api/v1/user
   host:
-    url: http://localhost:8084
+    uri: http://localhost:8084
+client:
+  host:
+    uri: http://localhost:3030

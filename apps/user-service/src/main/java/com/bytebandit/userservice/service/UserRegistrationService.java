@@ -2,7 +2,6 @@ package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.dto.UserRegistrationResponse;
-import com.bytebandit.userservice.enums.EmailTemplate;
 import com.bytebandit.userservice.enums.TokenType;
 import com.bytebandit.userservice.exception.UserAlreadyExistsException;
 import com.bytebandit.userservice.projection.CreateUserAndTokenProjection;
@@ -13,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -51,7 +49,7 @@ public class UserRegistrationService {
                 throw new IllegalStateException("User registration failed.");
             }
             sendEmail(
-                    registrationRequest,
+                    userAndToken,
                     token.toString()
             );
             return new UserRegistrationResponse(
@@ -67,13 +65,14 @@ public class UserRegistrationService {
     }
 
     private void sendEmail(
-            UserRegistrationRequest registrationRequest,
+            CreateUserAndTokenProjection user,
             String token
     ) {
         registrationEmailService.sendEmail(
-                registrationRequest.getEmail(),
-                registrationRequest.getFullName(),
-                token
+                user.getEmail(),
+                user.getFullName(),
+                token,
+                user.getId()
         );
     }
 }

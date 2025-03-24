@@ -40,7 +40,7 @@ class TokenEntityTest {
                 .type(TokenType.EMAIL_VERIFICATION)
                 .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
                 .user(user)
-                .isUsed(false)
+                .used(false)
                 .build();
 
         TokenEntity savedToken = entityManager.persistFlushFind(tokenEntity);
@@ -60,7 +60,7 @@ class TokenEntityTest {
                 .type(TokenType.EMAIL_VERIFICATION)
                 .expiresAt(Timestamp.valueOf(LocalDateTime.now().minusDays(1))) // Past date
                 .user(user)
-                .isUsed(false)
+                .used(false)
                 .build();
 
         entityManager.persistFlushFind(tokenEntity);
@@ -88,7 +88,7 @@ class TokenEntityTest {
                 .type(type)
                 .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
                 .user(user)
-                .isUsed(false)
+                .used(false)
                 .build();
     }
 

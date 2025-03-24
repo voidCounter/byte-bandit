@@ -1,13 +1,12 @@
 package com.bytebandit.userservice.service;
 
-import com.bytebandit.userservice.enums.EmailTemplate;
 import com.bytebandit.userservice.exception.ErrorSendingEmailException;
 import jakarta.mail.MessagingException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import jakarta.mail.internet.MimeMessage;
 
-import java.util.Map;
+import java.util.UUID;
 
 public abstract class EmailService {
 
@@ -32,6 +31,7 @@ public abstract class EmailService {
     public abstract void sendEmail(
         String sendEmailTo,
         String fullName,
-        String token
+        String token,
+        UUID userId
     ) ;
 }

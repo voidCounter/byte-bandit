@@ -39,7 +39,7 @@ class UserAndTokenEntityIntegrationTest {
                 .type(TokenType.REFRESH)
                 .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
                 .user(user)
-                .isUsed(false)
+                .used(false)
                 .build();
         user.getTokens().add(tokenEntity);
 
@@ -62,7 +62,7 @@ class UserAndTokenEntityIntegrationTest {
                 .type(TokenType.EMAIL_VERIFICATION)
                 .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
                 .user(user)
-                .isUsed(false)
+                .used(false)
                 .build();
 
         TokenEntity token2 = TokenEntity.builder()
@@ -70,7 +70,7 @@ class UserAndTokenEntityIntegrationTest {
                 .type(TokenType.PASSWORD_RESET)
                 .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(2)))
                 .user(user)
-                .isUsed(false)
+                .used(false)
                 .build();
 
         user.getTokens().add(token1);
