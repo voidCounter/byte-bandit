@@ -32,18 +32,19 @@ public class GlobalExceptionHandler {
     private String clientHostUri;
 
     @ExceptionHandler(FailedEmailVerificationAttemptException.class)
-    public ResponseEntity<Void> handleFailedVerificationAttemptException(
+    public ResponseEntity<String> handleFailedVerificationAttemptException(
             FailedEmailVerificationAttemptException ex,
             HttpServletResponse response
     ) {
         try {
             response.sendRedirect(clientHostUri + "/email-verification");
+            return ResponseEntity.status(HttpStatus.FOUND).build();
         } catch (IOException ioex) {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     "Failed to redirect, please go to " + clientHostUri + "/login\n" +
                             "cause: " + ioex.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.FOUND).build();
+
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)

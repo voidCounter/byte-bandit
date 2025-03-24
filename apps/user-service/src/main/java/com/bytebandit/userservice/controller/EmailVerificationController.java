@@ -24,7 +24,7 @@ public class EmailVerificationController {
     private String clientHostUri;
 
     @GetMapping("/verify")
-    public ResponseEntity<Void> verifyEmail(
+    public ResponseEntity<String> verifyEmail(
             @RequestParam @NotNull String token,
             @RequestParam @NotNull String userid,
             HttpServletResponse response
@@ -36,11 +36,12 @@ public class EmailVerificationController {
         );
         try {
             response.sendRedirect(clientHostUri + "/login");
+            return ResponseEntity.status(HttpStatus.FOUND).build();
         } catch (IOException ex) {
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     "Failed to redirect, please go to " + clientHostUri + "/login\n" +
                             "cause: " + ex.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.FOUND).build();
+
     }
 }
