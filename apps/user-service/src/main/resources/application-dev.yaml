@@ -7,4 +7,4 @@ api:
     uri: http://localhost:8084
 client:
   host:
-    uri: http://localhost:3030
+    uri: http://localhost:3000
