@@ -79,7 +79,7 @@ style settings. Follow the below steps to import the code style settings:
 1. Go to Preferences > Editor > Code Style.
 2. Click on the gear icon and select `Import Scheme > IntelliJ IDEA code style XML`.
    ![import_intellij_code_style.png](assets/import_intellij_code_style.png)
-3. Select the `oakcan-code-style.xml` file from the `.idea/codeStyles/` directory.
+3. Select the `oakcanCodeStyle.xml` file from the `.idea/codeStyles/` directory.
 4. Click on `OK` and `Apply`.
 5. Now your code style settings are updated to match the Checkstyle rules.
 

@@ -2,17 +2,20 @@ package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.dto.UserRegistrationResponse;
+import com.bytebandit.userservice.enums.TokenType;
 import com.bytebandit.userservice.exception.UserAlreadyExistsException;
-import com.bytebandit.userservice.mapper.UserMapper;
-import com.bytebandit.userservice.model.UserEntity;
+import com.bytebandit.userservice.projection.CreateUserAndTokenProjection;
 import com.bytebandit.userservice.repository.UserRepository;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/** Service for user registration. */
 @Service
 @RequiredArgsConstructor
 public class UserRegistrationService {
@@ -20,34 +23,67 @@ public class UserRegistrationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TransactionTemplate transactionTemplate;
-    private final UserMapper userMapper;
+    private final RegistrationEmailService registrationEmailService;
 
     /**
-     * Registers a new user.
+     * Registers a new user by creating user and token entries, sending a verification email, and
+     * returning a response containing user details.
      *
-     * @param registrationRequest the registration request.
+     * @param registrationRequest the user registration request including email, password, and full
+     *                            name.
      *
-     * @return the registration response.
+     * @return a UserRegistrationResponse containing user details such as ID, full name, email,
+     *     verification status, and creation timestamp.
      * @throws UserAlreadyExistsException if a user with the provided email already exists.
+     * @throws IllegalStateException      if the user registration process fails.
      */
     public UserRegistrationResponse register(
         UserRegistrationRequest registrationRequest
     ) {
-        UserEntity createdUser = UserEntity.builder()
-            .email(registrationRequest.getEmail())
-            .passwordHash(
-                passwordEncoder.encode(registrationRequest.getPassword())
-            )
-            .fullName(registrationRequest.getFullName())
-            .verified(false)
-            .build();
+        String passwordHash = passwordEncoder.encode(registrationRequest.getPassword());
+        UUID token = UUID.randomUUID();
+        String tokenHash = passwordEncoder.encode(token.toString());
+        Timestamp tokenExpiresAt = Timestamp.from(Instant.now().plus(24, ChronoUnit.HOURS));
+
         try {
-            UserEntity savedUser = transactionTemplate.execute(
-                result -> userRepository.save(createdUser)
+            CreateUserAndTokenProjection userAndToken = transactionTemplate.execute(
+                result -> userRepository.createUserAndToken(
+                    registrationRequest.getEmail(),
+                    passwordHash,
+                    registrationRequest.getFullName(),
+                    tokenHash,
+                    TokenType.EMAIL_VERIFICATION.name(),
+                    tokenExpiresAt
+                )
             );
-            return userMapper.toUserRegistrationResponse(savedUser);
+            if (userAndToken == null) {
+                throw new IllegalStateException("User registration failed.");
+            }
+            sendEmail(
+                userAndToken,
+                token.toString()
+            );
+            return new UserRegistrationResponse(
+                userAndToken.getId(),
+                userAndToken.getFullName(),
+                userAndToken.getEmail(),
+                userAndToken.getVerified(),
+                userAndToken.getCreatedAt()
+            );
         } catch (DataIntegrityViolationException e) {
             throw new UserAlreadyExistsException("User with provided email already exists.", e);
         }
+    }
+
+    private void sendEmail(
+        CreateUserAndTokenProjection user,
+        String token
+    ) {
+        registrationEmailService.sendEmail(
+            user.getEmail(),
+            user.getFullName(),
+            token,
+            user.getId()
+        );
     }
 }

@@ -1,16 +1,20 @@
 package com.bytebandit.userservice.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,6 +65,16 @@ public class UserEntity implements UserDetails, Principal {
     @UpdateTimestamp
     private Timestamp updatedAt;
 
+    /**
+     * One-to-many relationship with TokenEntity. cascade = CascadeType.ALL - This means that any
+     * operation (persist, merge, remove, refresh, detach) performed on the UserEntity will also be
+     * applied to the associated TokenEntity instances. orphanRemoval = true - This means that if a
+     * TokenEntity instance is removed from the UserEntity's tokens collection, Hashset provides
+     * efficient operations for adding, removing, and checking for the presence of elements.
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TokenEntity> tokens = new HashSet<>();
+
     @Override
     public String getName() {
         return this.email;
@@ -85,6 +99,4 @@ public class UserEntity implements UserDetails, Principal {
     public boolean isEnabled() {
         return this.verified;
     }
-
-
 }

@@ -1,3 +1,10 @@
 spring:
   jpa:
     show-sql: true
+api:
+  prefix: /api/v1/user
+  host:
+    uri: http://localhost:8084
+client:
+  host:
+    uri: http://localhost:3000
