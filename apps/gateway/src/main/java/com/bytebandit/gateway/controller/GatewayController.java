@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class GatewayController {
     /**
      * Handles a GET request to retrieve a response containing csrf token in the cookies.
-     *
+     * The CSRF token is automatically set in the XSRF-TOKEN cookie by Spring Security's
+     * CsrfFilter when this endpoint is accessed.
      * @return ResponseEntity with a successful HTTP status.
      */
     @GetMapping("/csrf")
@@ -21,7 +22,6 @@ public class GatewayController {
 
     /**
      * Handles a POST request to validate CSRF protection.
-     *
      * @return ResponseEntity containing a message indicating the CSRF test result.
      */
     @PostMapping("/test-csrf")

@@ -33,9 +33,19 @@ public class SecurityFilterChainConfig {
             "/test-csrf"
     );
 
+    /**
+     * Configures the security filter chain for the application.
+     * This method sets up a stateless session management strategy, CSRF protection,
+     * and URL authorization rules. Permits specific routes to be accessible without
+     * authentication based on the defined list of permitted routes.
+     * @param http the {@link HttpSecurity} object used to customize the security
+     *             configurations for the application.
+     * @return the configured {@link SecurityFilterChain} instance.
+     * @throws Exception if any error occurs during the configuration setup.
+     */
+    // TODO: Make CSRF cookie secure in production
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        XorCsrfTokenRequestAttributeHandler handler = new XorCsrfTokenRequestAttributeHandler();
         return http
                 .csrf(csrf ->
                         csrf.csrfTokenRepository(CookieCsrfTokenRepository

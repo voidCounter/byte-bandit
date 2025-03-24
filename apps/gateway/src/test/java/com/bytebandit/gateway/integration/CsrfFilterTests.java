@@ -56,21 +56,20 @@ public class CsrfFilterTests {
      * cookie.</li>
      * <li>Extract the CSRF token value from the "XSRF-TOKEN" cookie in the response.</li>
      * <li>Perform a POST request to the "/test-csrf" endpoint, including the CSRF token as a header
-     *    (X-XSRF-TOKEN) and as a cookie.</li>
+     * (X-XSRF-TOKEN) and as a cookie.</li>
      * <li>Assert that the response status is OK, indicating that the CSRF validation was
      * successful.</li>
-     *
      * @throws Exception if an error occurs while performing the requests or asserting the results.
      */
     @Test
     public void testPostWithCsrfToken() throws Exception {
-        var getResponse = mockMvc.perform(MockMvcRequestBuilders.get("/csrf")).andReturn();
-        String csrfToken = Objects.requireNonNull(getResponse.getResponse().getCookie("XSRF-TOKEN")).getValue();
-
+        var csrfResponse = mockMvc.perform(MockMvcRequestBuilders.get("/csrf")).andReturn();
+        String csrfToken = Objects.requireNonNull(csrfResponse.getResponse().getCookie("XSRF-TOKEN"),
+                "CSRF TOKEN COOKIE NOT FOUND").getValue();
         mockMvc.perform(MockMvcRequestBuilders.post("/test-csrf")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(getResponse.getResponse().getCookie("XSRF-TOKEN"))
+                        .cookie(csrfResponse.getResponse().getCookie("XSRF-TOKEN"))
                         .content("{}"))
                 .andExpect(status().isOk());
     }
