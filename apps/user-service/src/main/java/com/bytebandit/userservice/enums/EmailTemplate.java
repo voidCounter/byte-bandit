@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum EmailTemplate {
 
-    REGISTRATION_CONFIRMATION("registration/registration-confirmation"),
-    CONFIRMATION_SUCCESS("registration/confirmation-success"),
-    CONFIRMATION_FAILURE("registration/confirmation-failure");
+    REGISTRATION_CONFIRMATION("registration/registration-confirmation");
 
     private final String templatePath;
 
