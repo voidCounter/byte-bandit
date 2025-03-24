@@ -39,8 +39,7 @@ public class EmailVerificationController {
             return ResponseEntity.status(HttpStatus.FOUND).build();
         } catch (IOException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    "Failed to redirect, please go to " + clientHostUri + "/login\n" +
-                            "cause: " + ex.getMessage());
+                    "Failed to redirect, please go to " + clientHostUri + "/login\n");
         }
 
     }

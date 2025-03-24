@@ -41,8 +41,7 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(HttpStatus.FOUND).build();
         } catch (IOException ioex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    "Failed to redirect, please go to " + clientHostUri + "/login\n" +
-                            "cause: " + ioex.getMessage());
+                    "Failed to redirect, please go to " + clientHostUri + "/login\n");
         }
 
     }
