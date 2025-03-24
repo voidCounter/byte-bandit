@@ -29,7 +29,8 @@ public class SecurityFilterChainConfig {
             "/api/v1/user/login",
             "/api/v1/user/register",
             "/api/v1/user/verify",
-            "/csrf"
+            "/csrf",
+            "/test-csrf"
     );
 
     @Bean
