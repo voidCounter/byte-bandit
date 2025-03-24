@@ -1,10 +1,13 @@
 package com.bytebandit.userservice.exception;
 
+import com.bytebandit.userservice.enums.EmailTemplate;
 import com.bytebandit.userservice.enums.ErrorCode;
 import com.bytebandit.userservice.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -14,7 +17,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +27,24 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @Value("${client.host.uri}")
+    private String clientHostUri;
+
+    @ExceptionHandler(FailedEmailVerificationAttemptException.class)
+    public ResponseEntity<String> handleFailedVerificationAttemptException(
+            FailedEmailVerificationAttemptException ex,
+            HttpServletResponse response
+    ) {
+        try {
+            response.sendRedirect(clientHostUri + "/email-verification");
+            return ResponseEntity.status(HttpStatus.FOUND).build();
+        } catch (IOException ioex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    "Failed to redirect, please go to " + clientHostUri + "/login\n");
+        }
+
+    }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex, HttpServletRequest request) {
