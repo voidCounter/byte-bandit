@@ -2,13 +2,24 @@
 <project version="4">
   <component name="CheckStyle-IDEA" serialisationVersion="2">
     <checkstyleVersion>10.21.3</checkstyleVersion>
-    <scanScope>JavaOnly</scanScope>
+    <scanScope>JavaOnlyWithTests</scanScope>
     <option name="thirdPartyClasspath" />
-    <option name="activeLocationIds" />
+    <option name="activeLocationIds">
+      <option value="6d5dc6c1-3f01-4b9a-8be6-6e1c30c5aac2" />
+    </option>
     <option name="locations">
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
+        <ConfigurationLocation id="6d5dc6c1-3f01-4b9a-8be6-6e1c30c5aac2" type="LOCAL_FILE" scope="All" description="checkstyle">
+          $PROJECT_DIR$/apps/backend/checkstyle.xml
+          <option name="properties">
+            <map>
+              <entry key="org.checkstyle.google.suppressionfilter.config" value="checkstyle-suppressions.xml" />
+              <entry key="org.checkstyle.google.suppressionxpathfilter.config" value="checkstyle-xpath-suppressions.xml" />
+            </map>
+          </option>
+        </ConfigurationLocation>
       </list>
     </option>
   </component>
