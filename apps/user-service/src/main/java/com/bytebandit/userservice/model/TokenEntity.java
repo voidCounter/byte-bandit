@@ -28,8 +28,8 @@ public class TokenEntity {
     @Column(name= "token_hash",nullable = false, unique = true, length = 72)
     private String tokenHash;
 
-    @Column(name = "is_used", nullable = false, updatable = false)
-    private boolean isUsed;
+    @Column(name = "is_used", nullable = false)
+    private boolean used;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
