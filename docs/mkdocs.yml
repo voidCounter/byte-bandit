@@ -86,12 +86,15 @@ nav:
       - Starting Development: developers/starting-development.md
       - Project Structure: developers/project-structure.md
       - Branching Strategy: developers/branching-strategy.md
-      - Code Style: developers/code-style.md
+      - Code Style Guideline: developers/code-style.md
   - Changelog: changelog.md
 
 extra_css:
   - stylesheets/extra.css
 markdown_extensions:
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
   - tables
   - admonition
   - pymdownx.highlight:
@@ -104,4 +107,5 @@ markdown_extensions:
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
 plugins:
+  - glightbox
   - git-authors

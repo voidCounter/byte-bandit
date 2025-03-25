@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="oakcanRunConfiguration" type="Multirun" separateTabs="false" reuseTabsWithFailures="false" startOneByOne="true" markFailedProcess="true" hideSuccessProcess="false" delayTime="7.0">
+    <runConfiguration name="DiscoveryApplication" type="Spring Boot" />
+    <runConfiguration name="GatewayApplication" type="Spring Boot" />
+    <runConfiguration name="UserServiceApplication" type="Spring Boot" />
+    <runConfiguration name="FileServiceApplication" type="Spring Boot" />
+    <runConfiguration name="SyncServiceApplication" type="Spring Boot" />
+    <method v="2" />
+  </configuration>
+</component>

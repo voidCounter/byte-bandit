@@ -3,10 +3,12 @@
     --md-primary-fg-color: #8c5425;
     --md-accent-fg-color: #8c5425;
 }
+
 .md-header {
     background: #1b1503;
 }
-.md-tabs{
+
+.md-tabs {
     background: #1b1503;
 }
 
@@ -15,4 +17,5 @@
     --md-primary-fg-color: #bc702f;
     --md-default-bg-color: #0d0a02;
     --md-accent-fg-color: #bc702f;
+    --md-code-bg-color: #231e02;
 }
