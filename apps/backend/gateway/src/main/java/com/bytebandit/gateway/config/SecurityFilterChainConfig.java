@@ -23,14 +23,9 @@ import org.springframework.util.StringUtils;
 @Configuration
 @EnableWebSecurity
 public class SecurityFilterChainConfig {
-
-    private final List<String> permittedRoutes = List.of(
-        "/api/v1/user/login",
-        "/api/v1/user/register",
-        "/api/v1/user/verify",
-        "/csrf",
-        "/test-csrf"
-    );
+    private final List<String> permittedRoutes =
+        List.of("/api/v1/user/login", "/api/v1/user/register", "/api/v1/user/verify", "/csrf",
+            "/test-csrf");
 
     /**
      * This method sets up the security configuration by customizing the CSRF protection mechanism,
@@ -42,8 +37,8 @@ public class SecurityFilterChainConfig {
      * requests.</li>
      * <li>Stateless session management policy to ensure no server-side session is maintained.</li>
      *
-     * @param http the {@link HttpSecurity} object to configure security settings such as
-     *             CSRF protection, authorization rules, and session management.
+     * @param http the {@link HttpSecurity} object to configure security settings such as CSRF
+     *             protection, authorization rules, and session management.
      *
      * @return the fully configured {@link SecurityFilterChain} for the application.
      * @throws Exception in case of any security configuration errors.
@@ -51,28 +46,18 @@ public class SecurityFilterChainConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf(csrf ->
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository
-                        .withHttpOnlyFalse())
-                    .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
+            .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
             .authorizeHttpRequests(
-                req -> req.requestMatchers(
-                        getAllPermittedRoutes(permittedRoutes)
-                    ).permitAll()
-                    .anyRequest()
-                    .authenticated()
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(
-                    SessionCreationPolicy.STATELESS
-                ))
-            .build();
+                req -> req.requestMatchers(getAllPermittedRoutes(permittedRoutes)).permitAll()
+                    .anyRequest().authenticated())
+            .sessionManagement(
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
     }
 
     private RequestMatcher getAllPermittedRoutes(List<String> permittedRoutes) {
-        List<RequestMatcher> matchers = permittedRoutes.stream()
-            .map(AntPathRequestMatcher::new)
-            .collect(Collectors.toList());
+        List<RequestMatcher> matchers =
+            permittedRoutes.stream().map(AntPathRequestMatcher::new).collect(Collectors.toList());
         return new OrRequestMatcher(matchers);
     }
 
@@ -81,17 +66,17 @@ public class SecurityFilterChainConfig {
         private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
 
         /**
-         * Handles the CSRF token for the incoming request and response by employing
-         * BREACH protection using the {@link XorCsrfTokenRequestAttributeHandler}
-         * to securely process and render the token.
+         * Handles the CSRF token for the incoming request and response by employing BREACH
+         * protection using the {@link XorCsrfTokenRequestAttributeHandler} to securely process and
+         * render the token.
          *
-         * @param request   the {@link HttpServletRequest} associated with the current
-         *                  client request
-         * @param response  the {@link HttpServletResponse} associated with the current
-         *                  client request
+         * @param request   the {@link HttpServletRequest} associated with the current client
+         *                  request
+         * @param response  the {@link HttpServletResponse} associated with the current client
+         *                  request
          * @param csrfToken a {@link Supplier} that supplies the
-         *                  {@link org.springframework.security.web.csrf.CsrfToken},
-         *                  allowing deferred loading and subsequent processing of the token
+         *                  {@link org.springframework.security.web.csrf.CsrfToken}, allowing
+         *                  deferred loading and subsequent processing of the token
          */
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response,
@@ -108,21 +93,21 @@ public class SecurityFilterChainConfig {
         }
 
         /**
-         * Resolves the CSRF token value from the provided request, using the appropriate
-         * strategy based on whether the token is present in the request header or as a parameter.
+         * Resolves the CSRF token value from the provided request, using the appropriate strategy
+         * based on whether the token is present in the request header or as a parameter.
          *
          * @param request   the {@link HttpServletRequest} used to extract the CSRF token value
          * @param csrfToken the {@link org.springframework.security.web.csrf.CsrfToken} object
-         *                  containing details about the CSRF token
-         *                  (e.g., header name and token value)
+         *                  containing details about the CSRF token (e.g., header name and token
+         *                  value)
          *
          * @return the resolved CSRF token value as a {@link String}, or {@code null} if it cannot
          *     be resolved.
          */
         @Override
         public String resolveCsrfTokenValue(HttpServletRequest request,
-                                            org.springframework.security
-                                                .web.csrf.CsrfToken csrfToken) {
+                                            org.springframework.security.web.csrf
+                                                .CsrfToken csrfToken) {
             String headerValue = request.getHeader(csrfToken.getHeaderName());
             /*
              * If the request contains a request header, use CsrfTokenRequestAttributeHandler
