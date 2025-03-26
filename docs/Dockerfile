@@ -8,7 +8,7 @@ COPY ./docs .
 COPY .git /docs/.git
 
 # Install additional MkDocs plugins if needed
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir
 
 # Expose the default MkDocs port
 EXPOSE 8000

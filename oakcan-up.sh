@@ -25,7 +25,7 @@ start_infrastructure() {
 rebuild_service() {
   local service=$1
 
-  if [[ " ${services[*]} " =~ "${service}" ]]; then
+  if [[ " ${services[*]} " =~ ${service} ]]; then
     if [[ "$service" == "docs" ]]; then
       echo "Building docs..."
       (cd "docs" && docker build -t oakcan/docs:0.0.1-SNAPSHOT -f Dockerfile ../)
