@@ -1,24 +1,23 @@
 package com.bytebandit.userservice.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
+
+import java.util.UUID;
 import org.junit.Test;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.util.UUID;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.mock;
-
 public class RegistrationEmailServiceTest {
 
     /**
-     * Tests the {@code confirmationUrl} method of {@link RegistrationEmailService} to
-     * ensure it generates the correct confirmation URL using the provided token and user ID.
+     * Tests the {@code confirmationUrl} method of {@link RegistrationEmailService} to ensure it
+     * generates the correct confirmation URL using the provided token and user ID.
      *
      * <p>This test verifies that the {@code confirmationUrl} method properly constructs the URL
-     * by concatenating the backend host, API prefix, and query parameters (token and userId).
-     * The generated URL is compared with the expected URL format to ensure correctness.</p>
+     * by concatenating the backend host, API prefix, and query parameters (token and userId). The
+     * generated URL is compared with the expected URL format to ensure correctness.</p>
      *
      * <p>Dependencies:</p>
      * <ul>
@@ -44,14 +43,14 @@ public class RegistrationEmailServiceTest {
         ReflectionTestUtils.setField(service, "apiPrefix", apiPrefix);
 
         String confirmationUrl = ReflectionTestUtils.invokeMethod(
-                service,
-                "confirmationUrl",
-                token,
-                userId
+            service,
+            "confirmationUrl",
+            token,
+            userId
         );
 
         assertThat(confirmationUrl).isEqualTo(
-                String.format("%s%s/verify?token=%s&userid=%s", backendHost, apiPrefix, token, userId)
+            String.format("%s%s/verify?token=%s&userid=%s", backendHost, apiPrefix, token, userId)
         );
     }
 }

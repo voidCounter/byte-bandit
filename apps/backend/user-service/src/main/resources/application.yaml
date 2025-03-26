@@ -2,24 +2,24 @@ spring:
   application:
     name: user-service
   datasource:
-    url: ${secrets.datasource.url}
-    username: ${secrets.datasource.username}
-    password: ${secrets.datasource.password}
+    url: ${DB_URL:${secrets.datasource.url}}
+    username: ${DB_USERNAME:${secrets.datasource.username}}
+    password: ${DB_PASSWORD:${secrets.datasource.password}}
     driver-class-name: org.postgresql.Driver
   config:
-    import: classpath:secrets.yml
+    import: optional:classpath:secrets.yml
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   mail:
-    host: ${secrets.mail.host}
-    port: ${secrets.mail.port}
-    username: ${secrets.mail.username}
-    password: ${secrets.mail.password}
+    host: ${MAIL_HOST:${secrets.mail.host}}
+    port: ${MAIL_PORT:${secrets.mail.port}}
+    username: ${MAIL_USERNAME:${secrets.mail.username}}
+    password: ${MAIL_PASSWORD:${secrets.mail.password}}
     properties:
       mail:
         smtp:
@@ -31,6 +31,6 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
     register-with-eureka: true
     fetch-registry: true
