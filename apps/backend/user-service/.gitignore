@@ -31,5 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
-src/main/resources/secrets.yml
-src/test/resources/secrets.yml
+main/resources/secrets.yml
+test/resources/secrets.yml
