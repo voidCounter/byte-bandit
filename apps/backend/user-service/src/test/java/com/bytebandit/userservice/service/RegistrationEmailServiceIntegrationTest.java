@@ -1,11 +1,19 @@
 package com.bytebandit.userservice.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.bytebandit.userservice.enums.EmailTemplate;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import jakarta.mail.Address;
 import jakarta.mail.internet.MimeMessage;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -13,29 +21,22 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-
 class RegistrationEmailServiceIntegrationTest {
 
     @RegisterExtension
     static GreenMailExtension greenMailExtension = new GreenMailExtension(ServerSetupTest.SMTP_IMAP)
-            .withConfiguration(GreenMailConfiguration
-                    .aConfig()
-                    .withUser(
-                            "test-user@localhost",
-                            "test-user",
-                            "test-user-pwd"
-                    )
-            ).withPerMethodLifecycle(false);
+        .withConfiguration(GreenMailConfiguration
+            .aConfig()
+            .withUser(
+                "test-user@localhost",
+                "test-user",
+                "test-user-pwd"
+            )
+        ).withPerMethodLifecycle(false);
 
     /**
-     * Tests the {@code sendEmail} method of {@link RegistrationEmailService} to ensure
-     * that an email is actually sent via SMTP using GreenMail as the test SMTP server.
+     * Tests the {@code sendEmail} method of {@link RegistrationEmailService} to ensure that an
+     * email is actually sent via SMTP using GreenMail as the test SMTP server.
      *
      * <p>This test verifies the following:</p>
      * <ul>
@@ -62,8 +63,9 @@ class RegistrationEmailServiceIntegrationTest {
 
         SpringTemplateEngine templateEngine = mock(SpringTemplateEngine.class);
         String expectedBody = "<html><body>Welcome, John!</body></html>";
-        when(templateEngine.process(eq(EmailTemplate.REGISTRATION_CONFIRMATION.getTemplatePath()), any(Context.class)))
-                .thenReturn(expectedBody);
+        when(templateEngine.process(eq(EmailTemplate.REGISTRATION_CONFIRMATION.getTemplatePath()),
+            any(Context.class)))
+            .thenReturn(expectedBody);
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("localhost");
@@ -71,9 +73,11 @@ class RegistrationEmailServiceIntegrationTest {
         mailSender.setUsername("test-user");
         mailSender.setPassword("test-user-pwd");
 
-        RegistrationEmailService registrationEmailService = new RegistrationEmailService(templateEngine, mailSender);
+        RegistrationEmailService registrationEmailService =
+            new RegistrationEmailService(templateEngine, mailSender);
 
-        ReflectionTestUtils.setField(registrationEmailService, "backendHost", "http://localhost:8080");
+        ReflectionTestUtils.setField(registrationEmailService, "backendHost",
+            "http://localhost:8080");
         ReflectionTestUtils.setField(registrationEmailService, "apiPrefix", "/api");
 
         registrationEmailService.sendEmail(recipient, fullName, token, userId);
@@ -91,6 +95,7 @@ class RegistrationEmailServiceIntegrationTest {
 
         assertThat(receivedMessage.getSubject()).isEqualTo("REGISTRATION CONFIRMATION");
 
-        verify(templateEngine).process(eq(EmailTemplate.REGISTRATION_CONFIRMATION.getTemplatePath()), any(Context.class));
+        verify(templateEngine).process(
+            eq(EmailTemplate.REGISTRATION_CONFIRMATION.getTemplatePath()), any(Context.class));
     }
 }

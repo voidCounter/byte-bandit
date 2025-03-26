@@ -2,9 +2,9 @@ spring:
   jpa:
     show-sql: true
 api:
-  prefix: /api/v1/user
+  prefix: ${API_PREFIX:/api/v1/user}
   host:
-    uri: http://localhost:8084
+    uri: ${API_HOST_URI:http://localhost:8084}
 client:
   host:
-    uri: http://localhost:3000
+    uri: ${CLIENT_HOST_URI:http://localhost:3000}
