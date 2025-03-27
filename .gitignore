@@ -42,6 +42,7 @@ venv/
 
 ### .secrets for nektos/act ###
 .secrets
+.env
 
 node_modules/
 .idea/dataSources.xml
