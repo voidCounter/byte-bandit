@@ -1,0 +1,62 @@
+services:
+  discovery:
+    image: oakcan/discovery:0.0.1-SNAPSHOT
+    container_name: oakcan-discovery-server
+    ports:
+      - "8761:8761"
+  file-service:
+    image: oakcan/file-service:0.0.1-SNAPSHOT
+    container_name: oakcan-file-service
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+  sync-service:
+    image: oakcan/sync-service:0.0.1-SNAPSHOT
+    container_name: oakcan-sync-service
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+  user-service:
+    image: oakcan/user-service:0.0.1-SNAPSHOT
+    container_name: oakcan-user-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+      - DB_URL=jdbc:postgresql://user-db:5432/userdb
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - MAIL_HOST=smtp.example.com
+      - MAIL_PORT=587
+      - MAIL_USERNAME=user@example.com
+      - MAIL_PASSWORD=securepassword
+      - API_PREFIX=/api/v1/user
+      - API_HOST_URI=http://gateway:8084
+      - CLIENT_HOST_URI=http://client:3000
+    depends_on:
+      user-db:
+        condition: service_healthy
+  gateway:
+    image: oakcan/gateway:0.0.1-SNAPSHOT
+    container_name: oakcan-gateway
+    ports:
+      - "8084:8084"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+  client:
+    image: oakcan/client:0.0.1-SNAPSHOT
+    container_name: oakcan-client
+    build:
+      context: ./apps/web
+    ports:
+      - "3000:3000"
+  docs:
+    image: oakcan/docs:0.0.1-SNAPSHOT
+    container_name: oakcan-docs
+    build:
+      context: docs
+    ports:
+      - "8000:8000"

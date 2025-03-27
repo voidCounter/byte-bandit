@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -61,7 +62,7 @@ class CsrfFilterTests {
      */
     @Test
     void testPostWithCsrfToken() throws Exception {
-        var csrfResponse = mockMvc.perform(MockMvcRequestBuilders.get("/csrf")).andReturn();
+        MvcResult csrfResponse = mockMvc.perform(MockMvcRequestBuilders.get("/csrf")).andReturn();
         String csrfToken =
             Objects.requireNonNull(csrfResponse.getResponse().getCookie("XSRF-TOKEN"),
                 "CSRF TOKEN COOKIE NOT FOUND").getValue();
