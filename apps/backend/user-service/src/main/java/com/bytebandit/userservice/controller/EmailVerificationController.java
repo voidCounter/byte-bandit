@@ -24,8 +24,8 @@ public class EmailVerificationController {
 
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(
-        @RequestParam @NotNull String token,
-        @RequestParam @NotNull String userid,
+        @RequestParam("token") @NotNull String token,
+        @RequestParam("userid") @NotNull String userid,
         HttpServletResponse response
     ) {
         tokenVerificationService.verifyToken(
@@ -40,6 +40,5 @@ public class EmailVerificationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 "Failed to redirect, please go to " + clientHostUri + "/login\n");
         }
-
     }
 }
