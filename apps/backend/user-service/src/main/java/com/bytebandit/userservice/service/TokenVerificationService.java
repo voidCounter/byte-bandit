@@ -15,30 +15,29 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TokenVerificationService {
-
+    
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public void verifyToken(
-        String token,
-        String userId,
-        TokenType tokenType
-    ) {
-
+    
+    /**
+     * Verifies the provided token against the stored token hash for the given user ID and token.
+     *
+     * @param token     The token to verify
+     * @param userId    The user ID associated with the token
+     * @param tokenType The type of token (e.g., EMAIL_VERIFICATION)
+     */
+    public void verifyToken(String token, String userId, TokenType tokenType) {
+        
         TokenEntity tokenEntity =
             tokenRepository.findByUserIdAndTypeAndCreatedAtBeforeAndExpiresAtAfterAndUsedIsFalse(
-                UUID.fromString(userId),
-                tokenType,
-                Timestamp.from(Instant.now()),
-                Timestamp.from(Instant.now())
-            ).orElseThrow(
-                () -> new FailedEmailVerificationAttemptException("Token is corrupted.")
-            );
-
+                UUID.fromString(userId), tokenType, Timestamp.from(Instant.now()),
+                Timestamp.from(Instant.now())).orElseThrow(
+                    () -> new FailedEmailVerificationAttemptException("Token is corrupted."));
+        
         if (!passwordEncoder.matches(token, tokenEntity.getTokenHash())) {
             throw new FailedEmailVerificationAttemptException("Token is invalid");
         }
-
+        
         tokenEntity.setUsed(true);
         tokenRepository.save(tokenEntity);
     }

@@ -22,6 +22,15 @@ public class EmailVerificationController {
     @Value("${client.host.uri}")
     private String clientHostUri;
 
+    /**
+     * Verifies the email address of a user.
+     *
+     * @param token    The verification token.
+     * @param userid   The user ID.
+     * @param response The HTTP response.
+     *
+     * @return ResponseEntity with a redirect to the login page.
+     */
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(
         @RequestParam("token") @NotNull String token,

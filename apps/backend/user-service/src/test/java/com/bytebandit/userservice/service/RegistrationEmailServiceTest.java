@@ -21,8 +21,10 @@ public class RegistrationEmailServiceTest {
      *
      * <p>Dependencies:</p>
      * <ul>
-     *     <li>{@link SpringTemplateEngine} and {@link JavaMailSenderImpl} are mocked, as they are not relevant to this test.</li>
-     *     <li>{@link ReflectionTestUtils} is used to inject the values for {@code backendHost} and {@code apiPrefix}
+     *     <li>{@link SpringTemplateEngine} and {@link JavaMailSenderImpl} are mocked, as they
+     *     are not relevant to this test.</li>
+     *     <li>{@link ReflectionTestUtils} is used to inject the values for {@code backendHost}
+     *     and {@code apiPrefix}
      *         and to invoke the private {@code confirmationUrl} method for testing.</li>
      * </ul>
      *

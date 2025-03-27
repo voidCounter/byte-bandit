@@ -29,6 +29,9 @@ class UserAndTokenEntityIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Test to verify that when a user is deleted, all associated tokens are also deleted.
+     */
     @Test
     void whenUserIsDeleted_thenAssociatedTokensAreDeleted() {
         UserEntity user = createAndPersistUser();
@@ -52,6 +55,11 @@ class UserAndTokenEntityIntegrationTest {
         assertNull(deletedToken);
     }
 
+    /**
+     * Test to verify that when multiple tokens are added to a user, all tokens are persisted. For
+     * example, if a user has both an email verification token and a password reset token, they
+     * should both be stored in the database.
+     */
     @Test
     void whenMultipleTokensAreAddedToUser_thenAllTokensArePersisted() {
         UserEntity user = createAndPersistUser();

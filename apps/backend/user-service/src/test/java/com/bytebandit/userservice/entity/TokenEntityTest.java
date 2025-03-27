@@ -32,6 +32,9 @@ class TokenEntityTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Test to verify that a token entity can be persisted and that the token is hashed.
+     */
     @Test
     void whenTokenEntityIsPersisted_thenTokenIsHashedAndIsSavedInDatabase() {
         UserEntity user = createAndPersistUser();
@@ -54,6 +57,9 @@ class TokenEntityTest {
         assertFalse(savedToken.isUsed());
     }
 
+    /**
+     * Test to verify that the token entity's expiration date is set correctly.
+     */
     @Test
     void whenTokenIsExpired_thenIsExpiredReturnsTrue() {
         UserEntity user = createAndPersistUser();
@@ -70,6 +76,9 @@ class TokenEntityTest {
         assertTrue(tokenEntity.getExpiresAt().before(new Timestamp(System.currentTimeMillis())));
     }
 
+    /**
+     * Test to verify that when different token types are persisted, they are saved correctly.
+     */
     @Test
     void whenDifferentTokenTypesArePersisted_thenTheyAreSavedCorrectly() {
         UserEntity user = createAndPersistUser();

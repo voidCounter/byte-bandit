@@ -10,9 +10,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
-
+    
     @Query(
-        value = "SELECT * FROM create_user_and_token(:email, :passwordHash, :fullName, :tokenHash, :tokenType, :expiresAt)",
+        value = "SELECT * FROM create_user_and_token"
+            + "(:email, :passwordHash, :fullName, :tokenHash, :tokenType, :expiresAt)",
         nativeQuery = true
     )
     CreateUserAndTokenProjection createUserAndToken(
