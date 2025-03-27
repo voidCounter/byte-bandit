@@ -28,6 +28,14 @@ public class GlobalExceptionHandler {
     @Value("${client.host.uri}")
     private String clientHostUri;
 
+    /**
+     * Handles FailedEmailVerificationAttemptException.
+     *
+     * @param ex       The exception thrown.
+     * @param response The HTTP response.
+     *
+     * @return ResponseEntity with a redirect to the email verification page or to login page.
+     */
     @ExceptionHandler(FailedEmailVerificationAttemptException.class)
     public ResponseEntity<String> handleFailedVerificationAttemptException(
         FailedEmailVerificationAttemptException ex,
@@ -50,6 +58,14 @@ public class GlobalExceptionHandler {
             ex.getMessage());
     }
 
+    /**
+     * Handles validation exceptions.
+     *
+     * @param ex      The exception thrown.
+     * @param request The HTTP request.
+     *
+     * @return ResponseEntity with a BAD_REQUEST status and error details.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(
         MethodArgumentNotValidException ex, HttpServletRequest request) {
