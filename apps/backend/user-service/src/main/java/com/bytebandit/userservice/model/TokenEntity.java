@@ -30,31 +30,31 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class TokenEntity {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    
     @Column(name = "token_hash", nullable = false, unique = true, length = 72)
     private String tokenHash;
-
+    
     @Column(name = "is_used", nullable = false)
     private boolean used;
-
+    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
     private TokenType type;
-
+    
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
-
+    
     @Column(name = "expires_at", nullable = false, updatable = false)
     private Timestamp expiresAt;
-
+    
     /**
-     * Many-to-one relationship with the UserEntity.
-     * Fetches the user lazily and joins on the 'user_id' column.
+     * Many-to-one relationship with the UserEntity. Fetches the user lazily and joins on the
+     * 'user_id' column.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

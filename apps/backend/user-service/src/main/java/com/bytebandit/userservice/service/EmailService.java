@@ -9,6 +9,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 public abstract class EmailService {
 
+    /**
+     * Sends an email message using the provided JavaMailSender.
+     *
+     * @param mailSender   the JavaMailSender to use for sending the email.
+     * @param sendEmailTo  the recipient's email address.
+     * @param emailSubject the subject of the email.
+     * @param emailBody    the body of the email, which can be HTML formatted.
+     */
     protected void sendMailMessage(
         JavaMailSender mailSender,
         String sendEmailTo,
