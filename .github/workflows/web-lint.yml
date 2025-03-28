@@ -1,0 +1,40 @@
+name: web-linting
+on:
+  push:
+    branches:
+      - '*'
+    paths:
+      - 'apps/web/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+      - develop-snapshot
+    paths:
+      - 'apps/web/**'
+jobs:
+  web-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Check for ESLint errors
+        if: ${{ failure() }}
+        run: echo "ESLint failed!" && exit 1
