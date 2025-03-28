@@ -27,3 +27,22 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('apps/backend/pom.xml') }}
       - name: Run Checkstyle
         run: cd apps/backend && mvn checkstyle:check
+  frontend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        working-directory: apps/web
+        run: npm install
+      - name: Run ESLint
+        working-directory: apps/web
+        run: npm run lint
+      - name: Check for ESLint errors
+        if: ${{ failure() }}
+        run: echo "ESLint failed!" && exit 1
