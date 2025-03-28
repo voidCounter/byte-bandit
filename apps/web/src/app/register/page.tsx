@@ -9,7 +9,6 @@ import {Button} from "@/components/ui/button";
 import React from "react";
 import {PasswordInput} from "@/components/ui/PasswordInput";
 import {AxiosInstance} from "@/utils/AxiosInstance";
-import {useRouter} from "next/navigation";
 import {useMutation} from "@tanstack/react-query";
 import Loading from "@/components/ui/loading";
 
@@ -22,7 +21,6 @@ name: z.string().min(1, {message: "Must have at least 1 character."}).regex(/^[A
     }).max(16, {message: "Password length must be less than 17."}),
 });
 export default function Register() {
-    const router = useRouter();
     const registerForm = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -32,13 +30,13 @@ export default function Register() {
         }
     })
 
-    const {mutate: register, isPending, isError} = useMutation({
+    const {mutate: register, isPending} = useMutation({
         mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/auth/register", data),
         onSuccess: data => {
-            // TODO: handle success
+            // handle success
         },
         onError: error => {
-            // TODO: handle error
+            // handle error
         }
     })
 

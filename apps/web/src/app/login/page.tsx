@@ -23,7 +23,7 @@ const loginSchema = z.object({
 
 
 export default function Login() {
-    const {authenticatedUser, setAuthenticatedUser} = useAuthStore();
+    const {setAuthenticatedUser} = useAuthStore();
     const router = useRouter();
     const loginForm = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -34,7 +34,7 @@ export default function Login() {
     })
 
 
-    const {mutate: login, isPending, isError} = useMutation({
+    const {mutate: login, isPending} = useMutation({
         mutationFn: (data: z.infer<typeof loginSchema>) => AxiosInstance.post("/auth/login", data),
         onSuccess: data => {
             const response: AxiosResponse<User> = data;
@@ -42,7 +42,7 @@ export default function Login() {
             router.push("/app");
         },
         onError: error => {
-            // TODO: handle error
+            // implement error handling
         }
     })
 
