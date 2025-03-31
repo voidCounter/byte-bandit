@@ -25,7 +25,7 @@ import org.springframework.util.StringUtils;
 public class SecurityFilterChainConfig {
     private final List<String> permittedRoutes =
         List.of("/api/v1/user/login", "/api/v1/user/register", "/api/v1/user/verify", "/csrf",
-            "/test-csrf");
+            "/test-csrf", "/actuator/*");
 
     /**
      * This method sets up the security configuration by customizing the CSRF protection mechanism,

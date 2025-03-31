@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations:
+            - classpath:/config/discovery-server
+            - classpath:/config/file-service
+            - classpath:/config/gateway-server
+            - classpath:/config/sync-service
+            - classpath:/config/user-service
+server:
+  port: 8071

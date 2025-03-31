@@ -1,0 +1,4 @@
+// @no-log
+GET http://localhost:8071/user-service/dev
+
+

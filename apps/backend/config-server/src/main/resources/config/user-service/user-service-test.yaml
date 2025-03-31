@@ -1,0 +1,36 @@
+example:
+  property: I AM THE TEST
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${TEST_DB_URL:jdbc:postgresql://localhost:15433/user-test-db}
+    username: ${TEST_DB_USERNAME:postgres}
+    password: ${TEST_DB_PASSWORD:postgres}
+  cloud:
+    discovery:
+      enabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  sql:
+    init:
+      mode: always
+  mail:
+    host: ${TEST_MAIL_HOST:localhost}
+    port: ${TEST_MAIL_PORT:1025}
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: false
+        starttls:
+          enable: false
+api:
+  prefix: ${TEST_API_PREFIX:/api/v1/user}
+  host:
+    uri: ${TEST_API_HOST_URI:http://localhost:8084}
+client:
+  host:
+    uri: ${TEST_CLIENT_HOST_URI:http://localhost:3030}

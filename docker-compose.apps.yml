@@ -1,7 +1,15 @@
 services:
+  config-server:
+    image: oakcan/configserver:0.0.1-SNAPSHOT
+    container_name: oakcan-config-server
+    ports:
+      - "8071:8071"
   discovery:
     image: oakcan/discovery:0.0.1-SNAPSHOT
     container_name: oakcan-discovery-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     ports:
       - "8761:8761"
   file-service:
@@ -37,7 +45,7 @@ services:
       - API_HOST_URI=http://gateway:8084
       - CLIENT_HOST_URI=http://client:3000
     depends_on:
-      user-db:
+      user-dev-db:
         condition: service_healthy
   gateway:
     image: oakcan/gateway:0.0.1-SNAPSHOT

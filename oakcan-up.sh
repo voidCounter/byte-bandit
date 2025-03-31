@@ -2,7 +2,7 @@
 set -e  # Exit on error
 
 # List of backend services
-services=("discovery" "gateway" "user-service" "file-service" "sync-service" "client" "docs")
+services=("discovery" "gateway" "user-service" "file-service" "sync-service" "client" "docs" "config-server")
 
 start_infrastructure() {
   echo "Starting infrastructure services..."

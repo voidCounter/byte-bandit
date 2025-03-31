@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: file-service
+  profiles:
+    active: default
+  cloud:
+    config:
+      uri: http://localhost:8071

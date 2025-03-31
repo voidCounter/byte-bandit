@@ -1,13 +1,31 @@
 services:
-  user-db:
-    image: postgres:15-alpine
-    container_name: user-db
+  user-dev-db:
+    image: postgres:17-alpine
+    container_name: user-dev-db
     ports:
       - "15432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=userdb
+      - POSTGRES_DB=user-dev-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+  user-test-db:
+    image: postgres:17-alpine
+    container_name: user-test-db
+    ports:
+      - "15433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=user-test-db
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s

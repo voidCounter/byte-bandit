@@ -1,0 +1,31 @@
+example:
+  property: I AM THE DEV
+spring:
+  jpa:
+    show-sql: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DEV_DB_URL:jdbc:postgresql://localhost:15432/user-dev-db}
+    username: ${DEV_DB_USERNAME:postgres}
+    password: ${DEV_DB_PASSWORD:postgres}
+  mail:
+    host: ${DEV_MAIL_HOST:localhost}
+    port: ${DEV_MAIL_PORT:1025}
+    username: ${DEV_MAIL_USERNAME:""}
+    password: ${DEV_MAIL_PASSWORD:""}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  sql:
+    init:
+      continue-on-error: true
+api:
+  prefix: ${DEV_API_PREFIX:/api/v1/user}
+  host:
+    uri: ${DEV_API_HOST_URI:http://localhost:8084}
+client:
+  host:
+    uri: ${DEV_CLIENT_HOST_URI:http://localhost:3000}

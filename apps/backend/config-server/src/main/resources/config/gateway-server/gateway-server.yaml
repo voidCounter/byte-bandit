@@ -1,11 +1,8 @@
+example:
+  property: I AM THE DEFAULT
 spring:
   application:
-    name: gateway
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "health,info"
+    name: gateway-server
 server:
   port: 8084
 eureka:

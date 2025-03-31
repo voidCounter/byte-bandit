@@ -1,0 +1,13 @@
+example:
+  property: I AM THE DEFAULT
+spring:
+  application:
+    name: discovery-server
+server:
+  port: 8761
+eureka:
+  instance:
+    hostname: discoveryserver
+  client:
+    register-with-eureka: false
+    fetch-registry: false
