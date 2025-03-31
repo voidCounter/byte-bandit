@@ -11,12 +11,7 @@ spring:
       enabled: false
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: none
     show-sql: true
-  sql:
-    init:
-      mode: always
   mail:
     host: ${TEST_MAIL_HOST:localhost}
     port: ${TEST_MAIL_PORT:1025}

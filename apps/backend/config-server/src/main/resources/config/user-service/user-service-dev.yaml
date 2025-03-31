@@ -19,9 +19,6 @@ spring:
           auth: false
           starttls:
             enable: false
-  sql:
-    init:
-      continue-on-error: true
 api:
   prefix: ${DEV_API_PREFIX:/api/v1/user}
   host:

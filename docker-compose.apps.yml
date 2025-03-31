@@ -4,48 +4,26 @@ services:
     container_name: oakcan-config-server
     ports:
       - "8071:8071"
-  discovery:
-    image: oakcan/discovery:0.0.1-SNAPSHOT
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8071/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  discovery-server:
+    image: oakcan/discovery-server:0.0.1-SNAPSHOT
     container_name: oakcan-discovery-server
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     ports:
       - "8761:8761"
-  file-service:
-    image: oakcan/file-service:0.0.1-SNAPSHOT
-    container_name: oakcan-file-service
-    ports:
-      - "8081:8081"
-    environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
-  sync-service:
-    image: oakcan/sync-service:0.0.1-SNAPSHOT
-    container_name: oakcan-sync-service
-    ports:
-      - "8082:8082"
-    environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
-  user-service:
-    image: oakcan/user-service:0.0.1-SNAPSHOT
-    container_name: oakcan-user-service
-    ports:
-      - "8083:8083"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
-      - DB_URL=jdbc:postgresql://user-db:5432/userdb
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=${POSTGRES_PASSWORD}
-      - MAIL_HOST=smtp.example.com
-      - MAIL_PORT=587
-      - MAIL_USERNAME=${MAIL_USER_NAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - API_PREFIX=/api/v1/user
-      - API_HOST_URI=http://gateway:8084
-      - CLIENT_HOST_URI=http://client:3000
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
-      user-dev-db:
+      config-server:
         condition: service_healthy
   gateway:
     image: oakcan/gateway:0.0.1-SNAPSHOT
@@ -53,7 +31,75 @@ services:
     ports:
       - "8084:8084"
     environment:
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery:8761/eureka/
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+  file-service:
+    image: oakcan/file-service:0.0.1-SNAPSHOT
+    container_name: oakcan-file-service
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
+    depends_on:
+      gateway:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+  sync-service:
+    image: oakcan/sync-service:0.0.1-SNAPSHOT
+    container_name: oakcan-sync-service
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+  user-service:
+    image: oakcan/user-service:0.0.1-SNAPSHOT
+    container_name: oakcan-user-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
+      - DEV_DB_URL=jdbc:postgresql://user-dev-db:5432/user-dev-db
+      - TEST_MAIL_HOST=mailhog
+      - DEV_MAIL_HOST=mailhog
+      - TEST_MAIL_PORT=1025
+      - DEV_MAIL_PORT=1025
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+      mailhog:
+        condition: service_healthy
+      user-dev-db:
+        condition: service_healthy
+
   client:
     image: oakcan/client:0.0.1-SNAPSHOT
     container_name: oakcan-client

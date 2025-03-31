@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.bytebandit</groupId>
-    <artifactId>configserver</artifactId>
+    <artifactId>config-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>config-server</name>
     <description>config-server</description>

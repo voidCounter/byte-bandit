@@ -20,7 +20,7 @@
 
 
     <modules>
-        <module>discovery</module>
+        <module>discovery-server</module>
         <module>file-service</module>
         <module>gateway</module>
         <module>sync-service</module>
