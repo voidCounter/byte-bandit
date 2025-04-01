@@ -2,13 +2,13 @@ example:
   property: I AM THE DEFAULT
 spring:
   application:
-    name: gateway-server
+    name: gateway
 server:
   port: 8084
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
     register-with-eureka: true
     fetch-registry: true
 management:

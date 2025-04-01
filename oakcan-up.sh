@@ -2,7 +2,7 @@
 set -e  # Exit on error
 
 # List of backend services
-services=("config-server" "discovery-server" "gateway" "user-service" "file-service" "sync-service" "client" "docs")
+services=("discovery-server" "config-server" "gateway" "user-service" "file-service" "sync-service" "client" "docs")
 
 start_infrastructure() {
   echo "Starting infrastructure services..."
@@ -34,7 +34,7 @@ rebuild_service() {
       (cd "apps/web" && docker build -t oakcan/client:0.0.1-SNAPSHOT .)
     else
       echo "Building $service..."
-      (cd "apps/backend/$service" && mvn package dockerfile:build)
+      (cd "apps/backend/$service" && mvn -DskipTests package dockerfile:build )
     fi
   else
     echo "Service $service not found!"

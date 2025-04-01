@@ -7,9 +7,9 @@
         <artifactId>oakcan-backend</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>gateway-server</artifactId>
-    <name>gateway-server</name>
-    <description>gateway-server</description>
+    <artifactId>gateway</artifactId>
+    <name>gateway</name>
+    <description>gateway</description>
     <properties>
         <java.version>17</java.version>
         <spring-boot.version>3.3.6</spring-boot.version>

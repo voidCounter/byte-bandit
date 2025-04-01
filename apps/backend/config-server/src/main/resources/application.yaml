@@ -8,10 +8,14 @@ spring:
       server:
         native:
           search-locations:
-            - classpath:/config/discovery-server
             - classpath:/config/file-service
-            - classpath:/config/gateway-server
+            - classpath:/config/gateway
             - classpath:/config/sync-service
             - classpath:/config/user-service
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+      register-with-eureka: true
 server:
   port: 8071

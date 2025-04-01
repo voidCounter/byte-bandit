@@ -1,8 +1,0 @@
-spring:
-  application:
-    name: discovery-server
-  profiles:
-    active: default
-  cloud:
-    config:
-      uri: http://localhost:8071

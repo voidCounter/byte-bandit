@@ -1,19 +1,8 @@
 services:
-  config-server:
-    image: oakcan/configserver:0.0.1-SNAPSHOT
-    container_name: oakcan-config-server
-    ports:
-      - "8071:8071"
-    healthcheck:
-      test: [ "CMD", "wget", "-qO-", "http://localhost:8071/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
   discovery-server:
     image: oakcan/discovery-server:0.0.1-SNAPSHOT
     container_name: oakcan-discovery-server
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     ports:
       - "8761:8761"
@@ -22,8 +11,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  config-server:
+    image: oakcan/config-server:0.0.1-SNAPSHOT
+    container_name: oakcan-config-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8071/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     depends_on:
-      config-server:
+      discovery-server:
         condition: service_healthy
   gateway:
     image: oakcan/gateway:0.0.1-SNAPSHOT
@@ -32,7 +33,6 @@ services:
       - "8084:8084"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health" ]
       interval: 10s
@@ -50,7 +50,6 @@ services:
       - "8081:8081"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     depends_on:
       gateway:
         condition: service_healthy
@@ -65,7 +64,6 @@ services:
       - "8082:8082"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     depends_on:
       config-server:
         condition: service_healthy
