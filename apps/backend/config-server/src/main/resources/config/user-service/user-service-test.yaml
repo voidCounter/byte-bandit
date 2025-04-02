@@ -3,18 +3,22 @@ example:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${TEST_DB_URL:jdbc:postgresql://localhost:15433/user-test-db}
-    username: ${TEST_DB_USERNAME:postgres}
-    password: ${TEST_DB_PASSWORD:postgres}
+    url: ${USER_TEST_DB_URL}
+    username: ${USER_TEST_DB_USERNAME}
+    password: ${USER_TEST_DB_PASSWORD}
   cloud:
     discovery:
       enabled: false
   jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
   mail:
-    host: ${TEST_MAIL_HOST:localhost}
-    port: ${TEST_MAIL_PORT:1025}
+    host: ${TEST_MAIL_HOST}
+    port: ${TEST_MAIL_PORT}
     protocol: smtp
     properties:
       mail:

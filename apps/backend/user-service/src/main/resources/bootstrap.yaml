@@ -3,6 +3,8 @@ spring:
     name: user-service
   profiles:
     active: dev
+  config:
+    import: optional:file:.env.properties
   cloud:
     config:
       discovery:

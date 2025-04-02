@@ -6,7 +6,7 @@ spring:
   cloud:
     config:
       discovery:
-        enabled: true # enable Discovery-first lookup
+        enabled: true   # enable Discovery-first lookup
         service-id: config-server
       fail-fast: true
       retry:
