@@ -1,16 +1,10 @@
 spring:
   application:
-    name: gateway
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "health,info"
+    name: sync-service
 server:
-  port: 8084
+  port: 8082
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
-    fetch-registry: true
