@@ -13,13 +13,13 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${USER_DEV_DB_URL}
-    username: ${USER_DEV_DB_USERNAME}
-    password: ${USER_DEV_DB_PASSWORD}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   mail:
-    host: ${DEV_MAIL_HOST:localhost}
-    port: ${DEV_MAIL_PORT:1025}
-    username: ${DEV_MAIL_USERNAME}
-    password: ${DEV_MAIL_PASSWORD}
+    host: ${DEV_MAIL_HOST}
+    port: ${DEV_MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:

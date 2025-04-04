@@ -1,19 +1,21 @@
 services:
-  config-server:
-    image: oakcan/config-server
-    container_name: oakcan-config-server-test
+  gateway:
+    image: oakcan/gateway:latest
+    container_name: oakcan-gateway-test
+    ports:
+      - "9003:8084"
     environment:
       - SPRING_ACTIVE_PROFILE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-    ports:
-      - "9002:8071"
     healthcheck:
-      test: [ "CMD", "wget", "-qO-", "http://localhost:8071/actuator/health" ]
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health" ]
       interval: 10s
       timeout: 5s
       retries: 5
     depends_on:
       discovery-server:
+        condition: service_healthy
+      config-server:
         condition: service_healthy
     networks:
       - oakcan-test-network

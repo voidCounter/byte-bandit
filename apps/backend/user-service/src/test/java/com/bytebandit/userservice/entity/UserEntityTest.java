@@ -18,12 +18,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
 @Transactional
 @Rollback
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(BCryptPasswordEncoder.class)
+@ActiveProfiles("test")
 class UserEntityTest {
 
     @Autowired

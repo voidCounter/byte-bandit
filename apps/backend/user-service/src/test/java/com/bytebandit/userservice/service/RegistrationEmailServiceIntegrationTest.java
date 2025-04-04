@@ -17,10 +17,12 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+@ActiveProfiles("test")
 class RegistrationEmailServiceIntegrationTest {
     
     @RegisterExtension

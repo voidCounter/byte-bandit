@@ -4,8 +4,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${USER_TEST_DB_URL}
-    username: ${USER_TEST_DB_USERNAME}
-    password: ${USER_TEST_DB_PASSWORD}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   cloud:
     discovery:
       enabled: false

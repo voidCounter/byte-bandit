@@ -1,8 +1,9 @@
 services:
   discovery-server:
     image: oakcan/discovery-server
-    container_name: oakcan-discovery-server
+    container_name: oakcan-discovery-server-test
     environment:
+      - SPRING_ACTIVE_PROFILE=test
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     ports:
       - "9001:8761"

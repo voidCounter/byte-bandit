@@ -1,0 +1,62 @@
+services:
+  user-service:
+    image: oakcan/user-service:latest
+    container_name: oakcan-user-service-test
+    ports:
+      - "9006:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
+      - TEST_DB_USERNAME=postgres
+      - TEST_DB_PASSWORD=${POSTGRES_PASSWORD}
+      - TEST_MAIL_HOST=mailhog
+      - TEST_MAIL_PORT=1025
+    networks:
+      - oakcan-test-network
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      mailhog:
+        condition: service_healthy
+      user-test-db:
+        condition: service_healthy
+  user-test-db:
+    image: postgres:17-alpine
+    container_name: user-test-db
+    ports:
+      - "15433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=user-test-db
+    networks:
+      - oakcan-test-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog-test
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - oakcan-test-network
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8025" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+networks:
+  oakcan-test-network:
+    external: true
