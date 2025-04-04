@@ -1,0 +1,18 @@
+services:
+  discovery-server:
+    image: oakcan/discovery-server
+    container_name: oakcan-discovery-server
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
+    ports:
+      - "9001:8761"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - oakcan-test-network
+networks:
+  oakcan-test-network:
+    external: true
