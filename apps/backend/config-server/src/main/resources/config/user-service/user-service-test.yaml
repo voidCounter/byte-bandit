@@ -33,3 +33,9 @@ api:
 client:
   host:
     uri: ${TEST_CLIENT_HOST_URI:http://localhost:3030}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
