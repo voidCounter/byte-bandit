@@ -8,7 +8,6 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>file-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>file-service</name>
     <description>file-service</description>
     <properties>
