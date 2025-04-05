@@ -1,5 +1,7 @@
 package com.bytebandit.userservice.entity;
 
+import static com.bytebandit.userservice.utils.TestUtils.createToken;
+import static com.bytebandit.userservice.utils.TestUtils.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -64,33 +66,5 @@ class UserAndTokenEntityIntegrationTest {
 
         UserEntity retrievedUser = entityManager.find(UserEntity.class, user.getId());
         assertEquals(2, retrievedUser.getTokens().size());
-    }
-
-    private TokenEntity createToken(UserEntity user, TokenType type) {
-        TokenEntity tokenEntity = new TokenEntity();
-        tokenEntity.setTokenHash(UUID.randomUUID().toString());
-        tokenEntity.setType(type);
-        tokenEntity.setExpiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)));
-        tokenEntity.setUser(user);
-        tokenEntity.setUsed(false);
-        return tokenEntity;
-    }
-
-    private TokenEntity createToken(UserEntity user) {
-        TokenEntity tokenEntity = new TokenEntity();
-        tokenEntity.setTokenHash(UUID.randomUUID().toString());
-        tokenEntity.setType(TokenType.EMAIL_VERIFICATION);
-        tokenEntity.setExpiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)));
-        tokenEntity.setUser(user);
-        tokenEntity.setUsed(false);
-        return tokenEntity;
-    }
-
-    private UserEntity createUser() {
-        UserEntity user = new UserEntity();
-        user.setEmail("user@example.com");
-        user.setFullName("Test User");
-        user.setPasswordHash(UUID.randomUUID().toString());
-        return user;
     }
 }
