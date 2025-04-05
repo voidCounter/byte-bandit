@@ -31,4 +31,3 @@ api:
 client:
   host:
     uri: ${TEST_CLIENT_HOST_URI:http://localhost:3030}
-eureka:

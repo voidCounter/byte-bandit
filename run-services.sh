@@ -11,26 +11,30 @@ ALL_SERVICES="$BACKEND_SERVICES $FRONTEND_SERVICE $DOCS_SERVICE"
 rebuild_service() {
   local service=$1
 
-  if [[ " ${ALL_SERVICES[*]} " =~ ${service} ]]; then
+   if [[ " ${ALL_SERVICES[*]} " =~ ${service} ]]; then
     ./build-services.sh "$service"  # Build the specified service
-  else
-    echo "Service $service not found!"
-    exit 1
-  fi
+    if ! ./build-services.sh "$service"; then  # Build the specified service
+      echo "ERROR: FAILED TO BUILD $service"
+      exit 1
+    fi
+   else
+     echo "Service $service not found!"
+     exit 1
+   fi
 
   echo "Stopping $service..."
-  docker-compose -f docker-compose.apps.yml stop "$service"
+  docker-compose -f docker-compose.apps.yml stop "$service" || { echo "ERROR: FAILED TO STOP $service"; exit 1; }
 
   echo "Removing old container for $service..."
-  docker-compose -f docker-compose.apps.yml rm "$service"
+  docker-compose -f docker-compose.apps.yml rm -f "$service" || { echo "ERROR: FAILED TO REMOVE $service CONTAINER"; exit 1; }
 
   echo "Starting $service..."
-  docker-compose -f docker-compose.apps.yml up -d "$service"
+  docker-compose -f docker-compose.apps.yml up -d "$service" || { echo "ERROR: FAILED TO START $service"; exit 1; }
 }
 
 # Full rebuild (if no arguments are provided)
 full_rebuild() {
-  for service in "${ALL_SERVICES[@]}"; do
+  for service in $ALL_SERVICES; do
     rebuild_service "$service"
   done
 
