@@ -1,12 +1,12 @@
 package com.bytebandit.userservice.service;
 
-import com.bytebandit.userservice.enums.TokenType;
 import com.bytebandit.userservice.exception.FailedEmailVerificationAttemptException;
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.repository.TokenRepository;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
+import lib.user.enums.TokenType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
