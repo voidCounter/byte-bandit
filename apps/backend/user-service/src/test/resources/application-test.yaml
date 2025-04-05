@@ -1,14 +1,9 @@
-example:
-  property: I AM THE TEST
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${USER_TEST_DB_URL}
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
-  cloud:
-    discovery:
-      enabled: false
+    url: ${USER_TEST_DB_URL:jdbc:postgresql://localhost:15433/user-test-db}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:password}
   jpa:
     properties:
       hibernate:
@@ -16,9 +11,12 @@ spring:
     defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  sql:
+    init:
+      mode: always
   mail:
-    host: ${TEST_MAIL_HOST}
-    port: ${TEST_MAIL_PORT}
+    host: ${TEST_MAIL_HOST:localhost}
+    port: ${TEST_MAIL_PORT:1025}
     protocol: smtp
     properties:
       mail:
@@ -33,9 +31,3 @@ api:
 client:
   host:
     uri: ${TEST_CLIENT_HOST_URI:http://localhost:3030}
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
-    register-with-eureka: true
-    fetch-registry: true

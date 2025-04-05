@@ -1,9 +1,7 @@
 services:
   discovery-server:
-    image: oakcan/discovery-server:0.0.1-SNAPSHOT
+    image: oakcan/discovery-server:latest
     container_name: oakcan-discovery-server
-    environment:
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
     ports:
       - "8761:8761"
     healthcheck:
@@ -12,7 +10,7 @@ services:
       timeout: 5s
       retries: 5
   config-server:
-    image: oakcan/config-server:0.0.1-SNAPSHOT
+    image: oakcan/config-server:latest
     container_name: oakcan-config-server
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
@@ -27,7 +25,7 @@ services:
       discovery-server:
         condition: service_healthy
   gateway:
-    image: oakcan/gateway:0.0.1-SNAPSHOT
+    image: oakcan/gateway:latest
     container_name: oakcan-gateway
     ports:
       - "8084:8084"
@@ -44,7 +42,7 @@ services:
       config-server:
         condition: service_healthy
   file-service:
-    image: oakcan/file-service:0.0.1-SNAPSHOT
+    image: oakcan/file-service:latest
     container_name: oakcan-file-service
     ports:
       - "8081:8081"
@@ -58,7 +56,7 @@ services:
       config-server:
         condition: service_healthy
   sync-service:
-    image: oakcan/sync-service:0.0.1-SNAPSHOT
+    image: oakcan/sync-service:latest
     container_name: oakcan-sync-service
     ports:
       - "8082:8082"
@@ -72,16 +70,17 @@ services:
       gateway:
         condition: service_healthy
   user-service:
-    image: oakcan/user-service:0.0.1-SNAPSHOT
+    image: oakcan/user-service:latest
     container_name: oakcan-user-service
     ports:
       - "8083:8083"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8071
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
       - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
-      - DEV_DB_URL=jdbc:postgresql://user-dev-db:5432/user-dev-db
+      - USER_DEV_DB_URL=jdbc:postgresql://user-dev-db:5432/user-dev-db
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - TEST_MAIL_HOST=mailhog
       - DEV_MAIL_HOST=mailhog
       - TEST_MAIL_PORT=1025
@@ -97,6 +96,36 @@ services:
         condition: service_healthy
       user-dev-db:
         condition: service_healthy
+  user-dev-db:
+    image: postgres:17-alpine
+    container_name: user-dev-db
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=user-dev-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8025" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
 
   client:
     image: oakcan/client:0.0.1-SNAPSHOT

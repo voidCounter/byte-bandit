@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.UUID;
 import lib.user.enums.TokenType;
 import org.junit.jupiter.api.Test;
@@ -16,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.ActiveProfiles;
 
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
 class UserAndTokenEntityIntegrationTest {
 
     @Autowired

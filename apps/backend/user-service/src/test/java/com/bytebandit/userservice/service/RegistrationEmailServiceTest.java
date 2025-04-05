@@ -6,9 +6,11 @@ import static org.mockito.Mockito.mock;
 import java.util.UUID;
 import org.junit.Test;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+@ActiveProfiles("test")
 public class RegistrationEmailServiceTest {
 
     /**
