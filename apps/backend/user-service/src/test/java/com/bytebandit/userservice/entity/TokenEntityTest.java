@@ -1,53 +1,40 @@
 package com.bytebandit.userservice.entity;
 
+import static com.bytebandit.userservice.utils.TestUtils.createToken;
+import static com.bytebandit.userservice.utils.TestUtils.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.bytebandit.userservice.enums.TokenType;
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import lib.user.enums.TokenType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(BCryptPasswordEncoder.class)
 class TokenEntityTest {
 
     @Autowired
     private TestEntityManager entityManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     /**
      * Test to verify that a token entity can be persisted and that the token is hashed.
      */
     @Test
     void whenTokenEntityIsPersisted_thenTokenIsHashedAndIsSavedInDatabase() {
-        UserEntity user = createAndPersistUser();
-        TokenEntity tokenEntity = TokenEntity.builder()
-            .tokenHash(
-                passwordEncoder.encode(UUID.randomUUID().toString())
-            )
-            .type(TokenType.EMAIL_VERIFICATION)
-            .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
-            .user(user)
-            .used(false)
-            .build();
+        UserEntity user = createUser();
+        user = entityManager.persistAndFlush(user);
 
+        TokenEntity tokenEntity = createToken(user);
         TokenEntity savedToken = entityManager.persistFlushFind(tokenEntity);
 
         assertNotNull(savedToken.getId());
@@ -62,15 +49,11 @@ class TokenEntityTest {
      */
     @Test
     void whenTokenIsExpired_thenIsExpiredReturnsTrue() {
-        UserEntity user = createAndPersistUser();
-        TokenEntity tokenEntity = TokenEntity.builder()
-            .tokenHash(passwordEncoder.encode(UUID.randomUUID().toString()))
-            .type(TokenType.EMAIL_VERIFICATION)
-            .expiresAt(Timestamp.valueOf(LocalDateTime.now().minusDays(1))) // Past date
-            .user(user)
-            .used(false)
-            .build();
+        UserEntity user = createUser();
+        entityManager.persistAndFlush(user);
 
+        TokenEntity tokenEntity = createToken(user);
+        tokenEntity.setExpiresAt(Timestamp.valueOf(LocalDateTime.now().minusDays(1)));
         entityManager.persistFlushFind(tokenEntity);
 
         assertTrue(tokenEntity.getExpiresAt().before(new Timestamp(System.currentTimeMillis())));
@@ -81,7 +64,8 @@ class TokenEntityTest {
      */
     @Test
     void whenDifferentTokenTypesArePersisted_thenTheyAreSavedCorrectly() {
-        UserEntity user = createAndPersistUser();
+        UserEntity user = createUser();
+        entityManager.persistAndFlush(user);
 
         TokenEntity emailVerificationToken = createToken(user, TokenType.EMAIL_VERIFICATION);
         TokenEntity passwordResetToken = createToken(user, TokenType.PASSWORD_RESET);
@@ -93,22 +77,5 @@ class TokenEntityTest {
         assertEquals(TokenType.PASSWORD_RESET, savedPasswordToken.getType());
     }
 
-    private TokenEntity createToken(UserEntity user, TokenType type) {
-        return TokenEntity.builder()
-            .tokenHash(passwordEncoder.encode(UUID.randomUUID().toString()))
-            .type(type)
-            .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
-            .user(user)
-            .used(false)
-            .build();
-    }
 
-    private UserEntity createAndPersistUser() {
-        UserEntity user = new UserEntity();
-        user.setEmail("user@example.com");
-        user.setFullName("Test User");
-        user.setPasswordHash("hashedPassword");
-        entityManager.persistAndFlush(user);
-        return user;
-    }
 }

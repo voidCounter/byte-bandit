@@ -2,9 +2,10 @@ example:
   property: I AM THE DEV
 spring:
   jpa:
-    hibernate:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
     show-sql: true
   sql:
