@@ -24,7 +24,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s  # Give it time to start and register
+      start_period: 30s
     depends_on:
       discovery-server:
         condition: service_healthy
@@ -55,13 +55,6 @@ services:
     environment:
       - SPRING_ACTIVE_PROFILE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-    depends_on:
-      discovery-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      gateway:
-        condition: service_healthy
   sync-service:
     image: oakcan/sync-service:latest
     container_name: oakcan-sync-service-test
@@ -70,13 +63,6 @@ services:
     environment:
       - SPRING_ACTIVE_PROFILE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-    depends_on:
-      discovery-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
-      gateway:
-        condition: service_healthy
   user-service:
     image: oakcan/user-service:latest
     container_name: oakcan-user-service-test
@@ -91,10 +77,6 @@ services:
       - TEST_MAIL_HOST=mailhog
       - TEST_MAIL_PORT=1025
     depends_on:
-      discovery-server:
-        condition: service_healthy
-      config-server:
-        condition: service_healthy
       user-test-db:
         condition: service_healthy
   user-test-db:
