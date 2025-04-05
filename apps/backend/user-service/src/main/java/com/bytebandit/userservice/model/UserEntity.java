@@ -7,9 +7,13 @@ import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 import lib.user.model.UserEntityTemplate;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class UserEntity extends UserEntityTemplate {
 
     /**

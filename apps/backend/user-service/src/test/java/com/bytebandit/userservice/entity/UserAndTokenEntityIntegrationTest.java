@@ -3,46 +3,35 @@ package com.bytebandit.userservice.entity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import com.bytebandit.userservice.enums.TokenType;
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import lib.user.enums.TokenType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 @DataJpaTest
-@Import(BCryptPasswordEncoder.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserAndTokenEntityIntegrationTest {
 
     @Autowired
     private TestEntityManager entityManager;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     /**
      * Test to verify that when a user is deleted, all associated tokens are also deleted.
      */
     @Test
     void whenUserIsDeleted_thenAssociatedTokensAreDeleted() {
-        UserEntity user = createAndPersistUser();
+        UserEntity user = createUser();
+        user = entityManager.persistAndFlush(user);
 
-        TokenEntity tokenEntity = TokenEntity.builder()
-            .tokenHash(passwordEncoder.encode(UUID.randomUUID().toString()))
-            .type(TokenType.REFRESH)
-            .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
-            .user(user)
-            .used(false)
-            .build();
+        TokenEntity tokenEntity = createToken(user);
         user.getTokens().add(tokenEntity);
 
         entityManager.persistAndFlush(tokenEntity);
@@ -62,23 +51,11 @@ class UserAndTokenEntityIntegrationTest {
      */
     @Test
     void whenMultipleTokensAreAddedToUser_thenAllTokensArePersisted() {
-        UserEntity user = createAndPersistUser();
+        UserEntity user = createUser();
+        user = entityManager.persistAndFlush(user);
 
-        TokenEntity token1 = TokenEntity.builder()
-            .tokenHash(passwordEncoder.encode(UUID.randomUUID().toString()))
-            .type(TokenType.EMAIL_VERIFICATION)
-            .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)))
-            .user(user)
-            .used(false)
-            .build();
-
-        TokenEntity token2 = TokenEntity.builder()
-            .tokenHash(passwordEncoder.encode(UUID.randomUUID().toString()))
-            .type(TokenType.PASSWORD_RESET)
-            .expiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(2)))
-            .user(user)
-            .used(false)
-            .build();
+        TokenEntity token1 = createToken(user);
+        TokenEntity token2 = createToken(user, TokenType.PASSWORD_RESET);
 
         user.getTokens().add(token1);
         user.getTokens().add(token2);
@@ -89,12 +66,31 @@ class UserAndTokenEntityIntegrationTest {
         assertEquals(2, retrievedUser.getTokens().size());
     }
 
-    private UserEntity createAndPersistUser() {
+    private TokenEntity createToken(UserEntity user, TokenType type) {
+        TokenEntity tokenEntity = new TokenEntity();
+        tokenEntity.setTokenHash(UUID.randomUUID().toString());
+        tokenEntity.setType(type);
+        tokenEntity.setExpiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)));
+        tokenEntity.setUser(user);
+        tokenEntity.setUsed(false);
+        return tokenEntity;
+    }
+
+    private TokenEntity createToken(UserEntity user) {
+        TokenEntity tokenEntity = new TokenEntity();
+        tokenEntity.setTokenHash(UUID.randomUUID().toString());
+        tokenEntity.setType(TokenType.EMAIL_VERIFICATION);
+        tokenEntity.setExpiresAt(Timestamp.valueOf(LocalDateTime.now().plusDays(1)));
+        tokenEntity.setUser(user);
+        tokenEntity.setUsed(false);
+        return tokenEntity;
+    }
+
+    private UserEntity createUser() {
         UserEntity user = new UserEntity();
         user.setEmail("user@example.com");
         user.setFullName("Test User");
-        user.setPasswordHash("hashedPassword");
-        entityManager.persistAndFlush(user);
+        user.setPasswordHash(UUID.randomUUID().toString());
         return user;
     }
 }
