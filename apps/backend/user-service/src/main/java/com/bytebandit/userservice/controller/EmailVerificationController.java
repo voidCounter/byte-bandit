@@ -1,10 +1,10 @@
 package com.bytebandit.userservice.controller;
 
-import com.bytebandit.userservice.enums.TokenType;
 import com.bytebandit.userservice.service.TokenVerificationService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
+import lib.user.enums.TokenType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
