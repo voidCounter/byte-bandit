@@ -5,8 +5,10 @@ import com.bytebandit.gateway.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -19,7 +21,9 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @throws UsernameNotFoundException if the user is not found
      */
     @Override
-    public UserEntity loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email);
+    public UserEntity loadUserByUsername(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+            () -> new UsernameNotFoundException("User with provided" + email + " not found")
+        );
     }
 }
