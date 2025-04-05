@@ -3,7 +3,7 @@ services:
     image: oakcan/discovery-server:latest
     container_name: oakcan-discovery-server-test
     environment:
-      - SPRING_ACTIVE_PROFILE=test
+      - SPRING_PROFILES_ACTIVE=test
     ports:
       - "9001:8761"
     healthcheck:
@@ -15,7 +15,7 @@ services:
     image: oakcan/config-server:latest
     container_name: oakcan-config-server-test
     environment:
-      - SPRING_ACTIVE_PROFILE=test
+      - SPRING_PROFILES_ACTIVE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     ports:
       - "9002:8071"
@@ -34,7 +34,7 @@ services:
     ports:
       - "9003:8084"
     environment:
-      - SPRING_ACTIVE_PROFILE=test
+      - SPRING_PROFILES_ACTIVE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health" ]
@@ -53,7 +53,7 @@ services:
     ports:
       - "9004:8081"
     environment:
-      - SPRING_ACTIVE_PROFILE=test
+      - SPRING_PROFILES_ACTIVE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
   sync-service:
     image: oakcan/sync-service:latest
@@ -61,7 +61,7 @@ services:
     ports:
       - "9005:8082"
     environment:
-      - SPRING_ACTIVE_PROFILE=test
+      - SPRING_PROFILES_ACTIVE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
   user-service:
     image: oakcan/user-service:latest

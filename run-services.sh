@@ -12,10 +12,10 @@ rebuild_service() {
   local service=$1
 
    if [[ " ${ALL_SERVICES[*]} " =~ ${service} ]]; then
-    if ! ./build-services.sh "$service"; then  # Build the specified service
-      echo "ERROR: FAILED TO BUILD $service"
-      exit 1
-    fi
+      if ! ./build-services.sh "$service"; then  # Build the specified service
+        echo "ERROR: FAILED TO BUILD $service"
+        exit 1
+      fi
    else
      echo "Service $service not found!"
      exit 1
