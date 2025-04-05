@@ -34,3 +34,5 @@ build/
 
 src/main/resources/secrets.yml
 src/test/resources/secrets.yml
+
+.env
