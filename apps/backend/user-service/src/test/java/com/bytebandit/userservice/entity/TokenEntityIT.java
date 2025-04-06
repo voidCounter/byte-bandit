@@ -18,12 +18,17 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class TokenEntityTest {
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false",
+    "spring.cloud.config.discovery.enabled=false",
+})
+class TokenEntityIT {
 
     @Autowired
     private TestEntityManager entityManager;

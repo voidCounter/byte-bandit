@@ -19,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 @DataJpaTest
 @Transactional
@@ -26,7 +27,11 @@ import org.springframework.test.context.ActiveProfiles;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(BCryptPasswordEncoder.class)
 @ActiveProfiles("test")
-class UserEntityTest {
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false",
+    "spring.cloud.config.discovery.enabled=false",
+})
+class UserEntityIT {
 
     @Autowired
     private TestEntityManager entityManager;
