@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,9 +24,12 @@ import org.springframework.util.StringUtils;
 @Configuration
 @EnableWebSecurity
 public class SecurityFilterChainConfig {
-    private final List<String> permittedRoutes =
-        List.of("/api/v1/user/login", "/api/v1/user/register", "/api/v1/user/verify", "/csrf",
-            "/test-csrf", "/actuator/*");
+    private final List<String> permittedRoutes;
+
+    @Autowired
+    public SecurityFilterChainConfig(PermittedRoutesConfig permittedRoutesConfig) {
+        this.permittedRoutes = permittedRoutesConfig.getRoutes();
+    }
 
     /**
      * This method sets up the security configuration by customizing the CSRF protection mechanism,
