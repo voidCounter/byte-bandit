@@ -33,6 +33,13 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     @Value("${app.refresh-token-expiration}")
     private long refreshTokenExpirationTime;
 
+    /**
+     * Constructor for AuthCookieFilter.
+     *
+     * @param permittedRoutesConfig the configuration for permitted routes
+     * @param tokenService the token service
+     * @param userDetailsService the user details service
+     */
     public AuthCookieFilter(
         PermittedRoutesConfig permittedRoutesConfig,
         TokenService tokenService,
