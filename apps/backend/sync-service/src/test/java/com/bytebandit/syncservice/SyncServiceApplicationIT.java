@@ -1,13 +1,15 @@
-package com.bytebandit.userservice;
+package com.bytebandit.syncservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(classes = {UserServiceApplication.class})
+@SpringBootTest
 @ActiveProfiles("test")
-class UserServiceApplicationTests {
+class SyncServiceApplicationIT {
+
     @Test
     void contextLoads() {
     }
+
 }

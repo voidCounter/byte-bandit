@@ -17,7 +17,6 @@
         <docker.image.prefix>oakcan</docker.image.prefix>
         <spring-boot.version>3.4.1</spring-boot.version>
         <java.version>17</java.version>
-        <skip.ut>false</skip.ut>
     </properties>
 
 
@@ -121,10 +120,9 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.2</version>
                     <configuration>
-                        <skipTests>${skip.ut}</skipTests>
                         <includes>
                             <include>**/*Test.java</include>
-                            <include>**/*UnitTest.java</include>
+                            <include>**/*Tests.java</include>
                         </includes>
                         <excludes>
                             <exclude>**/*IT.java</exclude>
@@ -136,13 +134,13 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>3.5.2</version>
                     <configuration>
-                        <skipTests>${skip.ut}</skipTests>
                         <classesDirectory>${project.build.outputDirectory}</classesDirectory>
                         <includes>
                             <include>**/*IT.java</include>
                         </includes>
                         <excludes>
                             <exclude>**/*Test.java</exclude>
+                            <exclude>**/*Tests.java</exclude>
                         </excludes>
                     </configuration>
                     <executions>

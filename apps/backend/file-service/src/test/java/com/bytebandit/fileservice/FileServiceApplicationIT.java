@@ -1,11 +1,15 @@
-package com.bytebandit.discovery;
+package com.bytebandit.fileservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
-class DiscoveryApplicationTests {
+@ActiveProfiles("test")
+class FileServiceApplicationIT {
+
     @Test
     void contextLoads() {
     }
+
 }

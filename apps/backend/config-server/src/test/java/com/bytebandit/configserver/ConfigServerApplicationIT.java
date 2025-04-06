@@ -1,10 +1,10 @@
-package com.bytebandit.syncservice;
+package com.bytebandit.configserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SyncServiceApplicationTests {
+class ConfigServerApplicationIT {
 
     @Test
     void contextLoads() {
