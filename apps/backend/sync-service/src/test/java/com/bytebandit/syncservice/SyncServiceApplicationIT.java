@@ -8,8 +8,12 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class SyncServiceApplicationIT {
 
+    /**
+     * Test to check if the Spring application context loads successfully.
+     */
     @Test
     void contextLoads() {
+        // This test will fail if the application context cannot start.
     }
 
 }
