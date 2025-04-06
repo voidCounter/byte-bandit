@@ -4,9 +4,13 @@ import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.model.TokenEntity;
 import com.bytebandit.gateway.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.transaction.Transactional;
 import java.security.Key;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -58,6 +62,7 @@ public class TokenService {
      * This method generates a Refresh token for the given user
      * with the specified expiration time and access token.
      */
+    @Transactional
     public void generateAndSaveRefreshToken(
         UserDetails user,
         long expirationTimeInSeconds,
@@ -71,7 +76,7 @@ public class TokenService {
         TokenEntity tokenEntity = tokenRepository.findByUserIdAndType(
                 userId,
                 TokenType.REFRESH
-            ).orElseThrow(() -> new InvalidTokenException("Token is invalid"));
+            ).orElseThrow(() -> new InvalidTokenException("Refresh token not found for user"));
 
         tokenEntity.setTokenHash(generateToken(user, expirationTimeInSeconds, userId));
         tokenEntity.setExpiresAt(
@@ -103,11 +108,21 @@ public class TokenService {
      * This method extracts all claims from the JWT token.
      */
     public Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
+        try {
+            return Jwts.parserBuilder()
             .setSigningKey(getSignInKey())
             .build()
             .parseClaimsJws(token)
             .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenException("Token has expired");
+        } catch (SecurityException | MalformedJwtException e) {
+            throw new InvalidTokenException("Invalid token signature");
+        } catch (UnsupportedJwtException e) {
+            throw new InvalidTokenException("Unsupported JWT token");
+        } catch (IllegalArgumentException e) {
+            throw new InvalidTokenException("JWT claims string is empty");
+        }
     }
 
     /**

@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TokenRepository extends JpaRepository<TokenEntity, UUID> {
 
-    public Optional<TokenEntity> findByUserIdAndType(UUID userId, TokenType type);
+    Optional<TokenEntity> findByUserIdAndType(UUID userId, TokenType type);
 }

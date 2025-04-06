@@ -6,6 +6,7 @@ import com.bytebandit.gateway.exception.CookieNotFoundException;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
 import com.bytebandit.gateway.utils.CookieUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -74,7 +75,8 @@ public class AuthCookieFilter extends OncePerRequestFilter {
 
         if (username != null) {
             UserDetails user = userDetailsService.loadUserByUsername(username);
-            if (tokenService.isValidToken(accessToken, user)) {
+            try {
+                tokenService.isValidToken(accessToken, user);
                 UsernamePasswordAuthenticationToken token =
                     new UsernamePasswordAuthenticationToken(
                         user,
@@ -83,22 +85,18 @@ public class AuthCookieFilter extends OncePerRequestFilter {
                     );
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(token);
-            } else if (tokenService.isTokenExpired(accessToken)) {
-
+            } catch (ExpiredJwtException e) {
                 final UUID userId = tokenService.extractUserId(accessToken);
-
                 final String newAccessToken = tokenService.generateToken(
                     user,
                     accessTokenExpirationTime,
                     userId
                 );
-
                 tokenService.generateAndSaveRefreshToken(
                     user,
                     refreshTokenExpirationTime,
                     accessToken
                 );
-
                 CookieUtil.setCookie(
                     response,
                     CookieKey.ACCESS_TOKEN.getKey(),
