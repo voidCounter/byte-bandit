@@ -5,6 +5,7 @@ import static com.bytebandit.userservice.utils.TestUtils.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.bytebandit.userservice.UserServiceApplication;
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
 import java.util.UUID;
@@ -15,12 +16,19 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 
 @DataJpaTest
+@ContextConfiguration(classes = UserServiceApplication.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test")
-class UserAndTokenEntityIntegrationTest {
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false",
+    "spring.cloud.config.discovery.enabled=false",
+})
+class UserAndTokenEntityIT {
 
     @Autowired
     private TestEntityManager entityManager;

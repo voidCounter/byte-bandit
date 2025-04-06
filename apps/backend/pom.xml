@@ -16,11 +16,14 @@
     <properties>
         <docker.image.prefix>oakcan</docker.image.prefix>
         <spring-boot.version>3.4.1</spring-boot.version>
+        <java.version>17</java.version>
+        <skip.ut>false</skip.ut>
     </properties>
 
 
     <modules>
         <module>discovery-server</module>
+        <module>common</module>
         <module>file-service</module>
         <module>gateway</module>
         <module>sync-service</module>
@@ -37,6 +40,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
     <build>
@@ -89,6 +99,63 @@
                             <phase>validate</phase>
                             <goals>
                                 <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>dockerfile-maven-plugin</artifactId>
+                    <version>1.4.13</version>
+                    <configuration>
+                        <!-- repository and tag will pick up each child’s artifactId/version -->
+                        <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                        <tag>${project.version}</tag>
+                        <buildArgs>
+                            <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                        </buildArgs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                    <configuration>
+                        <skipTests>${skip.ut}</skipTests>
+                        <includes>
+                            <include>**/*Test.java</include>
+                            <include>**/*UnitTest.java</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/*IT.java</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.5.2</version>
+                    <configuration>
+                        <skipTests>${skip.ut}</skipTests>
+                        <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                        <includes>
+                            <include>**/*IT.java</include>
+                        </includes>
+                        <excludes>
+                            <exclude>**/*Test.java</exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>integration-test</id>
+                            <goals>
+                                <goal>integration-test</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>verify</id>
+                            <goals>
+                                <goal>verify</goal>
                             </goals>
                         </execution>
                     </executions>

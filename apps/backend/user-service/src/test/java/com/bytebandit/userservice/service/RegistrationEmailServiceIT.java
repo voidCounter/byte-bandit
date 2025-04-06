@@ -23,7 +23,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @ActiveProfiles("test")
-class RegistrationEmailServiceIntegrationTest {
+class RegistrationEmailServiceIT {
     
     @RegisterExtension
     static GreenMailExtension greenMailExtension =

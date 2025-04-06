@@ -4,7 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.util.UUID;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -29,8 +29,6 @@ public class RegistrationEmailServiceTest {
      *     and {@code apiPrefix}
      *         and to invoke the private {@code confirmationUrl} method for testing.</li>
      * </ul>
-     *
-     * @throws Exception if there is an issue invoking the method or performing assertions
      */
     @Test
     public void confirmationUrl_ShouldGenerateCorrectUrl() {

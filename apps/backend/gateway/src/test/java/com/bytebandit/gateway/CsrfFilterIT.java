@@ -1,4 +1,5 @@
-package com.bytebandit.gateway.integration;
+package com.bytebandit.gateway;
+
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -9,15 +10,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@SpringBootTest
+@SpringBootTest(classes = com.bytebandit.gateway.GatewayApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class CsrfFilterTests {
+@TestPropertySource(properties = {
+    "spring.cloud.config.discovery.enabled=false",
+    "spring.cloud.config.enabled=false",
+    "eureka.client.enabled=false"
+})
+class CsrfFilterIT {
     @Autowired
     private MockMvc mockMvc;
 
