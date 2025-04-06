@@ -2,7 +2,6 @@ package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.dto.UserRegistrationResponse;
-import com.bytebandit.userservice.enums.TokenType;
 import com.bytebandit.userservice.exception.UserAlreadyExistsException;
 import com.bytebandit.userservice.projection.CreateUserAndTokenProjection;
 import com.bytebandit.userservice.repository.UserRepository;
@@ -10,6 +9,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import lib.user.enums.TokenType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
