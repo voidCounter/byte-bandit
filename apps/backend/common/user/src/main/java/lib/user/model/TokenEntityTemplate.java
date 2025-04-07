@@ -34,7 +34,7 @@ public class TokenEntityTemplate {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "token_hash", nullable = false, unique = true, length = 72)
+    @Column(name = "token_hash", nullable = false, unique = true, length = 512)
     private String tokenHash;
 
     @Column(name = "is_used", nullable = false)
