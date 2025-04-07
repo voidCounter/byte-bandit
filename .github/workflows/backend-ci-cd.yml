@@ -36,7 +36,67 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('apps/backend/pom.xml') }}
+          key: ${{ runner.os }}-m2-${{ hashFiles('pom.xml', 'apps/backend/pom.xml','apps/backend/*/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+      - name: Run Checkstyle for ${{ matrix.service }}
+        working-directory: apps/backend/${{ matrix.service }}
+        run: |
+          mvn checkstyle:check
+  test-analyze-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [
+          'discovery-server','gateway', 'config-server', 'user-service', 'file-service', 'sync-service', 'common' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
 
-      - name: Run Checkstyle
-        run: cd apps/backend && mvn checkstyle:check
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('pom.xml', 'apps/backend/pom.xml','apps/backend/*/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Run Unit Tests for ${{ matrix.service }}
+        working-directory: apps/backend/${{ matrix.service }}
+        run: |
+          mvn test
+
+      - name: Create .env file
+        run: |
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_TEST_PASSWORD }}" > .env
+
+      - name: Start docker container for integration tests
+        run: |
+          docker-compose -f docker-compose.test.yaml up user-test-db -d
+          for i in {1..30}; do
+            if docker-compose ps | grep "healthy"; then
+                echo "Infrastructures are healthy"
+                break
+            fi  
+            echo "Waiting for infrastructures to be healthy...($i/30)"
+            sleep 10
+          done
+          docker-compose ps | grep "healthy" || exit 1
+
+      - name: Run integration test for ${{ matrix.service }}
+        working-directory: apps/backend/${{ matrix.service }}
+        run: |
+          mvn verify -DskipUnitTests=true
+
+      - name: Stop and remove Docker containers after integration tests
+        run: |
+          docker-compose -f docker-compose.test.yaml down
+
