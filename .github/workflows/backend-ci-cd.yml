@@ -69,6 +69,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2-
 
+      - name: Compile and install for ${{ matrix.service }}
+        run: |
+          mvn clean install -DskipTests=true
       - name: Run Unit Tests for ${{ matrix.service }}
         working-directory: apps/backend/${{ matrix.service }}
         run: |
@@ -80,16 +83,16 @@ jobs:
 
       - name: Start docker container for integration tests
         run: |
-          docker-compose -f docker-compose.test.yaml up user-test-db -d
+          docker compose -f docker-compose.test.yaml up user-test-db -d
           for i in {1..30}; do
-            if docker-compose ps | grep "healthy"; then
+            if docker compose -f docker-compose.test.yaml ps | grep "healthy"; then
                 echo "Infrastructures are healthy"
                 break
             fi  
             echo "Waiting for infrastructures to be healthy...($i/30)"
             sleep 10
           done
-          docker-compose ps | grep "healthy" || exit 1
+          docker compose -f docker-compose.test.yaml ps | grep "healthy" || exit 1
 
       - name: Run integration test for ${{ matrix.service }}
         working-directory: apps/backend/${{ matrix.service }}
@@ -98,5 +101,5 @@ jobs:
 
       - name: Stop and remove Docker containers after integration tests
         run: |
-          docker-compose -f docker-compose.test.yaml down
+          docker compose -f docker-compose.test.yaml down
 
