@@ -17,12 +17,16 @@
         <docker.image.prefix>oakcan</docker.image.prefix>
         <spring-boot.version>3.4.1</spring-boot.version>
         <java.version>17</java.version>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <skipUnitTests>false</skipUnitTests>
     </properties>
 
 
     <modules>
         <module>discovery-server</module>
         <module>common</module>
+        <module>coverage</module>
         <module>file-service</module>
         <module>gateway</module>
         <module>sync-service</module>
@@ -120,6 +124,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.2</version>
                     <configuration>
+                        <skipTests>${skipUnitTests}</skipTests>
                         <includes>
                             <include>**/*Test.java</include>
                             <include>**/*Tests.java</include>
@@ -148,12 +153,33 @@
                             <id>integration-test</id>
                             <goals>
                                 <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.12</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
                             </goals>
                         </execution>
                         <execution>
-                            <id>verify</id>
+                            <id>report</id>
+                            <phase>test</phase>
                             <goals>
-                                <goal>verify</goal>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report-integration</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>report</goal>
                             </goals>
                         </execution>
                     </executions>
