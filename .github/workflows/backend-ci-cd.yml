@@ -1,4 +1,4 @@
-name: backend-linting
+name: backend-CI/CD
 on:
   push:
     branches:
@@ -13,17 +13,24 @@ on:
     paths:
       - 'apps/backend/**'
 jobs:
-  backend-lint:
+  lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [
+          'discovery-server','gateway', 'config-server', 'user-service', 'file-service', 'sync-service', 'common' ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: Cache Maven packages
         uses: actions/cache@v3
