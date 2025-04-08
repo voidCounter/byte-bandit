@@ -1,0 +1,81 @@
+name: frontend-ci-cd
+on:
+  push:
+    branches:
+      - '*'
+    paths:
+      - 'apps/web/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+      - develop-snapshot
+    paths:
+      - 'apps/web/**'
+jobs:
+  web-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      - name: Install dependencies
+        run: npm install
+      - name: Run ESLint
+        run: npm run lint
+      - name: Check for ESLint errors
+        if: ${{ failure() }}
+        run: echo "ESLint failed!" && exit 1
+  test-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      - name: Install dependencies
+        run: npm install
+      - name: Run Unit Tests
+        run: npm test -- --passWithNoTests
+      - name: Check for test errors
+        if: ${{ failure() }}
+        run: echo "Tests failed!" && exit 1
+      - name: Build the application
+        run: npm run build
+      - name: upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: apps/web/.next
+
+  deploy-to-vercel:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: apps/web/.next
+      - name: Deploy to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@latest
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_CLIENT_PROJECT_ID }}
+          PRODUCTION: ${{ github.ref == 'main' }}
