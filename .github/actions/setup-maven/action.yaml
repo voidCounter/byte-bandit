@@ -14,11 +14,3 @@ runs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'maven'
-
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('pom.xml', 'apps/backend/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-m2-
