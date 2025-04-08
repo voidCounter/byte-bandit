@@ -26,7 +26,7 @@ jobs:
         run: |
           mvn checkstyle:check
 
-  unit-tests:
+  test-and-coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,64 +40,40 @@ jobs:
         working-directory: apps/backend
         run: |
           mvn test
-
-  integration-tests:
-    runs-on: ubuntu-latest
-    needs: unit-tests
-    strategy:
-      matrix:
-        service: [ 'user-service', 'gateway' ]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-maven
-      - name: Compile and install
-        run: |
-          mvn clean install -DskipTests=true
-      - name: Create .env file in root
-        run: |
-          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_TEST_PASSWORD }}" > .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-      - name: Copy .env file to ${{ matrix.service }}
-        run: |
-          cp .env apps/backend/${{ matrix.service }}/.env
-      - name: Start Docker container for integration tests
-        run: |
-          docker compose -f docker-compose.test.yaml up user-test-db -d
-          for i in {1..30}; do
-            if docker compose -f docker-compose.test.yaml ps | grep "healthy"; then
-              echo "Infrastructures are healthy"
-              break
-            fi  
-            echo "Waiting for infrastructures to be healthy...($i/30)"
-            sleep 10
-          done
-          docker compose -f docker-compose.test.yaml ps | grep "healthy" || exit 1
-      - name: Run Integration Tests for ${{ matrix.service }}
-        working-directory: apps/backend/${{ matrix.service }}
+      - name: Setup Test Environment
         env:
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-          mvn verify -DskipUnitTests=true
-      - name: Stop and remove Docker containers
+          chmod +x setup-test-env.sh
+          ./setup-test-env.sh
+      - name: Start Infrastructure for Integration Tests
         run: |
-          docker compose -f docker-compose.test.yaml down
-
-  coverage-report:
-    runs-on: ubuntu-latest
-    needs: [ unit-tests, integration-tests ]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-maven
+          docker compose -f docker-compose.test.yaml --profile infra up -d
+          for i in {1..30}; do
+          if docker compose -f docker-compose.test.yaml --profile infra ps | grep "healthy"; then
+           echo "Infrastructure is healthy"
+           break
+          fi  
+          echo "Waiting for infrastructure to be healthy...($i/30)"
+          sleep 10
+          done
+          docker compose -f docker-compose.test.yaml --profile infra ps | grep "healthy" || exit 1
+      - name: Run Integration Tests for all services
+        working-directory: apps/backend
+        run: |
+          for service in user-service file-service sync-service gateway; do
+            cd $service
+            mvn verify -DskipUnitTests=true
+            cd ..
+          done
       - name: Generate Final Coverage Report
         working-directory: apps/backend
         run: |
           mvn verify -DskipTests=true
-      - name: Analyze with Sonarqube
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        run: |
+          mvn verify sonar:sonar -DskipTests=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+      - name: Stop Infrastructure
+        run: |
+          docker compose -f docker-compose.test.yaml --profile infra down

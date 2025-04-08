@@ -18,9 +18,21 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.coverage.jacoco.xmlReportPaths>
-            ${project.basedir}/apps/backend/coverage/target/jacoco-aggregate/jacoco.xml,
+            ${maven.multiModuleProjectDirectory}/apps/backend/coverage/target/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.organization>learnathon-by-geeky-solutions</sonar.organization>
+        <sonar.projectKey>Learnathon-By-Geeky-Solutions_byte-bandit</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>4.0.0.4121</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
