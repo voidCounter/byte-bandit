@@ -12,9 +12,7 @@ on:
       - develop-snapshot
     paths:
       - 'apps/web/**'
-permissions:
-  deployments: write
-  contents: read
+
 jobs:
   web-lint:
     runs-on: ubuntu-latest
@@ -33,14 +31,14 @@ jobs:
       - name: Check for ESLint errors
         if: ${{ failure() }}
         run: echo "ESLint failed!" && exit 1
+
   test-and-build:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: apps/web
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-node
@@ -55,13 +53,13 @@ jobs:
         run: npm run build
       - name: Verify Build Output
         run: ls -l .next || echo "Build output (.next) not found!"
-      - name: upload build artifacts
+      - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: web-build
           include-hidden-files: 'true'
           path: ${{ github.workspace }}/apps/web/.next
-          if-no-files-found: 'error'
+          if-no-files-found: error
 
   deploy-to-vercel:
     needs: test-and-build
@@ -70,19 +68,24 @@ jobs:
       run:
         working-directory: apps/web
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: ./.github/actions/setup-node  # Ensure Node.js is set up
+      - name: Install Vercel CLI
+        run: npm install -g vercel
       - uses: actions/download-artifact@v4
         with:
           name: web-build
-          path: ./apps/web/.next
-      - name: Deploy to Vercel Action
-        uses: BetaHuhn/deploy-to-vercel-action@latest
-        with:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT}}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_CLIENT_PROJECT_ID }}
-          PRODUCTION: ${{ github.ref == 'main' }}
+          path: ${{ github.workspace }}/apps/web/.next
+      - name: Verify Downloaded Artifact
+        run: ls -l .next || echo "Downloaded artifact not found!"
+      - name: Link Vercel Project
+        run: |
+          rm -rf .vercel
+          vercel link --token ${{ secrets.VERCEL_TOKEN }} --project ${{ secrets.VERCEL_CLIENT_PROJECT_ID }} --scope ${{ secrets.VERCEL_ORG_ID }} --yes 
+      - name: Deploy to Vercel
+        run: |
+          vercel --token ${{ secrets.VERCEL_TOKEN }} \
+                 --prod=${{ github.ref == 'refs/heads/main' }} \
+                 --yes
