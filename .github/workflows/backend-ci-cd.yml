@@ -70,10 +70,10 @@ jobs:
       - name: Generate Final Coverage Report
         working-directory: apps/backend
         run: |
-          mvn verify -DskipTests=true
+          mvn jacoco:report-aggregate -DskipTests=true
       - name: SonarCloud Scan
         run: |
-          mvn verify sonar:sonar -DskipTests=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          mvn sonar:sonar -DskipTests=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
       - name: Stop Infrastructure
         run: |
           docker compose -f docker-compose.test.yaml --profile infra down

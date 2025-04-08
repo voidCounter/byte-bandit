@@ -12,6 +12,9 @@ on:
       - develop-snapshot
     paths:
       - 'apps/web/**'
+permissions:
+  deployments: write
+  contents: read
 jobs:
   web-lint:
     runs-on: ubuntu-latest
@@ -50,11 +53,15 @@ jobs:
         run: echo "Tests failed!" && exit 1
       - name: Build the application
         run: npm run build
+      - name: Verify Build Output
+        run: ls -l .next || echo "Build output (.next) not found!"
       - name: upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: web-build
-          path: apps/web/.next
+          include-hidden-files: 'true'
+          path: ${{ github.workspace }}/apps/web/.next
+          if-no-files-found: 'error'
 
   deploy-to-vercel:
     needs: test-and-build
@@ -70,11 +77,11 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: web-build
-          path: apps/web/.next
+          path: ./apps/web/.next
       - name: Deploy to Vercel Action
         uses: BetaHuhn/deploy-to-vercel-action@latest
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT}}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_CLIENT_PROJECT_ID }}
