@@ -1,6 +1,7 @@
 package com.bytebandit.gateway.service;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import java.time.Duration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -19,8 +20,9 @@ public abstract class AbstractPostgresContainer {
         "postgres:17-alpine")
         .withDatabaseName("testdb")
         .withUsername("postgres")
-        .withPassword(dotenv.get("TEST_DB_PASSWORD"))
-        .withReuse(true);
+        .withPassword(dotenv.get("POSTGRES_PASSWORD"))
+        .withReuse(true)
+        .withStartupTimeout(Duration.ofMinutes(3));
 
     /**
      * This method sets up the PostgreSQL container properties for the Spring application context.

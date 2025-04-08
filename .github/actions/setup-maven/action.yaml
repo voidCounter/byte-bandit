@@ -1,0 +1,24 @@
+name: 'Setup Maven Environment'
+description: 'Sets up JDK 17 and caches Maven packages'
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('pom.xml', 'apps/backend/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-m2-
