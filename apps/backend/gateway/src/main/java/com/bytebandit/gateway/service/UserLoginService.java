@@ -54,6 +54,14 @@ public class UserLoginService {
 
         if (loginRequest.getUserId() == null) {
             loginRequest.setUserId(resolveUserId(loginRequest));
+        } else {
+            try {
+                UUID.fromString(loginRequest.getUserId());
+            } catch (IllegalArgumentException e) {
+                loginRequest.setUserId(
+                    resolveUserId(loginRequest)
+                );
+            }
         }
 
         String accessToken = tokenService.generateToken(
