@@ -1,4 +1,4 @@
-package com.bytebandit.userservice.annotation;
+package lib.core.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
