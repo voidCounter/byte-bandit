@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bytebandit.gateway.dto.LoginRequest;
 import com.bytebandit.gateway.enums.CookieKey;
 import com.bytebandit.gateway.model.UserEntity;
+import com.bytebandit.gateway.repository.TokenRepository;
 import com.bytebandit.gateway.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import lib.core.dto.response.ApiResponse;
@@ -15,9 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -34,19 +33,12 @@ class LoginServiceIT extends AbstractPostgresContainer {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
     private MockHttpServletResponse mockHttpServletResponse;
 
     private final String userEmail = "test-user@mail.com";
     private final String password = "ValidPass#123";
+    @Autowired
+    private TokenRepository tokenRepository;
 
     /**
      * This method sets up the test environment by creating a mock HTTP servlet response and

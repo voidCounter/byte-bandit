@@ -83,7 +83,7 @@ public class UserLoginService {
         tokenService.generateAndSaveRefreshToken(
             userDetails,
             refreshTokenExpirationInSeconds,
-            accessToken
+            UUID.fromString(loginRequest.getUserId())
         );
 
         return ApiResponse.<Boolean>builder()
