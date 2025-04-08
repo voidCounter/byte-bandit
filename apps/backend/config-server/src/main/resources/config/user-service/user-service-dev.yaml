@@ -8,6 +8,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     defer-datasource-initialization: true
     show-sql: true
+    hibernate:
+      ddl-auto: update
   sql:
     init:
       mode: always
@@ -16,6 +18,7 @@ spring:
     url: ${USER_DEV_DB_URL}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
+    initialization-mode: always
   mail:
     host: ${DEV_MAIL_HOST}
     port: ${DEV_MAIL_PORT}
