@@ -55,5 +55,6 @@
     </properties>
     <modules>
         <module>user</module>
+        <module>core</module>
     </modules>
 </project>

@@ -8,6 +8,7 @@
         <option value="$PROJECT_DIR$/user-service/pom.xml" />
         <option value="$PROJECT_DIR$/sync-service/pom.xml" />
         <option value="$PROJECT_DIR$/apps/backend/config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/apps/backend/common/core/pom.xml" />
       </list>
     </option>
   </component>

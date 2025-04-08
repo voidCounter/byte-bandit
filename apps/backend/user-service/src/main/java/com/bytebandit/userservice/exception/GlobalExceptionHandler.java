@@ -1,12 +1,12 @@
 package com.bytebandit.userservice.exception;
 
 import com.bytebandit.userservice.enums.ErrorCode;
-import com.bytebandit.userservice.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lib.core.dto.response.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

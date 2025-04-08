@@ -1,4 +1,4 @@
-package com.bytebandit.userservice.response;
+package lib.core.dto.response;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -7,12 +7,7 @@ import lombok.Builder;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
 
-/**
- * Standardized error response format for API errors.
- *
- * <p>Used by GlobalExceptionHandler to create consistent error responses across the application.
- * Includes unique error ID, timestamp, HTTP status, error details and path information.</p>
- */
+
 @Value
 @Builder
 public class ErrorResponse {
