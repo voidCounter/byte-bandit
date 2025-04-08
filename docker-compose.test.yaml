@@ -2,6 +2,8 @@ services:
   discovery-server:
     image: oakcan/discovery-server:latest
     container_name: oakcan-discovery-server-test
+    profiles:
+      - core
     environment:
       - SPRING_PROFILES_ACTIVE=test
     ports:
@@ -14,6 +16,8 @@ services:
   config-server:
     image: oakcan/config-server:latest
     container_name: oakcan-config-server-test
+    profiles:
+      - core
     environment:
       - SPRING_PROFILES_ACTIVE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
@@ -31,6 +35,8 @@ services:
   gateway:
     image: oakcan/gateway:latest
     container_name: oakcan-gateway-test
+    profiles:
+      - core
     ports:
       - "9003:8084"
     environment:
@@ -50,6 +56,8 @@ services:
   file-service:
     image: oakcan/file-service:latest
     container_name: oakcan-file-service-test
+    profiles:
+      - core
     ports:
       - "9004:8081"
     environment:
@@ -58,6 +66,8 @@ services:
   sync-service:
     image: oakcan/sync-service:latest
     container_name: oakcan-sync-service-test
+    profiles:
+      - core
     ports:
       - "9005:8082"
     environment:
@@ -66,6 +76,8 @@ services:
   user-service:
     image: oakcan/user-service:latest
     container_name: oakcan-user-service-test
+    profiles:
+      - core
     ports:
       - "9006:8083"
     environment:
@@ -82,6 +94,8 @@ services:
   user-test-db:
     image: postgres:17-alpine
     container_name: user-test-db
+    profiles:
+      - infra
     ports:
       - "15433:5432"
     environment:
