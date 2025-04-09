@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bytebandit.gateway.dto.LoginRequest;
 import com.bytebandit.gateway.enums.CookieKey;
 import com.bytebandit.gateway.model.UserEntity;
-import com.bytebandit.gateway.repository.TokenRepository;
 import com.bytebandit.gateway.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import lib.core.dto.response.ApiResponse;
@@ -37,8 +36,6 @@ class LoginServiceIT extends AbstractPostgresContainer {
 
     private final String userEmail = "test-user@mail.com";
     private final String password = "ValidPass#123";
-    @Autowired
-    private TokenRepository tokenRepository;
 
     /**
      * This method sets up the test environment by creating a mock HTTP servlet response and
