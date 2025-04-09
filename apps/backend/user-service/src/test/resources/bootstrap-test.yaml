@@ -4,6 +4,10 @@ spring:
       enabled: false
       discovery:
         enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
 eureka:
   client:
     enabled: false

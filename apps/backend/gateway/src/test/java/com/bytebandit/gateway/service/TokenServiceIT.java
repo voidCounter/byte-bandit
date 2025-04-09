@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.bytebandit.gateway.configurer.AbstractPostgresContainer;
 import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.model.TokenEntity;
 import com.bytebandit.gateway.model.UserEntity;
