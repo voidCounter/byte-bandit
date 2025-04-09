@@ -11,8 +11,10 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
+@SpringBootTest
 class ErrorResponseTest {
 
     private UUID fixedId;

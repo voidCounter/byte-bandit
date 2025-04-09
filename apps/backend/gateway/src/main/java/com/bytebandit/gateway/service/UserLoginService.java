@@ -74,7 +74,7 @@ public class UserLoginService {
             httpResponse,
             CookieKey.ACCESS_TOKEN.getKey(),
             accessToken,
-            false,
+            true,
             7 * 24 * 60 * 60,
             "/",
             false
