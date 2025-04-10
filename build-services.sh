@@ -1,9 +1,10 @@
 #!/bin/bash
 
 BACKEND_SERVICES="discovery-server config-server gateway user-service file-service sync-service"
+INFRA_SERVICES="user-dev-db mailhog"
 FRONTEND_SERVICE="client"
 DOCS_SERVICE="docs"
-ALL_SERVICES="$BACKEND_SERVICES $FRONTEND_SERVICE $DOCS_SERVICE"
+ALL_SERVICES="$BACKEND_SERVICES $FRONTEND_SERVICE $DOCS_SERVICE $INFRA_SERVICES"
 
 build_backend_service() {
   local service=$1
@@ -98,13 +99,16 @@ else
       *)
         # Check if it's a specific service
         if contains_service "$arg" "$ALL_SERVICES"; then
-          if contains_service "$arg" "$BACKEND_SERVICES"; then
+          if contains_service "$arg" "$INFRA_SERVICES";then
+            echo "Skipping build for infrastructure service: $arg"
+            continue
+          elif contains_service "$arg" "$BACKEND_SERVICES"; then
             build_backend_service "$arg"
           else
             build_non_maven_service "$arg"
           fi
         else
-          echo "Error: Unknown service or option '$arg'. Valid options: backend, client, docs, or a specific service ($ALL_SERVICES)"
+          echo "Error: Unknown service or option '$arg'. Valid options: ($ALL_SERVICES)"
           exit 1
         fi
         ;;
