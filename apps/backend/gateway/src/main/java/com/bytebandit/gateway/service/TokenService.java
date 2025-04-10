@@ -2,7 +2,9 @@ package com.bytebandit.gateway.service;
 
 import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.model.TokenEntity;
+import com.bytebandit.gateway.model.UserEntity;
 import com.bytebandit.gateway.repository.TokenRepository;
+import com.bytebandit.gateway.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -32,6 +34,7 @@ public class TokenService {
     private String secretKey;
 
     private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
 
     /**
      * This method generates a JWT token for the given user with the specified expiration time.
@@ -82,6 +85,30 @@ public class TokenService {
         tokenEntity.setExpiresAt(
             new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000)
         );
+        tokenRepository.save(tokenEntity);
+    }
+
+    /**
+     * This method generates a Refresh token for the given user
+     * with the specified expiration time and user ID.
+     */
+    @Transactional
+    public void generateAndSaveRefreshToken(
+        UserDetails user,
+        long expirationTimeInSeconds,
+        UUID userId
+    ) {
+        UserEntity userEntity = userRepository.findById(userId)
+            .orElseThrow(() -> new InvalidTokenException("User not found"));
+
+        TokenEntity tokenEntity = new TokenEntity();
+        tokenEntity.setType(TokenType.REFRESH);
+        tokenEntity.setTokenHash(generateToken(user, expirationTimeInSeconds, userId));
+        tokenEntity.setExpiresAt(
+            new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000)
+        );
+        tokenEntity.setUser(userEntity);
+
         tokenRepository.save(tokenEntity);
     }
 

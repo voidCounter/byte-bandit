@@ -1,9 +1,9 @@
 package com.bytebandit.userservice.dto;
 
-import com.bytebandit.userservice.annotation.ValidEmail;
-import com.bytebandit.userservice.annotation.ValidPassword;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Size;
+import lib.core.validation.ValidEmail;
+import lib.core.validation.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
