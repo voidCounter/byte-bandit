@@ -43,7 +43,7 @@ public class EmailVerificationController {
             TokenType.EMAIL_VERIFICATION
         );
         try {
-            response.sendRedirect(clientHostUri + "/login");
+            response.sendRedirect(clientHostUri + "/email-verified");
             return ResponseEntity.status(HttpStatus.FOUND).build();
         } catch (IOException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(

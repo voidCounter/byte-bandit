@@ -1,64 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root  {
-  /* Main color scheme using HSL format: hue saturation lightness */
-  /* Primary color: Amber/Orange-based with varied brightness levels */
-  --background: 27 100% 97%;
-  --foreground: 27 5% 10%;
-  --card: 27 50% 97%;
-  --card-foreground: 27 5% 15%;
-  --popover: 27 100% 97%;
-  --popover-foreground: 27 100% 10%;
-  --primary: 27 58.4% 34.9%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 27 30% 90%;
-  --secondary-foreground: 0 0% 0%;
-  --muted: -11 30% 95%;
-  --muted-foreground: 27 5% 40%;
-  --accent: -11 30% 90%;
-  --accent-foreground: 27 5% 15%;
-  --destructive: 0 100% 50%;
-  --destructive-foreground: 27 5% 97%;
-  --border: 27 30% 82%;
-  --input: 27 30% 50%;
-  --ring: 27 58.4% 34.9%;
-  --radius: 0.5rem;
+:root {
+    /* Main color scheme using HSL format: hue saturation lightness */
+    /* Primary color: Amber/Orange-based with varied brightness levels */
+    --background: 27 100% 97%;
+    --foreground: 27 5% 10%;
+    --card: 27 50% 97%;
+    --card-foreground: 27 5% 15%;
+    --popover: 27 100% 97%;
+    --popover-foreground: 27 100% 10%;
+    --primary: 27 58.4% 34.9%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 27 30% 90%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: -11 30% 95%;
+    --muted-foreground: 27 5% 40%;
+    --accent: -11 30% 90%;
+    --accent-foreground: 27 5% 15%;
+    --success: 142 71% 45%; /* a warm green, similar to tailwind's emerald-500 */
+    --success-foreground: 0 0% 100%; /* white for contrast */
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 27 5% 97%;
+    --border: 27 30% 82%;
+    --input: 27 30% 50%;
+    --ring: 27 58.4% 34.9%;
+    --radius: 0.5rem;
 }
-.dark  {
-  --background: 27 50% 10%;
-  --foreground: 27 5% 97%;
-  --card: 27 50% 10%;
-  --card-foreground: 27 5% 97%;
-  --popover: 27 50% 5%;
-  --popover-foreground: 27 5% 97%;
-  --primary: 27 58.4% 34.9%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 27 30% 20%;
-  --secondary-foreground: 0 0% 100%;
-  --muted: -11 30% 25%;
-  --muted-foreground: 27 5% 65%;
-  --accent: -11 30% 25%;
-  --accent-foreground: 27 5% 95%;
-  --destructive: 0 100% 50%;
-  --destructive-foreground: 27 5% 97%;
-  --border: 27 30% 50%;
-  --input: 27 30% 50%;
-  --ring: 27 58.4% 34.9%;
-  --radius: 0.5rem;
+
+.dark {
+    --background: 27 50% 10%;
+    --foreground: 27 5% 97%;
+    --card: 27 50% 10%;
+    --card-foreground: 27 5% 97%;
+    --popover: 27 50% 5%;
+    --popover-foreground: 27 5% 97%;
+    --primary: 27 58.4% 34.9%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 27 30% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: -11 30% 25%;
+    --muted-foreground: 27 5% 65%;
+    --accent: -11 30% 25%;
+    --accent-foreground: 27 5% 95%;
+    --success: 142 71% 35%;
+    --success-foreground: 0 0% 100%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 27 5% 97%;
+    --border: 27 30% 50%;
+    --input: 27 30% 50%;
+    --ring: 27 58.4% 34.9%;
+    --radius: 0.5rem;
 }
+
 .no-scrollbar {
-  scrollbar-width: none;
+    scrollbar-width: none;
 }
+
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
 }

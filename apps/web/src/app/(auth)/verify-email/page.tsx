@@ -24,12 +24,14 @@ export default function VerifyEmailPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4">
-            <Card className="w-full max-w-md shadow-xl border-primary/50">
-                <CardHeader className={"flex justify-center items-center"}>
-                    <div className={"p-4 rounded-full bg-primary/30"}>
-                        <MailIcon className={"w-10 h-10 stroke-1 text-primary-foreground"}/>
+            <Card className="w-full max-w-md shadow-xl border-primary/60 border">
+                <div className={"w-full flex justify-center items-center"}>
+                    <div className={"absolute -mt-0 p-4 rounded-full bg-background border-2 border-primary/60"}>
+                        <MailIcon className={"w-10 h-10 stroke-1 text-primary"}/>
                     </div>
-                    <CardTitle className="text-2xl font-black text-center">Verify your email</CardTitle>
+                </div>
+                <CardHeader className={"flex justify-center items-center "}>
+                    <CardTitle className="text-2xl font-black text-center mt-8">Verify your email</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-sm text-center">
