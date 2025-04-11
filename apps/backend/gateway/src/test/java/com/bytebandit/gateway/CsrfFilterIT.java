@@ -37,7 +37,7 @@ class CsrfFilterIT {
      */
     @Test
     void testGetRequestSetsCsrfCookie() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/csrf"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/auth/csrf"))
             .andExpect(status().isOk())
             .andExpect(MockMvcResultMatchers.cookie().exists("XSRF-TOKEN"));
     }
@@ -50,7 +50,7 @@ class CsrfFilterIT {
      */
     @Test
     void testPostWithoutCsrfToken() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/test-csrf")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/test-csrf")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{}"))
             .andExpect(status().isForbidden());
@@ -71,11 +71,12 @@ class CsrfFilterIT {
      */
     @Test
     void testPostWithCsrfToken() throws Exception {
-        MvcResult csrfResponse = mockMvc.perform(MockMvcRequestBuilders.get("/csrf")).andReturn();
+        MvcResult csrfResponse =
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/auth/csrf")).andReturn();
         String csrfToken =
             Objects.requireNonNull(csrfResponse.getResponse().getCookie("XSRF-TOKEN"),
                 "CSRF TOKEN COOKIE NOT FOUND").getValue();
-        mockMvc.perform(MockMvcRequestBuilders.post("/test-csrf")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/test-csrf")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-XSRF-TOKEN", csrfToken)
                 .cookie(csrfResponse.getResponse().getCookie("XSRF-TOKEN"))

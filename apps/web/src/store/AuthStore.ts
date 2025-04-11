@@ -1,8 +1,10 @@
-import {User} from "@/types/User";
+import {User} from "@/types/User/User";
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 
 interface AuthStore {
+    pendingVerificationEmail: string | null,
+    setPendingVerificationEmail: (email: string) => void,
     authenticatedUser: User | null,
     setAuthenticatedUser: (user: User) => void,
     deleteAuthenticatedUser: () => void
@@ -11,7 +13,11 @@ interface AuthStore {
 export const useAuthStore = create<AuthStore>()(
     persist(
         (set) => ({
+            pendingVerificationEmail: null,
             authenticatedUser: null,
+            setPendingVerificationEmail: (email: string) => {
+                set({pendingVerificationEmail: email});
+            },
             setAuthenticatedUser: (user: User) => {
                 set({authenticatedUser: user});
             },
