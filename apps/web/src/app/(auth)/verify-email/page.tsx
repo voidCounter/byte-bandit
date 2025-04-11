@@ -35,7 +35,7 @@ export default function VerifyEmailPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-sm text-center">
-                        We've sent a verification link to <span
+                        We&apos;ve sent a verification link to <span
                         className="font-semibold">{pendingVerificationEmail}</span>. Please check
                         your inbox and follow the link to activate your account.
                     </p>
