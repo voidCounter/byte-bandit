@@ -1,23 +1,30 @@
 package com.bytebandit.userservice.controller;
 
+import com.bytebandit.userservice.dto.ResendVerificationRequest;
 import com.bytebandit.userservice.service.TokenVerificationService;
+import com.bytebandit.userservice.service.UserRegistrationService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
 import lib.user.enums.TokenType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class EmailVerificationController {
 
     private final TokenVerificationService tokenVerificationService;
+    private final UserRegistrationService userRegistrationService;
 
     @Value("${client.host.uri}")
     private String clientHostUri;
@@ -49,5 +56,21 @@ public class EmailVerificationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 "Failed to redirect, please go to " + clientHostUri + "/login\n");
         }
+    }
+
+    /**
+     * Resends the verification email to the user.
+     *
+     * @param resendVerificationRequest The request containing the email address.
+     *
+     * @return ResponseEntity with the status of the resend operation.
+     */
+    @PostMapping("/resend-verification")
+    public ResponseEntity<String> resendVerificationEmail(
+        @RequestBody ResendVerificationRequest resendVerificationRequest
+    ) {
+        log.info("Resending verification email to: {}", resendVerificationRequest.getEmail());
+        userRegistrationService.resendVerificationEmail(resendVerificationRequest.getEmail());
+        return ResponseEntity.ok("Verification email resent successfully.");
     }
 }

@@ -18,3 +18,10 @@ app:
     routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*
   access-token-expiration: 3600
   refresh-token-expiration: 86400
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.boot.autoconfigure.security.servlet: DEBUG
+    org.springframework.boot.autoconfigure.web.servlet.error: DEBUG

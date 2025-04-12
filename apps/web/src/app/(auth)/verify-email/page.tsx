@@ -8,12 +8,15 @@ import {toast} from "sonner"
 import {useAuthStore} from "@/store/AuthStore";
 import {MailIcon} from "lucide-react";
 import Link from 'next/link'
+import Loading from "@/components/ui/loading";
 
 export default function VerifyEmailPage() {
     const {pendingVerificationEmail, setPendingVerificationEmail} = useAuthStore();
 
-    const resendMutation = useMutation({
-        mutationFn: () => AxiosInstance.post(""),
+    const {mutate: resendVerificationEmail, isPending} = useMutation({
+        mutationFn: () => AxiosInstance.post("/api/v1/user/resend-verification", {
+            email: pendingVerificationEmail
+        }),
         onSuccess: () => {
             toast.message("Verification email resent", {description: "Verification email resent"});
         },
@@ -41,14 +44,15 @@ export default function VerifyEmailPage() {
                         Please check
                         your inbox and follow the link to activate your account.
                     </p>
-                    <div className="flex items-center justify-center gap-2">
-                        <Button onClick={() => resendMutation.mutate()} disabled={resendMutation.isPending}>
-                            {resendMutation.isPending ? "Resending..." : "Resend Email"}
+                    <div className="flex flex-col items-center justify-center gap-2">
+                        <Button onClick={() => resendVerificationEmail()}>
+                            {isPending ? <Loading
+                                text={"Resending..."}/> : "Resend"}
                         </Button>
-                    </div>
-                    <div className="text-sm text-center">
-                        Already verified?{" "}
-                        <Link href="/login" className="text-primary hover:underline">Log in here</Link>
+                        <div className="text-sm text-center">
+                            Already verified?{" "}
+                            <Link href="/login" className="text-primary hover:underline">Log in here</Link>
+                        </div>
                     </div>
                 </CardContent>
             </Card>

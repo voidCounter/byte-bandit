@@ -30,6 +30,7 @@ AxiosInstance.interceptors.request.use(
             const MAX_RETRIES = 3;
 
             if (csrfToken) {
+                console.log("Got the csrf: ", csrfToken);
                 config.headers[CSRF_HEADER_NAME] = csrfToken;
                 return config;
             }

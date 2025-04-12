@@ -3,7 +3,10 @@ package com.bytebandit.userservice.service;
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.dto.UserRegistrationResponse;
 import com.bytebandit.userservice.exception.UserAlreadyExistsException;
+import com.bytebandit.userservice.model.TokenEntity;
+import com.bytebandit.userservice.model.UserEntity;
 import com.bytebandit.userservice.projection.CreateUserAndTokenProjection;
+import com.bytebandit.userservice.repository.TokenRepository;
 import com.bytebandit.userservice.repository.UserRepository;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -21,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class UserRegistrationService {
 
     private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TransactionTemplate transactionTemplate;
     private final RegistrationEmailService registrationEmailService;
@@ -85,5 +89,39 @@ public class UserRegistrationService {
             token,
             user.getId()
         );
+    }
+
+    /**
+     * Resends the verification email to the user with the provided email address.
+     *
+     * @param email User's requested receiver email
+     */
+    public void resendVerificationEmail(
+        String email
+    ) {
+        UserEntity user = userRepository.findByEmail(
+            email).orElseThrow(() -> new IllegalArgumentException(
+            "If this email exists, an email will be sent.")); // avoid leaking information
+        if (user.isVerified()) {
+            return;
+        }
+        tokenRepository.invalidateAllForUserAndType(
+            user, TokenType.EMAIL_VERIFICATION
+        );
+
+        UUID token = UUID.randomUUID();
+        String tokenHash = passwordEncoder.encode(token.toString());
+        Timestamp tokenExpiresAt = Timestamp.from(Instant.now().plus(24, ChronoUnit.HOURS));
+
+        TokenEntity tokenEntity = TokenEntity.builder()
+            .type(TokenType.EMAIL_VERIFICATION)
+            .tokenHash(tokenHash)
+            .used(false)
+            .user(user)
+            .expiresAt(tokenExpiresAt).build();
+        tokenRepository.save(tokenEntity);
+
+        registrationEmailService.sendEmail(user.getEmail(), user.getFullName(), token.toString(),
+            user.getId());
     }
 }
