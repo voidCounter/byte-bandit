@@ -17,7 +17,8 @@ export const FormStatus = ({status, message}: StatusProps) => {
                     {message}
                 </div>
                 <Button variant={"ghost"} size={"icon"} onClick={() => setClose(true)}
-                        className={"absolute top-0 right-0 rounded-full hover:bg-transparent text-destructive"}>
+                        className={"absolute top-0 right-0 rounded-full hover:bg-transparent text-destructive"}
+                        aria-label={"Dismiss message"}>
                     <X/>
                 </Button>
             </div> : <div></div>

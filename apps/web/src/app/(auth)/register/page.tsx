@@ -69,6 +69,7 @@ export default function Register() {
     })
 
     function onRegisterFormSubmit(data: z.infer<typeof registerSchema>) {
+        setErrorMessage(null);
         register(data);
     }
 
