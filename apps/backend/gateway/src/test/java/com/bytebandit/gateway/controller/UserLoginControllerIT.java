@@ -1,6 +1,5 @@
 package com.bytebandit.gateway.controller;
 
-import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -12,7 +11,6 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import java.util.Map;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,8 +48,8 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     private String csrfToken;
 
     /**
-     * This method sets up the test environment by deleting all existing users and
-     * creating a new user with a known password.
+     * This method sets up the test environment by deleting all existing users and creating a new
+     * user with a known password.
      */
     @BeforeEach
     void setup() {
@@ -60,7 +58,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
         Response response = RestAssured
             .given()
             .when()
-            .get("/csrf")
+            .get("/api/v1/auth/csrf")
             .then()
             .statusCode(HttpStatus.OK.value())
             .extract()
@@ -91,10 +89,9 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     }
 
     /**
-     * This test verifies that a user can log in with valid credentials.
-     * It sends a POST request to the login endpoint with the user's email and password,
-     * and checks that the response status code is 200 (OK) and the response body contains
-     * the expected values.
+     * This test verifies that a user can log in with valid credentials. It sends a POST request to
+     * the login endpoint with the user's email and password, and checks that the response status
+     * code is 200 (OK) and the response body contains the expected values.
      */
     @Test
     void login_shouldSucceedWithValidCredentials() {
@@ -121,21 +118,21 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     }
 
     /**
-     * This test verifies that a user cannot log in with an invalid email.
-     * It sends a POST request to the login endpoint with an invalid email and a valid password,
-     * and checks that the response status code is 401 (Unauthorized) and the response body
-     * contains the expected error message.
+     * This test verifies that a user cannot log in with an invalid email. It sends a POST request
+     * to the login endpoint with an invalid email and a valid password, and checks that the
+     * response status code is 401 (Unauthorized) and the response body contains the expected error
+     * message.
      */
     @Test
     void login_shouldFailWithInvalidPassword() {
 
         String jsonBody = """
-                   {
-                       "email": "test@example.com",
-                       "password": "ValidPass1$",
-                       "userId": "..."
-                   }
-                """;
+               {
+                   "email": "test@example.com",
+                   "password": "ValidPass1$",
+                   "userId": "..."
+               }
+            """;
 
         requestSpecification()
             .body(jsonBody)

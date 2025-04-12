@@ -1,4 +1,4 @@
-package com.bytebandit.gateway;
+package com.bytebandit.gateway.filter;
 
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
