@@ -1,6 +1,17 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import {fetchCsrfToken} from "@/utils/csrf";
+
+
+const fetchCsrfToken = async () => {
+    try {
+        const response = await AxiosInstance.get("/auth/csrf");
+        if (response.status == 200) {
+            return response.data;
+        }
+    } catch (error) {
+        console.error("Error fetching CSRF token:", error);
+    }
+}
 
 // TODO: Axios Interceptor Instance
 export const AxiosInstance = axios.create({
@@ -18,15 +29,27 @@ AxiosInstance.interceptors.request.use(
             let csrfToken = Cookies.get("XSRF-TOKEN");
 
             if (!csrfToken) {
-                await fetchCsrfToken();
-                csrfToken = Cookies.get("XSRF-TOKEN");
+                console.warn("[CSRF] Token missing. Attempting recovery...");
+
+                try {
+                    await fetchCsrfToken();
+                    csrfToken = Cookies.get("XSRF-TOKEN");
+                } catch (fetchError) {
+                    console.error("[CSRF] Token fetch failed:", fetchError);
+                }
             }
 
             if (csrfToken) {
                 config.headers["X-XSRF-TOKEN"] = csrfToken;
-            } else {
-                console.warn("CSRF token not found");
+                return config;
             }
+            console.error("[CSRF] Token not found after recovery attempt. Blocking request.");
+            if (typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("csrf-token-missing", {
+                    detail: {url: config.url, method: config.method}
+                }));
+            }
+            return Promise.reject(new axios.Cancel("[CSRF] Missing token. Request cancelled."));
         }
         return config;
     },

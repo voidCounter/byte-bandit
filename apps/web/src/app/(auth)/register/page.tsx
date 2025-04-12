@@ -15,6 +15,8 @@ import Loading from "@/components/ui/loading";
 import {useAuthStore} from "@/store/AuthStore";
 import {toast} from "sonner";
 import {useRouter} from "next/navigation";
+import {APIErrorResponse} from "@/types/APIErrorResponse";
+import {FormStatus} from "@/app/components/ui/status";
 
 const registerSchema = z.object({
     fullName: z.string().min(1, {message: "Must have at least 1 character."}).regex(/^[A-Za-z]+[A-Za-z\s]*$/, {message: "Name must contain only letters and spaces(e.g. Jane Doe)."}),
@@ -25,14 +27,13 @@ const registerSchema = z.object({
     }).max(16, {message: "Password length must be less than 17."}),
 });
 const fieldErrorMap: Record<string, keyof z.infer<typeof registerSchema>> = {
-    'USER-02': 'email'
+    'USER-02': 'email',
+    'USER-03': 'email',
 }
 export default function Register() {
     const router = useRouter();
-    const {setError} = useForm();
-    const {setPendingVerificationEmail} = useAuthStore()
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+    const {setPendingVerificationEmail} = useAuthStore()
     const registerForm = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
@@ -43,17 +44,26 @@ export default function Register() {
     })
 
     const {mutate: register, isPending} = useMutation({
-        mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/user/register", data),
+        mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/api/v1/user/register", data),
         onSuccess: response => {
             toast.success("User registered successfully.");
             setPendingVerificationEmail("testemail@gmail.com");
             router.push("/verify-email");
         },
+        /**
+         * Handle error response
+         * Map error code to field.
+         * @param error
+         */
         onError: error => {
             if (error instanceof AxiosError && error.response) {
                 const apiError = error.response.data as APIErrorResponse;
                 const field = fieldErrorMap[apiError.errorCode];
-                registerForm.setError(field, {type: 'manual', message: apiError.details});
+                if (field) {
+                    registerForm.setError(field, {type: 'manual', message: apiError.details});
+                } else {
+                    setErrorMessage(apiError.details || 'Registration failed. Please try again.');
+                }
             }
         }
     })
@@ -76,6 +86,9 @@ export default function Register() {
                                 " text-transparent"}>Oakcan</span><span>{` account`}</span>
                     </h2>
                 </div>
+                {
+                    errorMessage && <FormStatus status={'error'} message={errorMessage}/>
+                }
                 <Form {...registerForm}>
                     <form
                         onSubmit={registerForm.handleSubmit(onRegisterFormSubmit)}

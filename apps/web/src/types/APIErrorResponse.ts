@@ -1,4 +1,4 @@
-type APIErrorResponse = {
+export type APIErrorResponse = {
     errorId: string;
     timestamp: string;
     status: number;

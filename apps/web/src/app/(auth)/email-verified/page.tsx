@@ -19,7 +19,8 @@ export default function EmailVerifiedPage() {
                     damping: 20
                 }}
             >
-                <CheckCircle2 className="text-primary w-16 h-16" strokeWidth={2}/>
+                <CheckCircle2 className="text-primary w-16 h-16" strokeWidth={2}
+                              aria-label="Email verification successful"/>
             </motion.div>
 
             <h2 className="text-xl font-semibold">Your email has been verified</h2>

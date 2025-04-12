@@ -29,7 +29,7 @@ public class EmailVerificationController {
      * @param userid   The user ID.
      * @param response The HTTP response.
      *
-     * @return ResponseEntity with a redirect to the login page.
+     * @return ResponseEntity with a redirect to the email verification confirmation page.
      */
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(
