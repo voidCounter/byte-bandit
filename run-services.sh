@@ -96,7 +96,8 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 # remove duplicates
-TARGET_SERVICES=($(echo "${TARGET_SERVICES[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+mapfile -t TARGET_SERVICES < <(echo "${TARGET_SERVICES[@]}" | tr ' ' '\n' | sort -u)
+
 
 echo "Action: $ACTION"
 if [[ ${#TARGET_SERVICES[*]} -gt 0 ]]; then
