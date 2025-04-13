@@ -41,6 +41,7 @@ services:
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
     healthcheck:
       test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health" ]
       interval: 10s
