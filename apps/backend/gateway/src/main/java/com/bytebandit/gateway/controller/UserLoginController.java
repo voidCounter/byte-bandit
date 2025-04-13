@@ -3,7 +3,6 @@ package com.bytebandit.gateway.controller;
 import com.bytebandit.gateway.dto.LoginRequest;
 import com.bytebandit.gateway.service.UserLoginService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lib.core.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,8 @@ public class UserLoginController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Boolean>> login(
-        @Valid @RequestBody LoginRequest loginRequest,
+        // for now, no validation is needed
+        @RequestBody LoginRequest loginRequest,
         HttpServletResponse response
     ) {
         return ResponseEntity.ok(userLoginService.login(loginRequest, response));
