@@ -1,16 +1,18 @@
 package com.bytebandit.userservice.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
-@Getter
 @NoArgsConstructor
 public class ResendVerificationRequest {
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Invalid email format")
     String email;
 }

@@ -1,8 +1,8 @@
 package com.bytebandit.userservice.controller;
 
 import com.bytebandit.userservice.dto.ResendVerificationRequest;
-import com.bytebandit.userservice.exception.InvalidTokenException;
-import com.bytebandit.userservice.exception.TokenExpiredException;
+import com.bytebandit.userservice.exception.EmailVerificationExpiredException;
+import com.bytebandit.userservice.exception.InvalidEmailVerificationLinkException;
 import com.bytebandit.userservice.service.TokenVerificationService;
 import com.bytebandit.userservice.service.UserRegistrationService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,7 +56,7 @@ public class EmailVerificationController {
             response.sendRedirect(clientHostUri + "/email-verification?status=success");
             return ResponseEntity.status(HttpStatus.FOUND).build();
 
-        } catch (TokenExpiredException ex) {
+        } catch (EmailVerificationExpiredException ex) {
             try {
                 response.sendRedirect(clientHostUri + "/email-verification?status=expired");
                 return ResponseEntity.status(HttpStatus.FOUND).build();
@@ -64,7 +64,7 @@ public class EmailVerificationController {
                 return ResponseEntity.status(HttpStatus.GONE).body(
                     "Verification link expired. Please request a new one.");
             }
-        } catch (InvalidTokenException ex) {
+        } catch (InvalidEmailVerificationLinkException ex) {
             try {
                 response.sendRedirect(clientHostUri + "/email-verification?status=invalid");
                 return ResponseEntity.status(HttpStatus.FOUND).build();

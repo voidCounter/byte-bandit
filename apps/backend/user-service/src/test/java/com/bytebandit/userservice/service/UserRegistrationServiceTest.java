@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.bytebandit.userservice.exception.FailedEmailVerificationAttemptException;
+import com.bytebandit.userservice.exception.EmailAlreadyVerifiedException;
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
 import com.bytebandit.userservice.repository.TokenRepository;
@@ -76,7 +76,7 @@ public class UserRegistrationServiceTest {
 
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
-        assertThrows(FailedEmailVerificationAttemptException.class,
+        assertThrows(EmailAlreadyVerifiedException.class,
             () -> userRegistrationService.resendVerificationEmail("test@example.com"));
     }
 

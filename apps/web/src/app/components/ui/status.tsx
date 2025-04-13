@@ -9,11 +9,14 @@ interface StatusProps {
 
 export const FormStatus = ({status, message}: StatusProps) => {
     const [close, setClose] = React.useState(false);
+    React.useEffect(() => {
+        setClose(false);
+    }, [status, message])
     return (
         !close ?
             <div className={"relative"}>
                 <div
-                    className={`${status == 'success' ? 'bg-success text-success-foreground' : 'bg-destructive/20'} p-4 mb-4 text-sm rounded-md font-normal border-2 border-destructive/30 text-destructive-foreground`}>
+                    className={`${status == 'success' ? 'bg-success text-success-foreground border-success/30' : 'bg-destructive/20 border-destructive/30 text-destructive-foreground'} p-4 mb-4 text-sm rounded-md font-normal border-2`}>
                     {message}
                 </div>
                 <Button variant={"ghost"} size={"icon"} onClick={() => setClose(true)}
@@ -21,6 +24,6 @@ export const FormStatus = ({status, message}: StatusProps) => {
                         aria-label={"Dismiss message"}>
                     <X/>
                 </Button>
-            </div> : <div></div>
+            </div> : <div/>
     )
 }

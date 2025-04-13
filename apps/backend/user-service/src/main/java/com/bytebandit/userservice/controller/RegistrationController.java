@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RegistrationController {
-    UserRegistrationService userRegistrationService;
+    private final UserRegistrationService userRegistrationService;
 
     public RegistrationController(UserRegistrationService userRegistrationService) {
         this.userRegistrationService = userRegistrationService;
@@ -26,7 +26,6 @@ public class RegistrationController {
     @PostMapping("/register")
     ResponseEntity<?> register(@RequestBody UserRegistrationRequest request) {
         userRegistrationService.register(request);
-        // Registration logic here
         return ResponseEntity.ok("User registered successfully");
     }
 }

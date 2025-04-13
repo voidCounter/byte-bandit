@@ -2,7 +2,7 @@ package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.dto.UserRegistrationResponse;
-import com.bytebandit.userservice.exception.FailedEmailVerificationAttemptException;
+import com.bytebandit.userservice.exception.EmailAlreadyVerifiedException;
 import com.bytebandit.userservice.exception.UserAlreadyExistsException;
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
@@ -106,7 +106,7 @@ public class UserRegistrationService {
             email).orElseThrow(() -> new IllegalArgumentException(
             "If this email exists, an email will be sent.")); // avoid leaking information
         if (user.isVerified()) {
-            throw new FailedEmailVerificationAttemptException("User is already verified.");
+            throw new EmailAlreadyVerifiedException("User is already verified.");
         }
         tokenRepository.invalidateAllForUserAndType(
             user, TokenType.EMAIL_VERIFICATION

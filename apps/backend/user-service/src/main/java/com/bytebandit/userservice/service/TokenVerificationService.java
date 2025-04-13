@@ -1,5 +1,7 @@
 package com.bytebandit.userservice.service;
 
+import com.bytebandit.userservice.exception.EmailVerificationExpiredException;
+import com.bytebandit.userservice.exception.InvalidEmailVerificationLinkException;
 import com.bytebandit.userservice.exception.InvalidTokenException;
 import com.bytebandit.userservice.exception.TokenExpiredException;
 import com.bytebandit.userservice.model.TokenEntity;
@@ -35,10 +37,20 @@ public class TokenVerificationService {
         TokenEntity tokenEntity =
             tokenRepository.findByUserIdAndTypeAndCreatedAtBeforeAndExpiresAtAfterAndUsedIsFalse(
                 UUID.fromString(userId), tokenType, Timestamp.from(Instant.now()),
-                Timestamp.from(Instant.now())).orElseThrow(
-                () -> new TokenExpiredException("Token is expired."));
+                Timestamp.from(Instant.now())).orElseThrow(() -> {
+                    if (tokenType == TokenType.EMAIL_VERIFICATION) {
+                        return new EmailVerificationExpiredException(
+                        "Email verification token is expired.");
+                    }
+                    return new TokenExpiredException("Token is expired.");
+                });
 
         if (!passwordEncoder.matches(token, tokenEntity.getTokenHash())) {
+
+            if (tokenType == TokenType.EMAIL_VERIFICATION) {
+                throw new InvalidEmailVerificationLinkException("Email verification link is "
+                                                                    + "invalid.");
+            }
             throw new InvalidTokenException("Token is invalid");
         }
 

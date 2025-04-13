@@ -23,7 +23,7 @@ export function ModeToggle({className}: { className?: string }) {
     }
 
     return (
-        <Button className={cn(className)} variant={"outline"} size={"icon"} onClick={toggleTheme}
+        <Button className={cn(className, "z-20")} variant={"outline"} size={"icon"} onClick={toggleTheme}
         >
             <Sun
                 className={cn("h-[1.2rem] w-[1.2rem]", theme === 'light' ? 'scale-100' : 'scale-0', "rotate-0 transition-all")}/>

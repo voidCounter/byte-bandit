@@ -1,10 +1,11 @@
-"use client"
+"use client";
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import React from 'react';
 import {useAuthStore} from "@/store/AuthStore";
 import {MailIcon} from "lucide-react";
 import Link from 'next/link'
+import {toast} from 'sonner';
 import Loading from "@/components/ui/loading";
 import {useResendVerification} from "@/hooks/useResendVerification";
 
@@ -13,9 +14,11 @@ export default function VerifyEmailPage() {
     const {mutate: resendVerificationEmail, isPending} = useResendVerification({});
 
     const handleResendVerificationEmail = async () => {
-        if (pendingVerificationEmail != null) {
-            resendVerificationEmail(pendingVerificationEmail);
+        if (!pendingVerificationEmail) {
+            toast.error("No email to verify", {description: "Please sign up first"});
+            return;
         }
+        resendVerificationEmail(pendingVerificationEmail);
     }
 
     return (
@@ -37,7 +40,8 @@ export default function VerifyEmailPage() {
                         your inbox and follow the link to activate your account.
                     </p>
                     <div className="flex flex-col items-center justify-center gap-2">
-                        <Button onClick={handleResendVerificationEmail} disabled={isPending}>
+                        <Button onClick={handleResendVerificationEmail}
+                                disabled={isPending || !pendingVerificationEmail}>
                             {isPending ? <Loading
                                 text={"Resending..."}/> : "Resend"}
                         </Button>

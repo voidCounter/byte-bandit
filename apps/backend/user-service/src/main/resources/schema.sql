@@ -91,19 +91,19 @@ AS
     END;
 ' LANGUAGE plpgsql;
 
--- trigger to automatically update of verified field in users table
-CREATE OR REPLACE FUNCTION update_user_verified_func()
-    RETURNS TRIGGER AS
-'
-    BEGIN
-        IF NEW.type = ''EMAIL_VERIFICATION'' AND NEW.is_used = TRUE THEN
-            UPDATE users
-            SET verified   = TRUE,
-                updated_at = CURRENT_TIMESTAMP
-            WHERE id = NEW.user_id
-              AND verified = FALSE;
-        END IF;
-
-        RETURN NEW;
-    END;
-' LANGUAGE plpgsql;
+-- -- trigger to automatically update of verified field in users table
+-- CREATE OR REPLACE FUNCTION update_user_verified_func()
+--     RETURNS TRIGGER AS
+-- '
+--     BEGIN
+--         IF NEW.type = ''EMAIL_VERIFICATION'' AND NEW.is_used = TRUE THEN
+--             UPDATE users
+--             SET verified   = TRUE,
+--                 updated_at = CURRENT_TIMESTAMP
+--             WHERE id = NEW.user_id
+--               AND verified = FALSE;
+--         END IF;
+--
+--         RETURN NEW;
+--     END;
+-- ' LANGUAGE plpgsql;

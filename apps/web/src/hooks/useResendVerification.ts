@@ -22,7 +22,9 @@ export function useResendVerification({onSuccessRedirect, onErrorRedirect}: {
         onError: (error) => {
             if (error instanceof AxiosError && error.response) {
                 const apiError = error.response.data as APIErrorResponse;
-                toast.error(apiError.details);
+                toast.error(apiError.details || "Failed to resend verification email");
+            } else {
+                toast.error("Network error", {description: "Please try again."});
             }
             if (onErrorRedirect) {
                 onErrorRedirect();
