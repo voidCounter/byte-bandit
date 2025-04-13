@@ -12,11 +12,11 @@ Oakcan is a file management system that allows users to upload, download, and ma
 
 <div align="center">
 
-### Wiki, API Docs, and Project Management Tools
+## Wiki, API Docs, and Project Management Tools
 [![Explore the Wiki](https://img.shields.io/badge/Explore-Wiki-0077B5?style=for-the-badge&logo=readthedocs&logoColor=white)](https://head.oakcan-docs.pages.dev/)
 [![Github Projects](https://img.shields.io/badge/View-Github%20Projects-00AAEF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/orgs/Learnathon-By-Geeky-Solutions/projects/14)
 
-### Tech Stack 
+## Tech Stack 
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Azure](https://img.shields.io/badge/azure-%230072C6.svg?style=for-the-badge&logo=microsoftazure&logoColor=white)
@@ -25,7 +25,7 @@ Oakcan is a file management system that allows users to upload, download, and ma
 ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-### Code Analysis and Quality
+## Code Analysis and Quality
 
 <p align="center"> 
     <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> 
@@ -62,37 +62,64 @@ Oakcan is a file management system that allows users to upload, download, and ma
 </a>
 
 
-### Meet The Team
+## Meet The Team
 
 > *"Alone we can do so little; together we can do so much." – Helen Keller*
-<div style="display: flex; flex-direction: column; row-gap: 1rem;">
-    <a href="https://github.com/Tasin-BS">
-        <img src="public/images/profile-dummy-image.jpg" width="100px;" width="100px;" height="100px" style="border-radius: 50%;" alt="Tasin"/><br />
-        <sub><b>Shahidullah Tasin</b></sub>
-        <br /> 
-        <img src="https://img.shields.io/badge/Mentor-4E9BCD?style=for-the-badge"> 
-    </a>
-    <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 1rem;">
-        <a href="https://github.com/voidCounter">
-            <img src="public/images/rohit-bg.png" width="100px;" height="100px" style="border-radius: 50%;" alt="Rohit"/><br />
-            <sub><b>Rohit Roy</b></sub>
-            <br />
-            <img src="https://img.shields.io/badge/Team%20Leader-2D9CDB?style=for-the-badge"> 
+
+<table style="width: 90%;">
+    <tr>
+      <td align="center" width="24%">
+        <h4  style="white-space: nowrap; font-size: 16px; padding: 0 5px;">Rohit Roy</h4>
+        <img src="https://img.shields.io/badge/Team%20Leader-2D9CDB?style=for-the-badge"> 
+        <br> <a href="https://github.com/voidCounter" target="_blank">
+              <img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white">
+             </a>
+      </td>
+      <td style="min-width: 220px;"  align="center" width="30%">
+          <h4 style="white-space: nowrap; font-size: 16px; padding: 0 5px;">Tajbir Ahmed</h4>
+          <img src="https://img.shields.io/badge/FullStack%20Developer-F2C94C?style=for-the-badge">  
+        <br><a href="https://github.com/tajbirahmed" target="_blank">
+              <img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white">
+             </a>
+      </td>
+      <td align="center" width="25%">
+        <h4 style="white-space: nowrap; font-size: 16px; padding: 0 5px;">Kazi Omar Sharif</h4>
+        <img src="https://img.shields.io/badge/FullStack%20Developer-F2C94C?style=for-the-badge"> 
+        <br><a href="https://github.com/Sharif37" target="_blank">
+              <img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white">
+             </a>
+      </td>
+      <td align="center" width="20%">
+        <h4 style="white-space: nowrap; font-size: 16px; padding: 0 5px;">Shahidullah Tasin</h4>
+        <img src="https://img.shields.io/badge/Mentor-F09BCD?style=for-the-badge"> <br> 
+        <a href="https://github.com/Tasin-BS">
+            <img src="https://img.shields.io/badge/GitHub-100000?style=flat&logo=github&logoColor=white"/>
         </a>
-        <a href="https://github.com/tajbirahmed">
-            <img src="public/images/tajbir-bg.png" width="100px;" height="100px" style="border-radius: 50%;" alt="Tajbir"/><br />
-            <sub><b>Tajbir Ahmed</b></sub>
-            <br />
-            <img src="https://img.shields.io/badge/Full%20Stack%20Developer-F2C94C?style=for-the-badge"> 
-        </a>
-        <a href="https://github.com/Sharif37">
-            <img src="public/images/sharif-bg.png" width="100px;" height="100px" style="border-radius: 50%;" alt="Sharif"/><br />
-            <sub><b>Kazi Omar Sharif</b></sub>
-            <br />
-            <img src="https://img.shields.io/badge/Full%20Stack%20Developer-F2C94C?style=for-the-badge"> 
-        </a>
-    </div>
-</div>
+    </tr>
+  </table>
 </div>
 
-## Project Description
+## 📸 Project Description
+Oakcan is a robust microservice-based file management platform designed for scalable and secure file operations. It enables efficient file upload/download, synchronization across devices, user management, and email-based notifications, making it ideal for cloud-native ecosystems.
+
+### Key Features
+- **File Operations**
+    - **Resumable Uploads**
+    - **Resumable Downloads**
+    - **Sync, and Delete**
+- **Folder Operations**
+    - **Create, Rename, Move, List, and Delete**
+- **File and Folder Sharing**
+    - **Direct Sharing:** Users can directly add other users with specific permissions
+        - **View Only, Edit, and Comment**
+    - **Shareable Links**
+        - **Role Based Permission**
+        - **Password Protection**
+        - **Expiration Date**
+
+<br>and many more...
+
+### 🗺️ System Architecture
+![System Architecture](public/images/system-architecture.png)
+
+
