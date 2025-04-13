@@ -2,7 +2,9 @@
 
 # 🌳 Oakcan
 
-**Your friendly, all-in-one file management solution.**
+**Your friendly, all-in-one file management solution.** 
+<br />
+![Banner](public/images/banner.svg)
 </div>
 
 ## About Oakcan
@@ -26,118 +28,71 @@ Oakcan is a file management system that allows users to upload, download, and ma
 ### Code Analysis and Quality
 
 <p align="center"> 
-<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> 
-<img src="https://img.shields.io/badge/SonarCloud-Analysis-4E9BCD?style=for-the-badge&logo=sonarcloud&logoColor=white" alt="SonarCloud Analysis" width="250"> 
-</a> 
+    <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> 
+        <img src="https://img.shields.io/badge/SonarCloud-Analysis-4E9BCD?style=for-the-badge&logo=sonarcloud&logoColor=white" alt="SonarCloud Analysis" width="250"> 
+    </a> 
 </p>
 
-<table style="border: none; border-collapse: collapse;">
- <tr style="border: none;"> 
- <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=alert_status" alt="Quality Gate Status"> </a> </td> 
- <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=ncloc" alt="Lines of Code"> </a> </td> 
+<br />
 
- <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=vulnerabilities" alt="Vulnerabilities"> </a> </td>
-  <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=code_smells" alt="Code Smells"> </a> </td> 
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=alert_status" alt="Quality Gate Status">
+</a>
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=ncloc" alt="Lines of Code">
+</a>
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=vulnerabilities" alt="Vulnerabilities">
+</a>
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=code_smells" alt="Code Smells">
+</a>
+<br />
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=sqale_index" alt="Technical Debt">
+</a>
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=duplicated_lines_density" alt="Duplicated Lines (%)">
+</a>
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_earendel">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_earendel&metric=coverage" alt="Coverage">
+</a>
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
+    <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=bugs" alt="Bugs">
+</a>
 
-  </tr>
-
- <tr style="border: none;"> 
- <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=sqale_index" alt="Technical Debt"> </a> </td> 
- <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=duplicated_lines_density" alt="Duplicated Lines (%)"> </a> </td> <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_earendel"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_earendel&metric=coverage" alt="Coverage"> </a> </td> 
- <td style="border: none; padding: 5px;"> <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit"> <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=bugs" alt="Bugs"> </a> </td> 
- </tr>
-</table>
 
 ### Meet The Team
 
 > *"Alone we can do so little; together we can do so much." – Helen Keller*
-
-<div align="center">
-
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/voidCounter">
-        <img src="" width="100px;" height="100px" border="" alt="Alice Johnson"/><br />
-        <sub><b>Alice "CodeQueen" Johnson</b></sub>
-      </a>
-      <br />
-      <span>👑 Team Leader</span><br />
-    </td>
-    <td align="center">
-      <a href="https://github.com/tajbirahmed">
-        <img src="public/images/tajbir.jpg" width="100px;" height="100px" style="border-radius: 50%;" alt="Brian Lee"/><br />
-        <sub><b><em>Tajbir</em> Ahmed</b></sub>
-      </a>
-      <br />
-      <span>🧑‍💻 Core Member #1</span><br />
-    </td>
-    <td align="center">
-      <a href="https://github.com/Sharif37">
-        <img src="public/images/sharif.jpg" width="100px;" height="100px" style="border-radius: 50%;" alt="Sharif"/><br />
-        <sub><b>Kazi Omar <em>Sharif</em></b></sub>
-      </a>
-      <br />
-      <span>🔧 Core Member #2</span><br />
-    </td>
-    <td align="center">
-      <a href="https://github.com/Tasin-BS">
+<div style="display: flex; flex-direction: column; row-gap: 1rem;">
+    <a href="https://github.com/Tasin-BS">
         <img src="public/images/profile-dummy-image.jpg" width="100px;" width="100px;" height="100px" style="border-radius: 50%;" alt="Tasin"/><br />
         <sub><b>Shahidullah Tasin</b></sub>
-      </a>
-      <br />
-      <span>🧙‍♂️ Mentor</span><br />
-    </td>
-  </tr>
-</table>
+        <br /> 
+        <img src="https://img.shields.io/badge/Mentor-4E9BCD?style=for-the-badge"> 
+    </a>
+    <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 1rem;">
+        <a href="https://github.com/voidCounter">
+            <img src="public/images/rohit-bg.png" width="100px;" height="100px" style="border-radius: 50%;" alt="Rohit"/><br />
+            <sub><b>Rohit Roy</b></sub>
+            <br />
+            <img src="https://img.shields.io/badge/Team%20Leader-2D9CDB?style=for-the-badge"> 
+        </a>
+        <a href="https://github.com/tajbirahmed">
+            <img src="public/images/tajbir-bg.png" width="100px;" height="100px" style="border-radius: 50%;" alt="Tajbir"/><br />
+            <sub><b>Tajbir Ahmed</b></sub>
+            <br />
+            <img src="https://img.shields.io/badge/Full%20Stack%20Developer-F2C94C?style=for-the-badge"> 
+        </a>
+        <a href="https://github.com/Sharif37">
+            <img src="public/images/sharif-bg.png" width="100px;" height="100px" style="border-radius: 50%;" alt="Sharif"/><br />
+            <sub><b>Kazi Omar Sharif</b></sub>
+            <br />
+            <img src="https://img.shields.io/badge/Full%20Stack%20Developer-F2C94C?style=for-the-badge"> 
+        </a>
+    </div>
+</div>
+</div>
 
-</div>
-
-<div align="center">
-    <table>
-      <tr>
-        <th>🧠 Role</th>
-        <th>🌟 Name & GitHub</th>
-        <th>💬 About</th>
-      </tr>
-      <tr>
-        <td>👑 <strong>Team Leader</strong></td>
-        <td><a href="https://github.com/voidCounter"><strong>"Rohit" Roy</strong></a></td>
-        <td>...</td>
-      </tr>
-      <tr>
-        <td>🧑‍💻 <strong>Core Member #1</strong></td>
-        <td><a href="https://github.com/tajbirahmed"><strong>"Tajbir" Ahmed</strong></a></td>
-        <td>...</td>
-      </tr>
-      <tr>
-        <td>🔧 <strong>Core Member #2</strong></td>
-        <td><a href="https://github.com/Sharif37"><strong>Kazi Omar "Sharif"</strong></a></td>
-        <td>...</td>
-      </tr>
-      <tr>
-        <td>🧙‍♂️ <strong>Mentor</strong></td>
-        <td><a href="https://github.com/refactorer-daniel"><strong>Shahidullah "Tasin"</strong></a></td>
-        <td>...</td>
-      </tr>
-    </table>
-</div>
-</div>
 ## Project Description
-Add your project description here.
-
-## Getting Started
-1. Clone the repository
-2. Install dependencies
-3. Start development
-
-## Development Guidelines
-1. Create feature branches
-2. Make small, focused commits
-3. Write descriptive commit messages
-4. Create pull requests for review
-
-## Resources
-- [Project Documentation](docs/)
-- [Development Setup](docs/setup.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
