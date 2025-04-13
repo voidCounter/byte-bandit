@@ -1,6 +1,8 @@
 package com.bytebandit.userservice.controller;
 
 import com.bytebandit.userservice.dto.ResendVerificationRequest;
+import com.bytebandit.userservice.exception.InvalidTokenException;
+import com.bytebandit.userservice.exception.TokenExpiredException;
 import com.bytebandit.userservice.service.TokenVerificationService;
 import com.bytebandit.userservice.service.UserRegistrationService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,25 +40,51 @@ public class EmailVerificationController {
      *
      * @return ResponseEntity with a redirect to the email verification confirmation page.
      */
+
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(
         @RequestParam("token") @NotNull String token,
         @RequestParam("userid") @NotNull String userid,
         HttpServletResponse response
     ) {
-        tokenVerificationService.verifyToken(
-            token,
-            userid,
-            TokenType.EMAIL_VERIFICATION
-        );
         try {
-            response.sendRedirect(clientHostUri + "/email-verified");
+            tokenVerificationService.verifyToken(
+                token,
+                userid,
+                TokenType.EMAIL_VERIFICATION
+            );
+            response.sendRedirect(clientHostUri + "/email-verification?status=success");
             return ResponseEntity.status(HttpStatus.FOUND).build();
-        } catch (IOException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                "Failed to redirect, please go to " + clientHostUri + "/login\n");
+
+        } catch (TokenExpiredException ex) {
+            try {
+                response.sendRedirect(clientHostUri + "/email-verification?status=expired");
+                return ResponseEntity.status(HttpStatus.FOUND).build();
+            } catch (IOException ioEx) {
+                return ResponseEntity.status(HttpStatus.GONE).body(
+                    "Verification link expired. Please request a new one.");
+            }
+
+        } catch (InvalidTokenException ex) {
+            try {
+                response.sendRedirect(clientHostUri + "/email-verification?status=invalid");
+                return ResponseEntity.status(HttpStatus.FOUND).build();
+            } catch (IOException ioEx) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    "Invalid verification link. Please check the URL or request a new one.");
+            }
+
+        } catch (Exception ex) {
+            try {
+                response.sendRedirect(clientHostUri + "/email-verification?status=error");
+                return ResponseEntity.status(HttpStatus.FOUND).build();
+            } catch (IOException ioEx) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    "Something went wrong. Please try again later.");
+            }
         }
     }
+
 
     /**
      * Resends the verification email to the user.

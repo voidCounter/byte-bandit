@@ -61,31 +61,26 @@ AS
                            name,
                            verified,
                            created_at,
-                           updated_at
-        )
-        VALUES (
-                gen_random_uuid(),
+                           updated_at)
+        VALUES (gen_random_uuid(),
                 p_email,
                 p_password_hash,
                 null,
                 p_full_name,
                 false,
                 now(),
-                now()
-        )
+                now())
         RETURNING users.id, users.name, users.email, users.verified, users.created_at
             INTO new_user_id, new_name, new_email, new_verified, new_created_at;
 
         INSERT INTO tokens (id, user_id, token_hash, type, expires_at, is_used, created_at)
-        VALUES (
-                gen_random_uuid(),
+        VALUES (gen_random_uuid(),
                 new_user_id,
                 p_token_hash,
                 p_token_type,
                 p_token_expires_at,
                 false,
-                now()
-            );
+                now());
 
         RETURN QUERY
             SELECT new_user_id    AS id,
@@ -112,11 +107,3 @@ CREATE OR REPLACE FUNCTION update_user_verified_func()
         RETURN NEW;
     END;
 ' LANGUAGE plpgsql;
-
--- set the trigger on the tokens table update
-CREATE OR REPLACE TRIGGER update_user_verified
-    AFTER UPDATE
-    ON tokens
-    FOR EACH ROW
-EXECUTE FUNCTION update_user_verified_func();
-

@@ -47,7 +47,7 @@ export default function Register() {
         mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/api/v1/user/register", data),
         onSuccess: response => {
             toast.success("User registered successfully.");
-            setPendingVerificationEmail("email1@gmail.com");
+            setPendingVerificationEmail("fgh@gmail.com");
             router.push("/verify-email");
         },
         /**

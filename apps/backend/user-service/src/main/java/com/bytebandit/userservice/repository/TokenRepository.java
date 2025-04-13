@@ -2,6 +2,7 @@ package com.bytebandit.userservice.repository;
 
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
+import jakarta.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.UUID;

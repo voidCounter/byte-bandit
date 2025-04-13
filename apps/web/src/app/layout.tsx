@@ -3,8 +3,8 @@ import "./globals.css";
 import {ThemeProvider} from "next-themes";
 import {dmSans} from "@/app/fonts";
 import QueryProvider from "@/layouts/QueryProvider";
-import {Toaster} from "sonner";
 import {ModeToggle} from "@/components/theme-toggler";
+import {Toaster} from "@/components/ui/Toaster";
 
 
 export const metadata: Metadata = {

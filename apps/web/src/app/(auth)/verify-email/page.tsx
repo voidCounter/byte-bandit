@@ -2,29 +2,21 @@
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
 import React from 'react';
-import {useMutation} from "@tanstack/react-query";
-import {AxiosInstance} from "@/utils/AxiosInstance";
-import {toast} from "sonner"
 import {useAuthStore} from "@/store/AuthStore";
 import {MailIcon} from "lucide-react";
 import Link from 'next/link'
 import Loading from "@/components/ui/loading";
+import {useResendVerification} from "@/hooks/useResendVerification";
 
 export default function VerifyEmailPage() {
     const {pendingVerificationEmail, setPendingVerificationEmail} = useAuthStore();
+    const {mutate: resendVerificationEmail, isPending} = useResendVerification({});
 
-    const {mutate: resendVerificationEmail, isPending} = useMutation({
-        mutationFn: () => AxiosInstance.post("/api/v1/user/resend-verification", {
-            email: pendingVerificationEmail
-        }),
-        onSuccess: () => {
-            toast.message("Verification email resent", {description: "Verification email resent"});
-        },
-        onError: () => {
-            toast.error("Failed to resend verification email");
+    const handleResendVerificationEmail = async () => {
+        if (pendingVerificationEmail != null) {
+            resendVerificationEmail(pendingVerificationEmail);
         }
-    })
-
+    }
 
     return (
         <div className="flex min-h-screen items-center justify-center p-4">
@@ -45,7 +37,7 @@ export default function VerifyEmailPage() {
                         your inbox and follow the link to activate your account.
                     </p>
                     <div className="flex flex-col items-center justify-center gap-2">
-                        <Button onClick={() => resendVerificationEmail()}>
+                        <Button onClick={handleResendVerificationEmail} disabled={isPending}>
                             {isPending ? <Loading
                                 text={"Resending..."}/> : "Resend"}
                         </Button>

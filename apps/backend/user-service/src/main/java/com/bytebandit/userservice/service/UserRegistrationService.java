@@ -2,12 +2,14 @@ package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.dto.UserRegistrationResponse;
+import com.bytebandit.userservice.exception.FailedEmailVerificationAttemptException;
 import com.bytebandit.userservice.exception.UserAlreadyExistsException;
 import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
 import com.bytebandit.userservice.projection.CreateUserAndTokenProjection;
 import com.bytebandit.userservice.repository.TokenRepository;
 import com.bytebandit.userservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -96,6 +98,7 @@ public class UserRegistrationService {
      *
      * @param email User's requested receiver email
      */
+    @Transactional
     public void resendVerificationEmail(
         String email
     ) {
@@ -103,7 +106,7 @@ public class UserRegistrationService {
             email).orElseThrow(() -> new IllegalArgumentException(
             "If this email exists, an email will be sent.")); // avoid leaking information
         if (user.isVerified()) {
-            return;
+            throw new FailedEmailVerificationAttemptException("User is already verified.");
         }
         tokenRepository.invalidateAllForUserAndType(
             user, TokenType.EMAIL_VERIFICATION
