@@ -1,7 +1,9 @@
 import {AxiosInstance} from "@/utils/AxiosInstance";
 import {useMutation} from "@tanstack/react-query";
+import {AxiosError} from 'axios';
 
 import {toast} from "sonner";
+import {APIErrorResponse} from "@/types/APIErrorResponse";
 
 export function useResendVerification({onSuccessRedirect, onErrorRedirect}: {
     onSuccessRedirect?: () => void,
@@ -17,8 +19,11 @@ export function useResendVerification({onSuccessRedirect, onErrorRedirect}: {
                 onSuccessRedirect();
             }
         },
-        onError: () => {
-            toast.error("Failed to resend verification email");
+        onError: (error) => {
+            if (error instanceof AxiosError && error.response) {
+                const apiError = error.response.data as APIErrorResponse;
+                toast.error(apiError.details);
+            }
             if (onErrorRedirect) {
                 onErrorRedirect();
             }

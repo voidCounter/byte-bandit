@@ -6,5 +6,5 @@ import {useTheme} from 'next-themes';
 export function Toaster() {
     const {resolvedTheme} = useTheme();
 
-    return <SonnerToaster closeButton={true} theme={resolvedTheme as ToasterProps['theme']}/>;
+    return <SonnerToaster richColors closeButton={true} theme={resolvedTheme as ToasterProps['theme']}/>;
 }

@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 import java.util.UUID;
 import lib.user.enums.TokenType;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @MappedSuperclass
-@Data
 @Getter
 @Setter
 @SuperBuilder

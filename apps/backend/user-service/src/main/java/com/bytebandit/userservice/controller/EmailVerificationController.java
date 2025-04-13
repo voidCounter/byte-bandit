@@ -64,7 +64,6 @@ public class EmailVerificationController {
                 return ResponseEntity.status(HttpStatus.GONE).body(
                     "Verification link expired. Please request a new one.");
             }
-
         } catch (InvalidTokenException ex) {
             try {
                 response.sendRedirect(clientHostUri + "/email-verification?status=invalid");
@@ -73,7 +72,6 @@ public class EmailVerificationController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     "Invalid verification link. Please check the URL or request a new one.");
             }
-
         } catch (Exception ex) {
             try {
                 response.sendRedirect(clientHostUri + "/email-verification?status=error");

@@ -3,7 +3,9 @@ import Cookies from "js-cookie";
 
 const fetchCsrfToken = async () => {
     try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/v1/auth/csrf`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/v1/auth/csrf`, {
+            withCredentials: true,
+        });
         return response.data;
     } catch (error) {
         console.error("Error fetching CSRF token:", error);
@@ -30,7 +32,6 @@ AxiosInstance.interceptors.request.use(
             const MAX_RETRIES = 3;
 
             if (csrfToken) {
-                console.log("Got the csrf: ", csrfToken);
                 config.headers[CSRF_HEADER_NAME] = csrfToken;
                 return config;
             }

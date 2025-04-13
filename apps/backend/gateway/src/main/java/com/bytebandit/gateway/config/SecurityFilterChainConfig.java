@@ -51,9 +51,9 @@ public class SecurityFilterChainConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(
                 req -> req.requestMatchers(getAllPermittedRoutes(permittedRoutes)).permitAll()
                     .anyRequest().authenticated())
