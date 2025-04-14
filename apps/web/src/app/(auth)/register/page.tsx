@@ -7,40 +7,69 @@ import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import React from "react";
+import {AxiosError} from 'axios';
 import {PasswordInput} from "@/components/ui/PasswordInput";
 import {AxiosInstance} from "@/utils/AxiosInstance";
 import {useMutation} from "@tanstack/react-query";
 import Loading from "@/components/ui/loading";
+import {useAuthStore} from "@/store/AuthStore";
+import {toast} from "sonner";
+import {useRouter} from "next/navigation";
+import {APIErrorResponse} from "@/types/APIErrorResponse";
+import {FormStatus} from "@/app/components/ui/status";
 
 const registerSchema = z.object({
-name: z.string().min(1, {message: "Must have at least 1 character."}).regex(/^[A-Za-z\s]+$/, {message: "Name must contain only letters and spaces."}),
+    fullName: z.string().min(1, {message: "Must have at least 1 character."}).regex(/^[A-Za-z]+[A-Za-z\s]*$/, {message: "Name must contain only letters and spaces(e.g. Jane Doe)."}),
     email: z.string().email(),
     password: z.string().min(8, {
         message: "Password length must be greater" +
             " than 7."
     }).max(16, {message: "Password length must be less than 17."}),
 });
+const fieldErrorMap: Record<string, keyof z.infer<typeof registerSchema>> = {
+    'USER-02': 'email',
+    'USER-03': 'email',
+}
 export default function Register() {
+    const router = useRouter();
+    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+    const {setPendingVerificationEmail} = useAuthStore()
     const registerForm = useForm<z.infer<typeof registerSchema>>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            name: "",
+            fullName: "",
             email: "",
             password: "",
         }
     })
 
     const {mutate: register, isPending} = useMutation({
-        mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/auth/register", data),
-        onSuccess: data => {
-            // handle success
+        mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/api/v1/user/register", data),
+        onSuccess: response => {
+            toast.success("User registered successfully.");
+            setPendingVerificationEmail("user10@gmail.com");
+            router.push("/verify-email");
         },
+        /**
+         * Handle error response
+         * Map error code to field.
+         * @param error
+         */
         onError: error => {
-            // handle error
+            if (error instanceof AxiosError && error.response) {
+                const apiError = error.response.data as APIErrorResponse;
+                const field = fieldErrorMap[apiError.errorCode];
+                if (field) {
+                    registerForm.setError(field, {type: 'manual', message: apiError.details});
+                } else {
+                    setErrorMessage(apiError.details || 'Registration failed. Please try again.');
+                }
+            }
         }
     })
 
     function onRegisterFormSubmit(data: z.infer<typeof registerSchema>) {
+        setErrorMessage(null);
         register(data);
     }
 
@@ -58,12 +87,15 @@ export default function Register() {
                                 " text-transparent"}>Oakcan</span><span>{` account`}</span>
                     </h2>
                 </div>
+                {
+                    errorMessage && <FormStatus status={'error'} message={errorMessage}/>
+                }
                 <Form {...registerForm}>
                     <form
                         onSubmit={registerForm.handleSubmit(onRegisterFormSubmit)}
                         className={"space-y-3  w-full"}>
                         <FormField control={registerForm.control}
-                                   name={"name"}
+                                   name={"fullName"}
                                    render={({field}) => (
                                        <FormItem>
                                            <FormControl
@@ -117,6 +149,7 @@ export default function Register() {
                         </div>
                     </form>
                 </Form>
+
                 <Link
                     href={"/login"}
                     className={"mt-6 hover:underline active:underline"}>{`Already have an account? `}<span

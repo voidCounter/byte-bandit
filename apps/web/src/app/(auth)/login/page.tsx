@@ -6,7 +6,7 @@ import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {AxiosResponse} from "axios";
-import {User} from "@/types/User";
+import {User} from "@/types/User/User";
 import {AxiosInstance} from "@/utils/AxiosInstance";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";

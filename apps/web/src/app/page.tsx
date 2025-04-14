@@ -1,5 +1,4 @@
 "use client";
-import {ModeToggle} from "@/components/theme-toggler";
 import {Button} from "@/components/ui/button";
 import NavigationBar from "@/app/components/navigation-bar";
 import {motion} from "framer-motion";
@@ -42,7 +41,6 @@ export default function Home() {
                     </motion.div>
                 </Link>
             </motion.section>
-            <ModeToggle className={"hidden sm:flex absolute right-0 top-0 m-2"}/>
         </div>
     );
 }

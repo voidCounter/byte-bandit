@@ -1,6 +1,7 @@
 package com.bytebandit.userservice.service;
 
 import com.bytebandit.userservice.enums.EmailTemplate;
+import jakarta.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,8 +30,8 @@ public class RegistrationEmailService extends EmailService {
     public void sendEmail(
         String sendEmailTo,
         String fullName,
-        String token,
-        UUID userId
+        @NotNull String token,
+        @NotNull UUID userId
     ) {
         Map<String, Object> templateModel = new HashMap<>();
         templateModel.put("confirmationUrl", confirmationUrl(token, userId));

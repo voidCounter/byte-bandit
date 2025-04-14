@@ -15,7 +15,7 @@ jwt:
   secret: ${JWT_SECRET}
 app:
   permitted:
-    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/verify,/csrf,/test-csrf,/actuator/*
+    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*
   access-token-expiration: 3600
   refresh-token-expiration: 86400
 cors:

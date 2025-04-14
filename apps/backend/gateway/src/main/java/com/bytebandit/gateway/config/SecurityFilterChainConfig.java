@@ -54,6 +54,7 @@ public class SecurityFilterChainConfig {
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(
                 req -> req.requestMatchers(getAllPermittedRoutes(permittedRoutes)).permitAll()
                     .anyRequest().authenticated())
