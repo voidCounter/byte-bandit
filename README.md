@@ -1,10 +1,9 @@
 <div align="center">
-
-# 🌳 Oakcan
+    
+![Banner](public/images/banner.svg)
+<br/>
 
 **Your friendly, all-in-one file management solution.** 
-<br />
-![Banner](public/images/banner.svg)
 </div>
 
 ## About Oakcan
@@ -12,8 +11,9 @@ Oakcan is a file management system that allows users to upload, download, and ma
 
 <div align="center">
 
-## Wiki, API Docs, and Project Management Tools
+## Wiki, API Docs, Devlog and Github Project
 [![Explore the Wiki](https://img.shields.io/badge/Explore-Wiki-0077B5?style=for-the-badge&logo=readthedocs&logoColor=white)](https://head.oakcan-docs.pages.dev/)
+![Devlog Badge](https://img.shields.io/badge/devlog-blue?style=for-the-badge)
 [![Github Projects](https://img.shields.io/badge/View-Github%20Projects-00AAEF?style=for-the-badge&logo=github&logoColor=white)](https://github.com/orgs/Learnathon-By-Geeky-Solutions/projects/14)
 
 ## Tech Stack 
