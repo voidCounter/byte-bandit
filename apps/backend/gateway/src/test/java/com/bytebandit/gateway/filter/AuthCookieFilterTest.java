@@ -16,9 +16,11 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,18 +69,18 @@ class AuthCookieFilterTest {
     }
 
     /**
-     * Test method to verify that the filter correctly processes a request with a valid.
+     * Test method to verify that the filter correctly pass through the permitted routes.
      */
     @Test
     void shouldPassThroughPermittedRoute()
-        throws ServletException, IOException {
+            throws ServletException, IOException {
         request.setServletPath("/public");
         when(permittedRoutesConfig.getRoutes()).thenReturn(List.of("/public"));
 
         authFilter = new AuthCookieFilter(
-            permittedRoutesConfig,
-            tokenService,
-            customUserDetailsService
+                permittedRoutesConfig,
+                tokenService,
+                customUserDetailsService
         );
 
         authFilter.doFilterInternal(request, response, mockFilterChain);
@@ -96,14 +98,14 @@ class AuthCookieFilterTest {
 
         when(permittedRoutesConfig.getRoutes()).thenReturn(List.of("/public"));
         authFilter = new AuthCookieFilter(
-            permittedRoutesConfig,
-            tokenService,
-            customUserDetailsService
+                permittedRoutesConfig,
+                tokenService,
+                customUserDetailsService
         );
 
         assertThrows(
-            CookieNotFoundException.class,
-            () -> authFilter.doFilterInternal(request, response, mockFilterChain)
+                CookieNotFoundException.class,
+                () -> authFilter.doFilterInternal(request, response, mockFilterChain)
         );
     }
 
@@ -120,19 +122,19 @@ class AuthCookieFilterTest {
         when(permittedRoutesConfig.getRoutes()).thenReturn(List.of("/public"));
         when(tokenService.extractUsername(accessToken)).thenReturn(username);
         when(customUserDetailsService.loadUserByUsername(username)).thenReturn(
-            mockUser);
+                mockUser);
         when(tokenService.isValidToken(accessToken, mockUser)).thenReturn(true);
 
         authFilter = new AuthCookieFilter(
-            permittedRoutesConfig,
-            tokenService,
-            customUserDetailsService
+                permittedRoutesConfig,
+                tokenService,
+                customUserDetailsService
         );
         authFilter.doFilterInternal(request, response, mockFilterChain);
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
         assertThat(
-            SecurityContextHolder.getContext().getAuthentication().getName()
+                SecurityContextHolder.getContext().getAuthentication().getName()
         ).isEqualTo(username);
     }
 
@@ -148,16 +150,16 @@ class AuthCookieFilterTest {
         when(permittedRoutesConfig.getRoutes()).thenReturn(List.of("/public"));
         when(tokenService.extractUsername(accessToken)).thenReturn(username);
         when(customUserDetailsService.loadUserByUsername(username))
-            .thenReturn(mockUser);
+                .thenReturn(mockUser);
         doThrow(ExpiredJwtException.class).when(tokenService).isValidToken(accessToken, mockUser);
         when(tokenService.extractUserId(accessToken)).thenReturn(userId);
         when(tokenService.generateToken(eq(mockUser), anyLong(), eq(userId)))
-            .thenReturn("new-token");
+                .thenReturn("new-token");
 
         authFilter = new AuthCookieFilter(
-            permittedRoutesConfig,
-            tokenService,
-            customUserDetailsService
+                permittedRoutesConfig,
+                tokenService,
+                customUserDetailsService
         );
         authFilter.doFilterInternal(request, response, mockFilterChain);
 
