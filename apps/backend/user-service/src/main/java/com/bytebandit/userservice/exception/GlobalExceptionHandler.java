@@ -123,7 +123,8 @@ public class GlobalExceptionHandler {
                             errorCode = ErrorCode.PASSWORD_NULL;
                         } else if (message.contains("at least 8 characters")) {
                             errorCode = ErrorCode.PASSWORD_TOO_SHORT;
-                        } else if (message.contains("uppercase") || message.contains("digit") || message.contains("special character")) {
+                        } else if (message.contains("uppercase") || message.contains("digit")
+                            || message.contains("special character")) {
                             errorCode = ErrorCode.PASSWORD_TOO_WEAK;
                         } else {
                             errorCode = ErrorCode.INVALID_PASSWORD;
