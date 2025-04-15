@@ -22,6 +22,7 @@ app:
   refresh-token-expiration: 86400
 logging:
   level:
+    com.byte-bandit.gateway: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     org.springframework.cloud.gateway: DEBUG

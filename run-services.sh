@@ -4,6 +4,7 @@ set -e  # Exit on error
 # List of backend services
 COMPOSE_FILE="docker-compose.apps.yml"
 INFRA_SERVICES="user-dev-db mailhog"
+INFRA_TEST_SERVICES="user-test-db"
 BACKEND_SERVICES="discovery-server config-server gateway user-service file-service sync-service"
 FRONTEND_SERVICE="client"
 DOCS_SERVICE="docs"
@@ -12,7 +13,7 @@ ACTIVE_PROFILES="--profile infra --profile core"
 
 # --- Helper Functions ---
 usage() {
-  echo "Usage: $0 <action> [service...] [options]"
+  echo "Usage: $0 <action> [options] [service...]"
   echo ""
   echo "Actions:"
   echo "  start   Build (if needed) and start specified services (or all core/infra if none specified)."
@@ -20,23 +21,26 @@ usage() {
   echo "  restart Stop, remove, build (optional), and start specified services."
   echo "  down    Stop and remove all containers, networks defined in the compose file."
   echo ""
+  echo "Options:"
+  echo "  -t, --test       Run services in test mode (e.g., requires a docker-compose.test.yaml)."
+  echo "  -n, --no-build   Skip the build step during 'start' or 'restart'."
+  echo "  -h, --help       Show this help message."
   echo "Services:"
   echo "  <service_name>  Specify one or more service names (e.g., user-service gateway)."
   echo "  backend         Apply action to all backend services ($BACKEND_SERVICES)."
   echo "  all             Apply action to all defined services ($ALL_SERVICES)."
   echo "  (none)          Default depends on action (e.g., 'start' defaults to core+infra, 'ps' shows all)."
   echo ""
-  echo "Options:"
-  echo "  -n, --no-build   Skip the build step during 'start' or 'restart'."
-  echo "  -h, --help       Show this help message."
   exit 1
 }
 
 ACTION=""
 TARGET_SERVICES=()
 NO_BUILD=false
+TEST_MODE=false
 
 run_compose() {
+  echo "Running: docker compose -f $COMPOSE_FILE $ACTIVE_PROFILES $*"
   docker compose -f "$COMPOSE_FILE" $ACTIVE_PROFILES "$@"
 }
 
@@ -67,13 +71,22 @@ while [[ $# -gt 0 ]]; do
       NO_BUILD=true
       shift
       ;;
+    -t|--test)
+      TEST_MODE=true
+      COMPOSE_FILE="docker-compose.test.yaml"
+      shift
+      ;;
     backend)
       TARGET_SERVICES+=("$BACKEND_SERVICES")
       shift
       ;;
     infra)
       NO_BUILD=true # for infra, we don't need to build images
-      TARGET_SERVICES+=("$INFRA_SERVICES")
+      if [[ "$TEST_MODE" == true ]]; then
+        TARGET_SERVICES+=("$INFRA_TEST_SERVICES")
+      else
+        TARGET_SERVICES+=("$INFRA_SERVICES")
+      fi
       shift
       ;;
     all)
@@ -120,7 +133,7 @@ case "$ACTION" in
     fi
     echo "Starting services..."
     # Start specific targets, or default to core+infra profiles if no targets given
-    run_compose up -d --remove-orphans "${TARGET_SERVICES[@]}"
+    run_compose up -d "${TARGET_SERVICES[@]}"
   ;;
   stop)
     echo "Stopping services..."

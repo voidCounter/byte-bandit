@@ -5,7 +5,7 @@ import {useAuthStore} from "@/store/AuthStore";
 import {useRouter} from "next/navigation";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {AxiosResponse} from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import {User} from "@/types/User/User";
 import {AxiosInstance} from "@/utils/AxiosInstance";
 import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
@@ -15,15 +15,17 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {useMutation} from "@tanstack/react-query";
 import Loading from "@/components/ui/loading";
+import {APIErrorResponse} from "@/types/APIErrorResponse";
+import {FormStatus} from "@/app/components/ui/status";
 
 const loginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8, {message: "Must have at least 8 character."}).max(16),
 });
 
-
 export default function Login() {
     const {setAuthenticatedUser} = useAuthStore();
+    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const router = useRouter();
     const loginForm = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -35,18 +37,22 @@ export default function Login() {
 
 
     const {mutate: login, isPending} = useMutation({
-        mutationFn: (data: z.infer<typeof loginSchema>) => AxiosInstance.post("/auth/login", data),
+        mutationFn: (data: z.infer<typeof loginSchema>) => AxiosInstance.post("/api/v1/auth/login", data),
         onSuccess: data => {
             const response: AxiosResponse<User> = data;
             setAuthenticatedUser(response.data);
             router.push("/app");
         },
         onError: error => {
-            // implement error handling
+            if (error instanceof AxiosError && error.response) {
+                const apiError = error.response.data as APIErrorResponse;
+                setErrorMessage(apiError.details || 'Registration failed. Please try again.');
+            }
         }
     })
 
     function onLoginFormSubmit(data: z.infer<typeof loginSchema>) {
+        setErrorMessage(null);
         login(data);
     }
 
@@ -64,7 +70,9 @@ export default function Login() {
                                 " text-transparent"}>Oakcan</span>
                     </h2>
                 </div>
-                {/*    form*/}
+                {
+                    errorMessage && <FormStatus status={'error'} message={errorMessage}/>
+                }
                 <div className={"flex flex-col"}><Form {...loginForm}>
                     <form onSubmit={loginForm.handleSubmit(onLoginFormSubmit)}
                           className={"space-y-3  w-full"}>
@@ -77,8 +85,9 @@ export default function Login() {
                                                    type={"email"}
                                                    placeholder={"Email"} {...field}/>
                                            </FormControl>
-                                           <FormMessage className={"text-sm" +
-                                               " font-normal"}/>
+                                           <FormMessage
+                                               className={"text-destructive text-xs rounded-md" +
+                                                   " font-normal"}/>
                                        </FormItem>
                                    )}>
                         </FormField>
@@ -95,7 +104,8 @@ export default function Login() {
                                                    />
                                                </FormControl>
                                                <FormMessage
-                                                   className={"text-sm font-normal"}/>
+                                                   className={"text-destructive text-xs rounded-md" +
+                                                       " font-normal"}/>
                                            </FormItem>
                                        )}>
                             </FormField>

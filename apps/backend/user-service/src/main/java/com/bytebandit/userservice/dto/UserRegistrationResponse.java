@@ -8,10 +8,7 @@ import java.util.UUID;
  * if there is one [:)].
  */
 public record UserRegistrationResponse(
-    UUID id,
-    String fullName,
-    String email,
-    Boolean verified,
-    Timestamp createdAt
+        String fullName,
+        String email
 ) {
 }

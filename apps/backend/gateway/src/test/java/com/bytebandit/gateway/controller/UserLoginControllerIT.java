@@ -11,6 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import java.util.Map;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,20 +34,20 @@ import org.springframework.test.context.ActiveProfiles;
 @Import({BCryptPasswordEncoder.class})
 @Slf4j
 class UserLoginControllerIT extends AbstractPostgresContainer {
-
+    
     @LocalServerPort
     private int port;
-
+    
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    
     @Autowired
     private UserRepository userRepository;
-
+    
     private final String requestPath = "/api/v1/auth/login";
     private final UUID userId = UUID.randomUUID();
     private String csrfToken;
-
+    
     /**
      * This method sets up the test environment by deleting all existing users and creating a new
      * user with a known password.
@@ -54,7 +55,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     @BeforeEach
     void setup() {
         RestAssured.port = port;
-
+        
         Response response = RestAssured
             .given()
             .when()
@@ -64,22 +65,23 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
             .extract()
             .response();
         log.info("{}", response);
-
+        
         csrfToken = response.getCookies().get("XSRF-TOKEN");
-
+        
         userRepository.deleteAll();
-
+        
         UserEntity user = new UserEntity();
         user.setId(userId);
         user.setEmail("test@example.com");
+        user.setFullName("test user");
         user.setPasswordHash(
             passwordEncoder.encode("ValidPass$1")
         );
         user.setVerified(true);
-
+        
         userRepository.save(user);
     }
-
+    
     private RequestSpecification requestSpecification() {
         log.info(csrfToken);
         return RestAssured.given()
@@ -87,7 +89,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
             .header("X-XSRF-TOKEN", csrfToken)
             .cookie("XSRF-TOKEN", csrfToken);
     }
-
+    
     /**
      * This test verifies that a user can log in with valid credentials. It sends a POST request to
      * the login endpoint with the user's email and password, and checks that the response status
@@ -95,7 +97,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
      */
     @Test
     void login_shouldSucceedWithValidCredentials() {
-
+        
         String jsonBody = """
                 {
                     "email": "test@example.com",
@@ -103,7 +105,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
                     "userId": "..."
                 }
             """;
-
+        
         requestSpecification()
             .body(jsonBody)
             .when()
@@ -116,7 +118,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
             .body("timestamp", notNullValue())
             .body("path", equalTo("/api/v1/auth/login"));
     }
-
+    
     /**
      * This test verifies that a user cannot log in with an invalid email. It sends a POST request
      * to the login endpoint with an invalid email and a valid password, and checks that the
@@ -125,7 +127,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
      */
     @Test
     void login_shouldFailWithInvalidPassword() {
-
+        
         String jsonBody = """
                {
                    "email": "test@example.com",
@@ -133,7 +135,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
                    "userId": "..."
                }
             """;
-
+        
         requestSpecification()
             .body(jsonBody)
             .when()
@@ -145,4 +147,48 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
             .body("message", containsString("Bad credentials"))
             .body("path", equalTo("/api/v1/auth/login"));
     }
+    
+    /**
+     * This test verifies that a user can access the /me endpoint after logging in. It sends a POST
+     * request to the login endpoint with valid credentials, extracts the cookies from the response,
+     * and then sends a GET request to the /me endpoint with the same cookies. It checks that the
+     * response status code is 200 (OK) and the response body contains the expected values.
+     */
+    @Test
+    void authenticationConfirmation_shouldSucceedAfterLogin() {
+        String jsonBody = """
+                {
+                    "email": "test@example.com",
+                    "password": "ValidPass$1",
+                    "userId": "..."
+                }
+            """;
+        
+        Response loginResponse = requestSpecification()
+            .body(jsonBody)
+            .when()
+            .post(requestPath)
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .extract()
+            .response();
+        
+        Map<String, String> cookies = loginResponse.getCookies();
+        
+        // Access the /me endpoint with the same cookies
+        RestAssured
+            .given()
+            .cookies(cookies)
+            .when()
+            .get("/api/v1/auth/me")
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("status", equalTo(200))
+            .body("message", equalTo("Authenticated user confirmed."))
+            .body("data.email", equalTo("test@example.com"))
+            .body("data.fullName", equalTo("test user"))
+            .body("timestamp", notNullValue())
+            .body("path", equalTo("/api/v1/auth/me"));
+    }
+    
 }
