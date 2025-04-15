@@ -12,6 +12,8 @@ public enum ErrorCode {
 
     USER_NOT_FOUND("USER-01", "User not found."),
 
+    USER_NOT_AUTHENTICATED("AUTH-02", "User not authenticated."),
+
     INVALID_INPUT_FORMAT("VALID-01", "Invalid input format."),
     REQUEST_VALIDATION_FAILED("VALID-02", "Request validation failed."),
 

@@ -11,7 +11,10 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+
+import java.util.Map;
 import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,13 +59,13 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
         RestAssured.port = port;
 
         Response response = RestAssured
-            .given()
-            .when()
-            .get("/api/v1/auth/csrf")
-            .then()
-            .statusCode(HttpStatus.OK.value())
-            .extract()
-            .response();
+                .given()
+                .when()
+                .get("/api/v1/auth/csrf")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .response();
         log.info("{}", response);
 
         csrfToken = response.getCookies().get("XSRF-TOKEN");
@@ -72,8 +75,9 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
         UserEntity user = new UserEntity();
         user.setId(userId);
         user.setEmail("test@example.com");
+        user.setFullName("test user");
         user.setPasswordHash(
-            passwordEncoder.encode("ValidPass$1")
+                passwordEncoder.encode("ValidPass$1")
         );
         user.setVerified(true);
 
@@ -83,9 +87,9 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     private RequestSpecification requestSpecification() {
         log.info(csrfToken);
         return RestAssured.given()
-            .contentType(ContentType.JSON)
-            .header("X-XSRF-TOKEN", csrfToken)
-            .cookie("XSRF-TOKEN", csrfToken);
+                .contentType(ContentType.JSON)
+                .header("X-XSRF-TOKEN", csrfToken)
+                .cookie("XSRF-TOKEN", csrfToken);
     }
 
     /**
@@ -97,24 +101,24 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     void login_shouldSucceedWithValidCredentials() {
 
         String jsonBody = """
-                {
-                    "email": "test@example.com",
-                    "password": "ValidPass$1",
-                    "userId": "..."
-                }
-            """;
+                    {
+                        "email": "test@example.com",
+                        "password": "ValidPass$1",
+                        "userId": "..."
+                    }
+                """;
 
         requestSpecification()
-            .body(jsonBody)
-            .when()
-            .post(requestPath)
-            .then()
-            .statusCode(HttpStatus.OK.value())
-            .body("status", equalTo(200))
-            .body("message", equalTo("Login successful"))
-            .body("data", equalTo(true))
-            .body("timestamp", notNullValue())
-            .body("path", equalTo("/api/v1/auth/login"));
+                .body(jsonBody)
+                .when()
+                .post(requestPath)
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("status", equalTo(200))
+                .body("message", equalTo("Login successful"))
+                .body("data", equalTo(true))
+                .body("timestamp", notNullValue())
+                .body("path", equalTo("/api/v1/auth/login"));
     }
 
     /**
@@ -127,22 +131,60 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     void login_shouldFailWithInvalidPassword() {
 
         String jsonBody = """
-               {
-                   "email": "test@example.com",
-                   "password": "ValidPass1$",
-                   "userId": "..."
-               }
-            """;
+                   {
+                       "email": "test@example.com",
+                       "password": "ValidPass1$",
+                       "userId": "..."
+                   }
+                """;
 
         requestSpecification()
-            .body(jsonBody)
-            .when()
-            .post(requestPath)
-            .then()
-            .statusCode(HttpStatus.UNAUTHORIZED.value())
-            .body("status", equalTo(401))
-            .body("errorCode", equalTo("AUTH-01"))
-            .body("message", containsString("Bad credentials"))
-            .body("path", equalTo("/api/v1/auth/login"));
+                .body(jsonBody)
+                .when()
+                .post(requestPath)
+                .then()
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .body("status", equalTo(401))
+                .body("errorCode", equalTo("AUTH-01"))
+                .body("message", containsString("Bad credentials"))
+                .body("path", equalTo("/api/v1/auth/login"));
     }
+
+    @Test
+    void authenticationConfirmation_shouldSucceedAfterLogin() {
+        String jsonBody = """
+                    {
+                        "email": "test@example.com",
+                        "password": "ValidPass$1",
+                        "userId": "..."
+                    }
+                """;
+
+        Response loginResponse = requestSpecification()
+                .body(jsonBody)
+                .when()
+                .post(requestPath)
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+                .response();
+
+        Map<String, String> cookies = loginResponse.getCookies();
+
+        // Access the /me endpoint with the same cookies
+        RestAssured
+                .given()
+                .cookies(cookies)
+                .when()
+                .get("/api/v1/auth/me")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("status", equalTo(200))
+                .body("message", equalTo("Authenticated user confirmed."))
+                .body("data.email", equalTo("test@example.com"))
+                .body("data.fullName", equalTo("test user"))
+                .body("timestamp", notNullValue())
+                .body("path", equalTo("/api/v1/auth/me"));
+    }
+
 }

@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status UNAUTHORIZED
      */
     @ExceptionHandler(BadCredentialsException.class)
@@ -47,6 +48,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status UNAUTHORIZED
      */
     @ExceptionHandler(InvalidTokenException.class)
@@ -65,6 +67,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status NOT_FOUND
      */
     @ExceptionHandler(UsernameNotFoundException.class)
@@ -86,6 +89,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status BAD_REQUEST
      */
     @ExceptionHandler(IllegalArgumentException.class)
@@ -107,6 +111,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status BAD_REQUEST
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -116,8 +121,8 @@ public class GlobalExceptionHandler {
         HttpServletRequest request
     ) {
         String details = ex.getBindingResult().getAllErrors().stream()
-            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-            .collect(Collectors.joining("; "));
+                             .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                             .collect(Collectors.joining("; "));
 
         return buildError(
             HttpStatus.BAD_REQUEST,
@@ -133,6 +138,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status CONFLICT
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -155,6 +161,7 @@ public class GlobalExceptionHandler {
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status INTERNAL_SERVER_ERROR
      */
     @ExceptionHandler(Exception.class)
@@ -163,6 +170,28 @@ public class GlobalExceptionHandler {
         return buildError(
             HttpStatus.INTERNAL_SERVER_ERROR,
             ErrorCode.INTERNAL_SERVER_ERROR,
+            ex.getMessage(),
+            request.getRequestURI()
+        );
+    }
+
+    /**
+     * Handles UserNotAuthenticatedException thrown by the application.
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     *
+     * @return an ErrorResponse with status UNAUTHORIZED
+     */
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUserNotAuthenticated(
+        UserNotAuthenticatedException ex,
+        HttpServletRequest request
+    ) {
+        return buildError(
+            HttpStatus.UNAUTHORIZED,
+            ErrorCode.USER_NOT_AUTHENTICATED,
             ex.getMessage(),
             request.getRequestURI()
         );

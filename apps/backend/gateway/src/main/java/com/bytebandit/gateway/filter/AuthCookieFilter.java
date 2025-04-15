@@ -11,17 +11,21 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+@Component
 public class AuthCookieFilter extends OncePerRequestFilter {
 
     private final List<String> permittedRoutes;
@@ -38,13 +42,13 @@ public class AuthCookieFilter extends OncePerRequestFilter {
      * Constructor for AuthCookieFilter.
      *
      * @param permittedRoutesConfig the configuration for permitted routes
-     * @param tokenService the token service
-     * @param userDetailsService the user details service
+     * @param tokenService          the token service
+     * @param userDetailsService    the user details service
      */
     public AuthCookieFilter(
-        PermittedRoutesConfig permittedRoutesConfig,
-        TokenService tokenService,
-        CustomUserDetailsService userDetailsService
+            PermittedRoutesConfig permittedRoutesConfig,
+            TokenService tokenService,
+            CustomUserDetailsService userDetailsService
     ) {
         this.permittedRoutes = permittedRoutesConfig.getRoutes();
         this.tokenService = tokenService;
@@ -53,9 +57,9 @@ public class AuthCookieFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-        @NonNull HttpServletRequest request,
-        @NonNull HttpServletResponse response,
-        @NonNull FilterChain filterChain
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
         if (permittedRoutes.contains(request.getServletPath())) {
@@ -64,8 +68,8 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         }
 
         final String accessToken = CookieUtil.getCookieValue(
-            request,
-            CookieKey.ACCESS_TOKEN.getKey());
+                request,
+                CookieKey.ACCESS_TOKEN.getKey());
 
         if (accessToken == null) {
             throw new CookieNotFoundException("Access token cookie not found");
@@ -78,35 +82,36 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             try {
                 tokenService.isValidToken(accessToken, user);
                 UsernamePasswordAuthenticationToken token =
-                    new UsernamePasswordAuthenticationToken(
-                        user,
-                        null,
-                        user.getAuthorities()
-                    );
+                        new UsernamePasswordAuthenticationToken(
+                                user,
+                                null,
+                                user.getAuthorities()
+                        );
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(token);
             } catch (ExpiredJwtException e) {
                 final UUID userId = tokenService.extractUserId(accessToken);
                 final String newAccessToken = tokenService.generateToken(
-                    user,
-                    accessTokenExpirationTime,
-                    userId
+                        user,
+                        accessTokenExpirationTime,
+                        userId
                 );
                 tokenService.generateAndSaveRefreshToken(
-                    user,
-                    refreshTokenExpirationTime,
-                    accessToken
+                        user,
+                        refreshTokenExpirationTime,
+                        accessToken
                 );
                 CookieUtil.setCookie(
-                    response,
-                    CookieKey.ACCESS_TOKEN.getKey(),
-                    newAccessToken,
-                    false,
-                    24 * 60 * 60,
-                    "/",
-                    false
+                        response,
+                        CookieKey.ACCESS_TOKEN.getKey(),
+                        newAccessToken,
+                        false,
+                        24 * 60 * 60,
+                        "/",
+                        false
                 );
             }
         }
+        filterChain.doFilter(request, response);
     }
 }
