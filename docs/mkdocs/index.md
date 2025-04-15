@@ -19,7 +19,7 @@ hide:
 
 To start using Oakcan, follow these guides:
 
-- [Local Setup](get-started/local-setup.md) – Setting up Oakcan for development.
+- [Running Locally](get-started/local-setup.md) – Instruction to run locally.
 - [Usage Guide](get-started/usage.md) – Detailed instructions on file management and sharing.
 
 ## Additional Resources

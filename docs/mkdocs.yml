@@ -39,7 +39,7 @@ theme:
 nav:
   - Home: index.md
   - Get Started:
-      - Local Setup: get-started/local-setup.md
+      - Running Locally: get-started/local-setup.md
       - Usage: get-started/usage.md
   - Documentation:
       - Introduction: documentation/introduction.md
