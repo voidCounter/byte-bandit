@@ -1,12 +1,13 @@
 package com.bytebandit.userservice.exception;
 
-import com.bytebandit.userservice.enums.ErrorCode;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lib.core.dto.response.ErrorResponse;
+import lib.core.dto.response.FieldValidationError;
+import lib.core.enums.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +52,14 @@ public class GlobalExceptionHandler {
 
     }
 
+    /**
+     * Handles EmailAlreadyVerifiedException.
+     *
+     * @param ex      The exception thrown.
+     * @param request The HTTP request.
+     *
+     * @return ResponseEntity with a BAD_REQUEST status and error details.
+     */
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex,
                                                                  HttpServletRequest request) {
@@ -59,30 +68,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles validation exceptions.
+     * Handles EmailAlreadyVerifiedException.
      *
      * @param ex      The exception thrown.
      * @param request The HTTP request.
      *
      * @return ResponseEntity with a BAD_REQUEST status and error details.
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationException(
-        MethodArgumentNotValidException ex, HttpServletRequest request) {
-        String details = ex.getBindingResult().getFieldErrors()
-            .stream()
-            .map(error -> error.getField() + ": " + error.getDefaultMessage())
-            .collect(Collectors.joining(", "));
-
-        String globalErrors = ex.getBindingResult().getGlobalErrors()
-            .stream()
-            .map(error -> error.getObjectName() + ": " + error.getDefaultMessage())
-            .collect(Collectors.joining(", "));
-
-        details = details.isEmpty() ? globalErrors : details + ", " + globalErrors;
-
-        return buildResponse(HttpStatus.BAD_REQUEST, ErrorCode.REQUEST_VALIDATION_FAILED, request,
-            details);
+    @ExceptionHandler(EmailAlreadyVerifiedException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyVerified(
+        EmailAlreadyVerifiedException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ErrorCode.EMAIL_ALREADY_VERIFIED, request,
+            ex.getMessage());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -97,6 +94,52 @@ public class GlobalExceptionHandler {
                                                               HttpServletRequest request) {
         return buildResponse(HttpStatus.UNAUTHORIZED, ErrorCode.AUTH_INVALID_CREDENTIALS, request,
             ex.getMessage());
+    }
+
+    /**
+     * Handles InvalidTokenException.
+     *
+     * @param ex      The exception thrown.
+     * @param request The HTTP request.
+     *
+     * @return ResponseEntity with a BAD_REQUEST status and error details.
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(
+        MethodArgumentNotValidException ex, HttpServletRequest request) {
+
+        FieldValidationError errors = ex.getBindingResult().getFieldErrors().stream()
+            .map(error -> {
+                String field = error.getField();
+                String message = error.getDefaultMessage();
+
+                ErrorCode errorCode;
+
+                switch (field) {
+                    case "email" -> errorCode = ErrorCode.INVALID_EMAIL;
+
+                    case "password" -> {
+                        if (message.contains("cannot be null")) {
+                            errorCode = ErrorCode.PASSWORD_NULL;
+                        } else if (message.contains("at least 8 characters")) {
+                            errorCode = ErrorCode.PASSWORD_TOO_SHORT;
+                        } else if (message.contains("uppercase") || message.contains("digit") || message.contains("special character")) {
+                            errorCode = ErrorCode.PASSWORD_TOO_WEAK;
+                        } else {
+                            errorCode = ErrorCode.INVALID_PASSWORD;
+                        }
+                    }
+
+                    default -> errorCode = ErrorCode.REQUEST_VALIDATION_FAILED;
+                }
+
+                return new FieldValidationError(field, errorCode, message);
+            })
+            .toList()
+            .get(0);
+
+        return buildResponse(HttpStatus.BAD_REQUEST, errors.getCode(), request,
+            errors.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -120,25 +163,11 @@ public class GlobalExceptionHandler {
             request, "Provided media type: " + ex.getContentType());
     }
 
-    @ExceptionHandler(RefreshTokenExpiredException.class)
-    public ResponseEntity<ErrorResponse> handleRefreshTokenExpired(RefreshTokenExpiredException ex,
-                                                                   HttpServletRequest request) {
-        return buildResponse(HttpStatus.UNAUTHORIZED, ErrorCode.REFRESH_TOKEN_EXPIRED, request,
-            ex.getMessage());
-    }
-
     @ExceptionHandler(TooManyRequestsException.class)
     public ResponseEntity<ErrorResponse> handleTooManyRequests(TooManyRequestsException ex,
                                                                HttpServletRequest request) {
         return buildResponse(HttpStatus.TOO_MANY_REQUESTS, ErrorCode.TOO_MANY_REQUESTS, request,
             ex.getMessage());
-    }
-
-    @ExceptionHandler(InvalidImageFormatException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidImageFormat(InvalidImageFormatException ex,
-                                                                  HttpServletRequest request) {
-        return buildResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ErrorCode.INVALID_IMAGE_FORMAT,
-            request, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
