@@ -4,6 +4,7 @@ import com.bytebandit.gateway.dto.AuthenticatedUserDto;
 import com.bytebandit.gateway.dto.LoginRequest;
 import com.bytebandit.gateway.service.UserLoginService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lib.core.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,18 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class UserLoginController {
-
+    
     private final UserLoginService userLoginService;
-
+    
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Boolean>> login(
-            // for now, no validation is needed
-            @RequestBody LoginRequest loginRequest,
-            HttpServletResponse response
+        @Valid @RequestBody LoginRequest loginRequest,
+        HttpServletResponse response
     ) {
         return ResponseEntity.ok(userLoginService.login(loginRequest, response));
     }
-
+    
     /**
      * Handles a GET request to retrieve the authenticated user's information.
      *
