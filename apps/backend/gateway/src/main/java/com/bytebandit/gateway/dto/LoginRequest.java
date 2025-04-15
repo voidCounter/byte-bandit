@@ -15,7 +15,6 @@ public class LoginRequest {
     @Nullable
     private String userId;
 
-    @ValidPassword
     private String password;
 
     @ValidEmail

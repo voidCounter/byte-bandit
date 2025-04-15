@@ -52,12 +52,7 @@ export default function Login() {
         onError: error => {
             if (error instanceof AxiosError && error.response) {
                 const apiError = error.response.data as APIErrorResponse;
-                const field = fieldErrorMap[apiError.errorCode];
-                if (field) {
-                    loginForm.setError(field, {type: 'manual', message: apiError.details});
-                } else {
-                    setErrorMessage(apiError.details || 'Registration failed. Please try again.');
-                }
+                setErrorMessage(apiError.details || 'Registration failed. Please try again.');
             }
         }
     })

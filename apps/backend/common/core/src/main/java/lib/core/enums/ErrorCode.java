@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    AUTH_INVALID_CREDENTIALS("AUTH-01", "Invalid credentials provided."),
+    AUTH_INVALID_CREDENTIALS("AUTH-01", "Invalid email or password provided."),
     AUTH_TOKEN_EXPIRED("AUTH-02", "Authentication token has expired."),
     AUTH_ACCESS_DENIED("AUTH-03", "Access denied for the requested resource."),
 
@@ -25,7 +25,7 @@ public enum ErrorCode {
     TOKEN_INVALID("SEC-02", "Invalid authentication token."),
     PASSWORD_TOO_SHORT("SEC-04", "Password must be at least 8 characters."),
     PASSWORD_TOO_WEAK("SEC-05", "Password must contain a digit, uppercase, "
-        + "lowercase, and a special character."),
+            + "lowercase, and a special character."),
     PASSWORD_NULL("SEC-06", "Password field cannot be null."),
     INVALID_PASSWORD("SEC-07", "Invalid password format."),
 
