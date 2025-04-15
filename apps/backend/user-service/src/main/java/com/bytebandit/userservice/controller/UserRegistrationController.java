@@ -2,16 +2,17 @@ package com.bytebandit.userservice.controller;
 
 import com.bytebandit.userservice.dto.UserRegistrationRequest;
 import com.bytebandit.userservice.service.UserRegistrationService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RegistrationController {
+public class UserRegistrationController {
     private final UserRegistrationService userRegistrationService;
 
-    public RegistrationController(UserRegistrationService userRegistrationService) {
+    public UserRegistrationController(UserRegistrationService userRegistrationService) {
         this.userRegistrationService = userRegistrationService;
     }
 
@@ -24,7 +25,7 @@ public class RegistrationController {
      */
 
     @PostMapping("/register")
-    ResponseEntity<?> register(@RequestBody UserRegistrationRequest request) {
+    ResponseEntity<?> register(@Valid @RequestBody UserRegistrationRequest request) {
         userRegistrationService.register(request);
         return ResponseEntity.ok("User registered successfully");
     }

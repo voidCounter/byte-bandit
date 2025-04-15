@@ -4,12 +4,14 @@ import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Supplier;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Value;
 import org.springframework.http.HttpStatus;
 
 
 @Value
 @Builder
+@Getter
 public class ErrorResponse {
     String errorId;
     Instant timestamp;
