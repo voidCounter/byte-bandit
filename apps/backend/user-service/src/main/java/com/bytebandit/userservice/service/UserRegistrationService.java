@@ -10,10 +10,12 @@ import com.bytebandit.userservice.projection.CreateUserAndTokenProjection;
 import com.bytebandit.userservice.repository.TokenRepository;
 import com.bytebandit.userservice.repository.UserRepository;
 import jakarta.transaction.Transactional;
+
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+
 import lib.user.enums.TokenType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,14 +39,13 @@ public class UserRegistrationService {
      *
      * @param registrationRequest the user registration request including email, password, and full
      *                            name.
-     *
      * @return a UserRegistrationResponse containing user details such as ID, full name, email,
-     *     verification status, and creation timestamp.
+     * verification status, and creation timestamp.
      * @throws UserAlreadyExistsException if a user with the provided email already exists.
      * @throws IllegalStateException      if the user registration process fails.
      */
     public UserRegistrationResponse register(
-        UserRegistrationRequest registrationRequest
+            UserRegistrationRequest registrationRequest
     ) {
         String passwordHash = passwordEncoder.encode(registrationRequest.getPassword());
         UUID token = UUID.randomUUID();
@@ -53,28 +54,25 @@ public class UserRegistrationService {
 
         try {
             CreateUserAndTokenProjection userAndToken = transactionTemplate.execute(
-                result -> userRepository.createUserAndToken(
-                    registrationRequest.getEmail(),
-                    passwordHash,
-                    registrationRequest.getFullName(),
-                    tokenHash,
-                    TokenType.EMAIL_VERIFICATION.name(),
-                    tokenExpiresAt
-                )
+                    result -> userRepository.createUserAndToken(
+                            registrationRequest.getEmail(),
+                            passwordHash,
+                            registrationRequest.getFullName(),
+                            tokenHash,
+                            TokenType.EMAIL_VERIFICATION.name(),
+                            tokenExpiresAt
+                    )
             );
             if (userAndToken == null) {
                 throw new IllegalStateException("User registration failed.");
             }
             sendEmail(
-                userAndToken,
-                token.toString()
+                    userAndToken,
+                    token.toString()
             );
             return new UserRegistrationResponse(
-                userAndToken.getId(),
-                userAndToken.getFullName(),
-                userAndToken.getEmail(),
-                userAndToken.getVerified(),
-                userAndToken.getCreatedAt()
+                    userAndToken.getFullName(),
+                    userAndToken.getEmail()
             );
         } catch (DataIntegrityViolationException e) {
             throw new UserAlreadyExistsException("User with provided email already exists.", e);
@@ -82,14 +80,14 @@ public class UserRegistrationService {
     }
 
     private void sendEmail(
-        CreateUserAndTokenProjection user,
-        String token
+            CreateUserAndTokenProjection user,
+            String token
     ) {
         registrationEmailService.sendEmail(
-            user.getEmail(),
-            user.getFullName(),
-            token,
-            user.getId()
+                user.getEmail(),
+                user.getFullName(),
+                token,
+                user.getId()
         );
     }
 
@@ -100,16 +98,16 @@ public class UserRegistrationService {
      */
     @Transactional
     public void resendVerificationEmail(
-        String email
+            String email
     ) {
         UserEntity user = userRepository.findByEmail(
-            email).orElseThrow(() -> new IllegalArgumentException(
-            "If this email exists, an email will be sent.")); // avoid leaking information
+                email).orElseThrow(() -> new IllegalArgumentException(
+                "If this email exists, an email will be sent.")); // avoid leaking information
         if (user.isVerified()) {
             throw new EmailAlreadyVerifiedException("User is already verified.");
         }
         tokenRepository.invalidateAllForUserAndType(
-            user, TokenType.EMAIL_VERIFICATION
+                user, TokenType.EMAIL_VERIFICATION
         );
 
         UUID token = UUID.randomUUID();
@@ -117,14 +115,14 @@ public class UserRegistrationService {
         Timestamp tokenExpiresAt = Timestamp.from(Instant.now().plus(24, ChronoUnit.HOURS));
 
         TokenEntity tokenEntity = TokenEntity.builder()
-            .type(TokenType.EMAIL_VERIFICATION)
-            .tokenHash(tokenHash)
-            .used(false)
-            .user(user)
-            .expiresAt(tokenExpiresAt).build();
+                .type(TokenType.EMAIL_VERIFICATION)
+                .tokenHash(tokenHash)
+                .used(false)
+                .user(user)
+                .expiresAt(tokenExpiresAt).build();
         tokenRepository.save(tokenEntity);
 
         registrationEmailService.sendEmail(user.getEmail(), user.getFullName(), token.toString(),
-            user.getId());
+                user.getId());
     }
 }

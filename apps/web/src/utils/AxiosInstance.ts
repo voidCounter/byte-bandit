@@ -1,5 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import {useAuthStore} from "@/store/AuthStore";
+import {toast} from "sonner";
 
 const fetchCsrfToken = async () => {
     try {
@@ -66,3 +68,21 @@ AxiosInstance.interceptors.request.use(
         return Promise.reject(error);
     }
 )
+
+AxiosInstance.interceptors.response.use(
+    (response) => response, // Pass through successful responses
+    (error) => {
+        if (error.response?.status === 401) {
+            useAuthStore.getState().deleteAuthenticatedUser();
+
+            if (typeof window !== 'undefined') {
+                const currentPath = window.location.pathname;
+                if (!['/login', '/register'].includes(currentPath)) {
+                    toast.error("Session expired. Please log in again!");
+                    window.location.href = '/login'; // Client-side redirect
+                }
+            }
+        }
+        return Promise.reject(error);
+    }
+);

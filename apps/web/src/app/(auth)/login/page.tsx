@@ -23,12 +23,6 @@ const loginSchema = z.object({
     password: z.string().min(8, {message: "Must have at least 8 character."}).max(16),
 });
 
-const fieldErrorMap: Record<string, keyof z.infer<typeof loginSchema>> = {
-    'AUTH-01': 'password',
-    'USER-01': 'email',
-}
-
-
 export default function Login() {
     const {setAuthenticatedUser} = useAuthStore();
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -58,6 +52,7 @@ export default function Login() {
     })
 
     function onLoginFormSubmit(data: z.infer<typeof loginSchema>) {
+        setErrorMessage(null);
         login(data);
     }
 
@@ -91,7 +86,7 @@ export default function Login() {
                                                    placeholder={"Email"} {...field}/>
                                            </FormControl>
                                            <FormMessage
-                                               className={"text-destructive text-sm rounded-md" +
+                                               className={"text-destructive text-xs rounded-md" +
                                                    " font-normal"}/>
                                        </FormItem>
                                    )}>
@@ -109,7 +104,7 @@ export default function Login() {
                                                    />
                                                </FormControl>
                                                <FormMessage
-                                                   className={"text-destructive text-sm rounded-md" +
+                                                   className={"text-destructive text-xs rounded-md" +
                                                        " font-normal"}/>
                                            </FormItem>
                                        )}>

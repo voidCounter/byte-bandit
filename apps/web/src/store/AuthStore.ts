@@ -5,7 +5,7 @@ import {AuthenticatedUser} from "@/types/User/AuthenticatedUser";
 
 interface AuthStore {
     pendingVerificationEmail: string | null,
-    setPendingVerificationEmail: (email: string) => void,
+    setPendingVerificationEmail: (email: string | null) => void,
     authenticatedUser: AuthenticatedUser | null,
     setAuthenticatedUser: (authenticatedUser: AuthenticatedUser) => void,
     deleteAuthenticatedUser: () => void
@@ -16,7 +16,7 @@ export const useAuthStore = create<AuthStore>()(
         (set) => ({
             pendingVerificationEmail: null,
             authenticatedUser: null,
-            setPendingVerificationEmail: (email: string) => {
+            setPendingVerificationEmail: (email: string | null) => {
                 set({pendingVerificationEmail: email});
             },
             setAuthenticatedUser: (authenticatedUser: AuthenticatedUser) => {
