@@ -10,3 +10,9 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
     register-with-eureka: true
+aws:
+  s3:
+    bucket: ${BUCKET_NAME:oakcan-bucket}
+  sqs:
+    queue-url: ${SQS_QUEUE_URL}
+  region: ${AWS_REGION:us-east-1}
