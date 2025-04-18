@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
@@ -29,6 +30,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     private final List<String> permittedRoutes;
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
     
     @Value("${app.access-token-expiration}")
     private long accessTokenExpirationTime;
@@ -59,7 +61,13 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if (permittedRoutes.contains(request.getServletPath())) {
+        logger.info("permittedRoutes: " + permittedRoutes);
+        logger.info("request.getServletPath(): " + request.getServletPath());
+        
+        String servletPath = request.getServletPath();
+        boolean isPermitted = permittedRoutes.stream()
+            .anyMatch(route -> pathMatcher.match(route, servletPath));
+        if (isPermitted) {
             filterChain.doFilter(request, response);
             return;
         }
