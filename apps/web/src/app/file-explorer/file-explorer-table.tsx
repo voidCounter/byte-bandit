@@ -25,25 +25,20 @@ import {
 import {FileSystemItem} from "@/types/Files/FileSystemItem";
 import {Trash2, Download, Share2, Edit, Grid, List, File, Folder, LayoutGrid, Rows3} from "lucide-react";
 
-// Placeholder functions for context menu actions
 const handleRename = (item: FileSystemItem) => {
     console.log(`Rename: ${item.name}`);
-    // TODO: Implement rename logic (e.g., open a modal or input field)
 };
 
 const handleDelete = (item: FileSystemItem) => {
     console.log(`Delete: ${item.name}`);
-    // TODO: Implement delete logic (e.g., API call to delete item)
 };
 
 const handleDownload = (item: FileSystemItem) => {
     console.log(`Download: ${item.name}`);
-    // TODO: Implement download logic (e.g., trigger file download)
 };
 
 const handleShare = (item: FileSystemItem) => {
     console.log(`Share: ${item.name}`);
-    // TODO: Implement share logic (e.g., copy link or open share dialog)
 };
 
 interface FileExplorerTableProps {
@@ -63,7 +58,6 @@ export function FileExplorerTable({data, columns}: FileExplorerTableProps) {
         setViewMode((prev) => (prev === "table" ? "grid" : "table"));
     };
 
-    // Split data into folders and files
     const folders = data.filter((item) => item.type === "folder");
     const files = data.filter((item) => item.type === "file");
 

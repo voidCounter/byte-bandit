@@ -15,25 +15,20 @@ import {formatBytes} from "@/utils/size-formatter"
 import {formatDate} from "@/utils/date-formatter";
 import {FileSystemItem} from "@/types/Files/FileSystemItem"; // Adjust import path
 
-// Placeholder functions for actions
 const handleRename = (item: FileSystemItem) => {
     console.log("Rename", item.name);
-    // Implement rename logic (e.g., open a modal)
 };
 
 const handleDelete = (item: FileSystemItem) => {
     console.log("Delete", item.name);
-    // Implement delete logic (e.g., show a confirmation dialog)
 };
 
 const handleDownload = (item: FileSystemItem) => {
     console.log("Download", item.name);
-    // Implement download logic
 };
 
 const handleShare = (item: FileSystemItem) => {
     console.log("Share", item.name);
-    // Implement share logic (e.g., open a share modal)
 };
 
 

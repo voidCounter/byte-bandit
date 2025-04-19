@@ -76,7 +76,7 @@ export function AppSidebar() {
                             {
                                 items.map((item: NavItem) => (
                                     <SidebarMenuItem key={item.title}
-                                                     className={`${pathname === item.link && "bg-primary rounded-md"}`}>
+                                                     className={`${pathname === item.link && "bg-primary text-background dark:text-foreground rounded-md"}`}>
                                         <SidebarMenuButton asChild>
                                             <Link href={item.link}>
                                                 {item.icon}
@@ -99,7 +99,7 @@ export function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem
-                                className={`${pathname === "/app/storage" && "bg-primary rounded-md"}`}>
+                                className={`${pathname === "/app/storage" && "bg-primary text-background dark:text-foreground rounded-md"}`}>
                                 <SidebarMenuButton asChild>
                                     <Link href="/app/storage" className={"h-fit"}>
                                         <BarChart className="mr-2 h-4 w-4"/>
@@ -107,8 +107,10 @@ export function AppSidebar() {
                                             <span>Storage Used</span>
                                             <div className={"flex flex-col gap-1 mt-2"}>
                                                 <span
-                                                    className={"text-xs text-muted-foreground"}>5GB of 10GB</span>
-                                                <Progress value={50} className={""}/>
+                                                    className={"text-xs dark:text-muted-foreground"}>5GB of 10GB</span>
+                                                <Progress value={50} className={""}
+                                                          indicatorColor={`${pathname === "/app/storage" ? "bg-background dark:bg-foreground" : "bg-foreground"}`}>
+                                                </Progress>
                                             </div>
                                         </div>
                                     </Link>
