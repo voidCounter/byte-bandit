@@ -8,10 +8,10 @@ import Link from "next/link";
 
 export default function Home() {
     return (
-        <div className="h-screen w-full">
+        <div className="h-screen w-full flex flex-col items-center bg-background">
             <NavigationBar/>
             <motion.section
-                className={'flex flex-col text-center justify-center items-center gap-4 w-full h-[75vh]'}
+                className={'flex flex-col text-center justify-center items-center gap-4 lg:w-[80vh] h-[75vh]'}
                 initial={{opacity: 0, y: 20, filter: 'blur(10px)'}}
                 animate={{opacity: 1, y: 0, filter: 'blur(0px)'}}
                 transition={{duration: 0.5, ease: "easeInOut"}}

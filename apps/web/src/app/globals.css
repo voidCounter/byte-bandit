@@ -14,15 +14,14 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 27 30% 90%;
     --secondary-foreground: 0 0% 0%;
-    --muted: -11 30% 95%;
+    --muted: 27 30% 95%;
     --muted-foreground: 27 5% 40%;
-    --accent: -11 30% 90%;
-    --accent-foreground: 27 5% 15%;
+    --accent: 36 20% 85%; /* warm neutral accent */
+    --accent-foreground: 27 10% 20%; /* stronger foreground contrast */
     --success: 142 71% 45%; /* a warm green, similar to tailwind's emerald-500 */
     --success-foreground: 0 0% 100%; /* white for contrast */
     --destructive: 0 100% 40%;
     --destructive-foreground: 0 80% 50%;
-
     --border: 27 30% 82%;
     --input: 27 30% 50%;
     --ring: 27 58.4% 34.9%;
@@ -40,10 +39,10 @@
     --primary-foreground: 0 0% 100%;
     --secondary: 27 30% 20%;
     --secondary-foreground: 0 0% 100%;
-    --muted: -11 30% 25%;
-    --muted-foreground: 27 5% 65%;
-    --accent: -11 30% 25%;
-    --accent-foreground: 27 5% 95%;
+    --muted: 27 30% 15%;
+    --muted-foreground: 27 5% 70%;
+    --accent: 36 22% 16%;
+    --accent-foreground: 27 10% 92%;
     --success: 142 71% 35%;
     --success-foreground: 0 0% 100%;
     --destructive: 0 100% 40%;
@@ -70,35 +69,39 @@
     body {
         @apply bg-background text-foreground;
     }
-  :root {
-        --sidebar-background: 0 0% 98%;
-        --sidebar-foreground: 240 5.3% 26.1%;
-        --sidebar-primary: 240 5.9% 10%;
-        --sidebar-primary-foreground: 0 0% 98%;
-        --sidebar-accent: 240 4.8% 95.9%;
-        --sidebar-accent-foreground: 240 5.9% 10%;
-        --sidebar-border: 220 13% 91%;
-        --sidebar-ring: 217.2 91.2% 59.8%;
-    }
-  .dark {
-        --sidebar-background: 240 5.9% 10%;
-        --sidebar-foreground: 240 4.8% 95.9%;
-        --sidebar-primary: 224.3 76.3% 48%;
+
+    :root {
+        /* Sidebar: darker than main theme */
+        --sidebar-background: 27 30% 91%; /* darker than main bg (97%) */
+        --sidebar-foreground: 27 8% 15%; /* slightly deeper text */
+        --sidebar-primary: 27 58% 30%; /* keep close to primary but deeper */
         --sidebar-primary-foreground: 0 0% 100%;
-        --sidebar-accent: 240 3.7% 15.9%;
-        --sidebar-accent-foreground: 240 4.8% 95.9%;
-        --sidebar-border: 240 3.7% 15.9%;
-        --sidebar-ring: 217.2 91.2% 59.8%;
+        --sidebar-accent: 36 22% 80%; /* warm neutral accent, darker */
+        --sidebar-accent-foreground: 27 10% 20%; /* strong contrast */
+        --sidebar-border: 27 20% 70%; /* darker border tone */
+        --sidebar-ring: 27 58% 30%; /* match primary */
     }
+
+    .dark {
+        --sidebar-background: 27 50% 8%; /* darker than main dark bg (10%) */
+        --sidebar-foreground: 27 6% 96%;
+        --sidebar-primary: 27 58% 30%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 36 22% 16%; /* warm, earthy tone */
+        --sidebar-accent-foreground: 27 6% 94%;
+        --sidebar-border: 27 20% 40%;
+        --sidebar-ring: 27 58% 30%;
+    }
+
 }
 
 
-
 @layer base {
-  * {
-    @apply border-border;
+    * {
+        @apply border-border;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
 }

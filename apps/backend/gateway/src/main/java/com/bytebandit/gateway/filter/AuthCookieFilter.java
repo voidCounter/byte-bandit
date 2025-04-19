@@ -3,10 +3,12 @@ package com.bytebandit.gateway.filter;
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
 import com.bytebandit.gateway.enums.CookieKey;
 import com.bytebandit.gateway.exception.CookieNotFoundException;
+import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
 import com.bytebandit.gateway.utils.CookieUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.micrometer.core.instrument.config.validate.Validated;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -80,42 +82,49 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             throw new CookieNotFoundException("Access token cookie not found");
         }
         
-        final String username = tokenService.extractUsername(accessToken);
         
-        if (username != null) {
+        try {
+            final String username = tokenService.extractUsername(accessToken);
             UserDetails user = userDetailsService.loadUserByUsername(username);
-            try {
-                tokenService.isValidToken(accessToken, user);
-                UsernamePasswordAuthenticationToken token =
-                    new UsernamePasswordAuthenticationToken(
-                        user,
-                        null,
-                        user.getAuthorities()
-                    );
-                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(token);
-            } catch (ExpiredJwtException e) {
-                final UUID userId = tokenService.extractUserId(accessToken);
-                final String newAccessToken = tokenService.generateToken(
-                    user,
-                    accessTokenExpirationTime,
-                    userId
-                );
-                tokenService.generateAndSaveRefreshToken(
-                    user,
-                    refreshTokenExpirationTime,
-                    accessToken
-                );
-                CookieUtil.setCookie(
-                    response,
-                    CookieKey.ACCESS_TOKEN.getKey(),
-                    newAccessToken,
-                    false,
-                    24 * 60 * 60,
-                    "/",
-                    false
-                );
+            if (tokenService.isTokenExpired(accessToken)) {
+                throw new ExpiredJwtException(null, null, "Token expired");
             }
+            if (!tokenService.isValidToken(accessToken, user)) {
+                throw new InvalidTokenException("Invalid token");
+            }
+            UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(
+                    user,
+                    null,
+                    user.getAuthorities()
+                );
+            token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(token);
+        } catch (ExpiredJwtException e) {
+            final UUID userId = tokenService.extractUserId(accessToken);
+            final String username = tokenService.extractUsername(accessToken);
+            UserDetails user = userDetailsService.loadUserByUsername(username);
+            final String newAccessToken = tokenService.generateToken(
+                user,
+                accessTokenExpirationTime,
+                userId
+            );
+            tokenService.generateAndSaveRefreshToken(
+                user,
+                refreshTokenExpirationTime,
+                accessToken
+            );
+            CookieUtil.setCookie(
+                response,
+                CookieKey.ACCESS_TOKEN.getKey(),
+                newAccessToken,
+                false,
+                24 * 60 * 60,
+                "/",
+                false
+            );
+        } catch (InvalidTokenException e) {
+            return;
         }
         filterChain.doFilter(request, response);
     }
