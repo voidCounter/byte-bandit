@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
@@ -51,10 +52,8 @@ public class SharedItemsPrivateEntity {
     @Column(nullable = false)
     private Timestamp updatedAt;
 
-    @OneToMany(
-        mappedBy = "files_system_item",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<SharedItemsPrivateEntity> sharedItems;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "share_id", nullable = false)
+    private SharedItemsPrivateEntity share;
+
 }

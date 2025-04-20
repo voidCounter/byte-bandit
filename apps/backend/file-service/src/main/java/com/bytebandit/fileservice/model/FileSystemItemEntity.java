@@ -3,6 +3,7 @@ package com.bytebandit.fileservice.model;
 import com.bytebandit.fileservice.enums.FileSystemItemType;
 import com.bytebandit.fileservice.enums.UploadStatus;
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -11,8 +12,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -74,10 +77,7 @@ public class FileSystemItemEntity {
     )
     private FileSystemItemEntity parent;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(
-        name = "shared_items_private_id",
-        referencedColumnName = "id"
-    )
-    private FileSystemItemEntity fileSystemItem;
+    @OneToMany(mappedBy = "share", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FileSystemItemEntity> sharedItems;
+
 }
