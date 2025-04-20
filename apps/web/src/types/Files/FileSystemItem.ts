@@ -6,4 +6,7 @@ export type FileSystemItem = {
     size?: number;
     itemCount?: number;
     lastModified: Date;
+    shared?: boolean;
+    sharedDate?: Date;
+    accessLevel?: 'viewer' | 'editor';
 };

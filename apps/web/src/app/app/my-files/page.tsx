@@ -1,6 +1,6 @@
 import {FileExplorerTable} from "@/app/file-explorer/file-explorer-table";
 import {dummyData} from "@/data/files";
-import {columns} from "@/app/file-explorer/columns";
+import {columns} from "@/app/app/my-files/columns";
 
 export default function MyFilesPage() {
     return (

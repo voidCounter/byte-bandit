@@ -1,3 +1,6 @@
+"use client";
+import {redirect} from "next/navigation";
+
 export default function App() {
-    return (<div className={"w-full h-full flex justify-center items-center"}>App</div>);
+    redirect("/app/my-files");
 }

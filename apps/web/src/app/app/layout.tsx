@@ -2,6 +2,7 @@ import ProtectedLayout from "@/layouts/ProtectedLayout";
 import {cookies} from "next/headers";
 import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/app/app/app-sidebar";
+import AppTopNav from "@/app/components/app-top-nav";
 
 export default async function AppLayout({
                                             children,
@@ -17,6 +18,7 @@ export default async function AppLayout({
                     <AppSidebar/>
                     <SidebarTrigger/>
                     <main className={"w-full pr-8"}>
+                        <AppTopNav/>
                         {children}
                     </main>
                 </SidebarProvider>
