@@ -1,5 +1,6 @@
 package com.bytebandit.fileservice.model;
 
+import com.bytebandit.fileservice.enums.FileSystemItemType;
 import com.bytebandit.fileservice.enums.UploadStatus;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.Column;
@@ -10,17 +11,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -36,15 +33,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 )
 @EntityListeners(AuditingEntityListener.class)
 public class FileSystemItemEntity {
-
-    @Getter
-    @RequiredArgsConstructor
-    public enum FileSystemType {
-        FILE("file"),
-        FOLDER("folder");
-
-        private final String type;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -66,7 +54,7 @@ public class FileSystemItemEntity {
     private UploadStatus status;
 
     @Column(nullable = false, updatable = false)
-    private FileSystemType type;
+    private FileSystemItemType type;
 
     @Column(columnDefinition = "jsonb", nullable = false)
     @JdbcTypeCode(SqlTypes.JSON)
@@ -80,7 +68,16 @@ public class FileSystemItemEntity {
     private String s3Url;
 
     @ManyToOne
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    @JoinColumn(
+        name = "parent_id",
+        referencedColumnName = "id"
+    )
     private FileSystemItemEntity parent;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(
+        name = "shared_items_private_id",
+        referencedColumnName = "id"
+    )
+    private FileSystemItemEntity fileSystemItem;
 }
