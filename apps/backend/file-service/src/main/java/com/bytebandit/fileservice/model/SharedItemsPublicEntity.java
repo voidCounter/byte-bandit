@@ -3,6 +3,8 @@ package com.bytebandit.fileservice.model;
 import com.bytebandit.fileservice.enums.FileSystemPermission;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +35,7 @@ public class SharedItemsPublicEntity {
     private UUID id;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private FileSystemPermission permission;
 
     @Column(nullable = false)

@@ -7,6 +7,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,7 +35,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(
-    name = "files_system_item"
+    name = "file_system_item"
 )
 @EntityListeners(AuditingEntityListener.class)
 public class FileSystemItemEntity {
@@ -55,6 +57,7 @@ public class FileSystemItemEntity {
     private UUID owner;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UploadStatus status;
 
     @Column(nullable = false, updatable = false)
