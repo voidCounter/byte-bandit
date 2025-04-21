@@ -17,6 +17,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.projectName>byte-bandit</sonar.projectName>
         <sonar.organization>learnathon-by-geeky-solutions</sonar.organization>
         <sonar.projectKey>Learnathon-By-Geeky-Solutions_byte-bandit</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
