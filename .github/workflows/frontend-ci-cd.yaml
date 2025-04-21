@@ -1,0 +1,104 @@
+name: frontend-ci-cd
+on:
+  push:
+    branches:
+      - '*'
+    paths:
+      - 'apps/web/**'
+  pull_request:
+    branches:
+      - develop
+      - main
+      - develop-snapshot
+    paths:
+      - 'apps/web/**'
+
+jobs:
+  web-lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      - name: Install dependencies
+        run: npm install
+      - name: Run ESLint
+        run: npm run lint
+      - name: Check for ESLint errors
+        if: ${{ failure() }}
+        run: echo "ESLint failed!" && exit 1
+
+  test-and-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node
+      - name: Install dependencies
+        run: npm install
+      - name: Run Unit Tests
+        run: npm test -- --passWithNoTests
+      - name: Check for test errors
+        if: ${{ failure() }}
+        run: echo "Tests failed!" && exit 1
+      - name: Build the application
+        run: npm run build
+      - name: Verify Build Output
+        run: ls -l .next || { echo "Build output (.next) not found!"; exit 1; }
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          include-hidden-files: 'true'
+          path: ${{ github.workspace }}/apps/web/.next
+          if-no-files-found: error
+
+  deploy-to-vercel:
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_CLIENT_PROJECT_ID }}
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-node  # Ensure Node.js is set up
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: ${{ github.workspace }}/apps/web/.next
+      - name: Verify Downloaded Artifact
+        run: ls -l .next || { echo "Build output (.next) not found!"; exit 1; }
+      - name: set Vercel environment
+        id: vercel-env
+        run: |
+          if [ "${{github.ref}}" = "refs/heads/main" ]; then
+            echo "env=production" >> $GITHUB_OUTPUT
+          else
+            echo "env=preview" >> $GITHUB_OUTPUT
+          fi
+      - name: Pull vercel environment information 
+        run: vercel pull --yes --environment=${{ steps.vercel-env.outputs.env }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to vercel (production)
+        if: github.ref == 'refs/heads/main'
+        run: vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to vercel (preview)
+        if: github.ref != 'refs/heads/main'
+        run: vercel deploy --token ${{ secrets.VERCEL_TOKEN }}
+

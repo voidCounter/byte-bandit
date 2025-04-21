@@ -1,0 +1,81 @@
+name: backend-CI/CD
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - develop
+      - main
+      - develop-snapshot
+
+jobs:
+  lint:
+    if: >
+      github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip-back-ci]') ||
+      github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[skip-back-ci]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-maven
+      - name: Run Checkstyle for all services
+        working-directory: apps/backend
+        run: |
+          mvn checkstyle:check
+
+  test-and-coverage:
+    if: >
+      github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip-back-ci]') ||
+      github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[skip-back-ci]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-maven
+      - name: Compile and install
+        run: |
+          mvn clean install -DskipTests=true
+      - name: Run Unit Tests for all services
+        working-directory: apps/backend
+        run: |
+          mvn test
+      - name: Setup Test Environment
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_TEST_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        run: |
+          chmod +x setup-test-env.sh
+          ./setup-test-env.sh
+      - name: Start Infrastructure for Integration Tests
+        run: |
+          docker compose -f docker-compose.test.yaml --profile infra up -d
+          for i in {1..30}; do
+          if docker compose -f docker-compose.test.yaml --profile infra ps | grep "healthy"; then
+           echo "Infrastructure is healthy"
+           break
+          fi  
+          echo "Waiting for infrastructure to be healthy...($i/30)"
+          sleep 10
+          done
+          docker compose -f docker-compose.test.yaml --profile infra ps | grep "healthy" || exit 1
+      - name: Run Integration Tests for all services
+        working-directory: apps/backend
+        run: |
+          for service in user-service file-service sync-service gateway; do
+            cd $service
+            mvn verify -DskipUnitTests=true
+            cd ..
+          done
+      - name: Generate Final Coverage Report
+        working-directory: apps/backend
+        run: |
+          mvn jacoco:report-aggregate -DskipTests=true
+      - name: SonarCloud Scan
+        run: |
+          mvn sonar:sonar -DskipTests=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+      - name: Stop Infrastructure
+        run: |
+          docker compose -f docker-compose.test.yaml --profile infra down

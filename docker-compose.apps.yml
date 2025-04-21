@@ -1,0 +1,170 @@
+services:
+  discovery-server:
+    image: oakcan/discovery-server:latest
+    container_name: oakcan-discovery-server
+    profiles:
+      - core
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  config-server:
+    image: oakcan/config-server:latest
+    container_name: oakcan-config-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    profiles:
+      - core
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8071/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+  gateway:
+    image: oakcan/gateway:latest
+    container_name: oakcan-gateway
+    profiles:
+      - core
+    ports:
+      - "8084:8084"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - USER_DEV_DB_URL=jdbc:postgresql://user-dev-db:5432/user-dev-db
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      user-dev-db:
+        condition: service_healthy
+  file-service:
+    image: oakcan/file-service:latest
+    container_name: oakcan-file-service
+    profiles:
+      - core
+    ports:
+      - "8081:8081"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    depends_on:
+      gateway:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+  sync-service:
+    image: oakcan/sync-service:latest
+    container_name: oakcan-sync-service
+    profiles:
+      - core
+    ports:
+      - "8082:8082"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+  user-service:
+    image: oakcan/user-service:latest
+    container_name: oakcan-user-service
+    profiles:
+      - core
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
+      - USER_DEV_DB_URL=jdbc:postgresql://user-dev-db:5432/user-dev-db
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TEST_MAIL_HOST=mailhog
+      - DEV_MAIL_HOST=mailhog
+      - TEST_MAIL_PORT=1025
+      - DEV_MAIL_PORT=1025
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      gateway:
+        condition: service_healthy
+      mailhog:
+        condition: service_healthy
+      user-dev-db:
+        condition: service_healthy
+  user-dev-db:
+    image: postgres:17-alpine
+    container_name: user-dev-db
+    profiles:
+      - infra
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=user-dev-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    profiles:
+      - infra
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "http://localhost:8025" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  client:
+    image: oakcan/client:latest
+    container_name: oakcan-client
+    profiles:
+      - core
+    build:
+      context: ./apps/web
+    ports:
+      - "3000:3000"
+  docs:
+    image: oakcan/docs:latest
+    container_name: oakcan-docs
+    profiles:
+      - core
+    build:
+      context: docs
+    ports:
+      - "8000:8000"

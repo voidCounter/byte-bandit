@@ -1,0 +1,11 @@
+name: 'Setup Maven Environment'
+description: 'Sets up JDK 17 and caches Maven packages'
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'

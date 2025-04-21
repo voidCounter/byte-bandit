@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+      discovery:
+        enabled: false
+eureka:
+  client:
+    enabled: false
+jwt:
+  secret: ${JWT_SECRET}

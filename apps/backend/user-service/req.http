@@ -1,0 +1,2 @@
+#@no-log
+GET http://localhost:8083/actuator/health

@@ -1,7 +1,4 @@
 name: Test and Deploy Docs
-env:
-  VERCEL_ORG_ID: ${{secrets.VERCEL_ORG_ID}}
-  VERCEL_PROJECT_ID: ${{secrets.VERCEL_DOC_PROJECT_ID}}
 on:
   push:
     branches:
@@ -33,18 +30,14 @@ jobs:
       - name: Install MkDocs and Dependencies
         working-directory: docs
         run: pip install -r requirements.txt
-      - name: Validate MkDocs Configuration
-        working-directory: docs
-        run: mkdocs build --strict
-      # To check for broken links in the documentation
+        # To check for broken links in the documentation
       - name: Install markdown-link-check
         run: npm install -g markdown-link-check
-      # To check for typos in the documentation
+        # To check for typos in the documentation
       - name: Install codespell
         run: pip install codespell
       - name: Install markdownlint-cli
         run: npm install -g markdownlint-cli
-
       - name: Check Markdown Links
         working-directory: docs
         run: find . -name "*.md" | xargs markdown-link-check
@@ -54,54 +47,31 @@ jobs:
         run: |
           npx markdownlint-cli "docs/**/*.md" || true
           echo "::warning::Markdown linting completed with warnings."
+      - name: Validate MkDocs Configuration
+        working-directory: docs
+        run: mkdocs build --strict
+      - name: upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mkdocs-site
+          path: docs/site
   deploy-docs:
-    name: Deploy Docs to Vercel
+    name: Deploy Docs to cloudflare
     needs: test-docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Set Up Python 3.9
-        uses: actions/setup-python@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
         with:
-          python-version: '3.9'
+          name: mkdocs-site
+          path: docs/site
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./docs/site --project-name=oakcan-docs
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install MkDocs Dependencies
-        working-directory: docs
-        run: |
-          pip install -r requirements.txt
-
-      - name: Build MkDocs Site
-        working-directory: docs
-        run: |
-          mkdocs build
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Determine environment
-        id: vars
-        run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-              echo "ENVIRONMENT=production" >> $GITHUB_ENV
-              echo "DEPLOY_PROD=true" >> $GITHUB_ENV
-          else
-              echo "ENVIRONMENT=preview" >> $GITHUB_ENV
-              echo "DEPLOY_PROD=false" >> $GITHUB_ENV
-          fi
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ env.ENVIRONMENT }} --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy to Vercel
-        working-directory: docs
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          cd site
-          if [[ "${{ env.DEPLOY_PROD }}" == "true" ]]; then
-              echo "Deploying to production (main branch)..."
-              vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --yes
-          else
-              echo "Deploying to preview for branch: ${{ github.ref }}"
-              vercel deploy --token ${{ secrets.VERCEL_TOKEN }} --yes
-          fi

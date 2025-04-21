@@ -1,12 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/discovery/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/file-service/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/common/core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/common/core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/common/user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/common/user/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/config-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/config-server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/coverage/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/coverage/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/discovery-server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/discovery-server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/file-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/file-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/sync-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/sync-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/user-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/apps/backend/user-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/sync-service/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/user-service/src/main/java" charset="UTF-8" />
   </component>
 </project>

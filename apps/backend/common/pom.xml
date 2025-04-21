@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.bytebandit</groupId>
+        <artifactId>oakcan-backend</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>lib</groupId>
+    <artifactId>common</artifactId>
+    <version>0.0.1</version>
+    <name>common</name>
+    <description>Common Library for Oakcan</description>
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+    </dependencies>
+    <packaging>pom</packaging>
+    <url/>
+    <developers>
+        <developer>
+            <id>1</id>
+            <name>Tajbir Ahmed</name>
+            <email>tajbir26@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/Learnathon-By-Geeky-Solutions/byte-bandit.git</connection>
+        <tag>HEAD</tag>
+        <url>https://github.com/Learnathon-By-Geeky-Solutions/byte-bandit</url>
+    </scm>
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <modules>
+        <module>user</module>
+        <module>core</module>
+    </modules>
+</project>
