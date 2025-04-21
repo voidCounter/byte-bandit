@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.List;
@@ -83,4 +84,25 @@ public class FileSystemItemEntity {
         orphanRemoval = true
     )
     private List<SharedItemsPrivateEntity> sharedItems;
+
+    @OneToOne(
+        mappedBy = "item",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private SharedItemsPublicEntity sharedItem;
+
+    @OneToOne(
+        mappedBy = "item",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private ItemsStarredEntity starredItem;
+
+    @OneToOne(
+        mappedBy = "item",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private ItemViewedEntity viewedItem;
 }
