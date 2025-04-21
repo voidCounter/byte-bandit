@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -83,6 +84,7 @@ public class FileSystemItemEntity {
 
     @OneToMany(
         mappedBy = "item",
+        fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
@@ -90,7 +92,6 @@ public class FileSystemItemEntity {
 
     @OneToOne(
         mappedBy = "item",
-        cascade = CascadeType.ALL,
         orphanRemoval = true
     )
     private SharedItemsPublicEntity sharedItem;
