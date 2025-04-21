@@ -1,0 +1,110 @@
+services:
+  discovery-server:
+    image: oakcan/discovery-server:latest
+    container_name: oakcan-discovery-server-test
+    profiles:
+      - core
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+    ports:
+      - "9001:8761"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  config-server:
+    image: oakcan/config-server:latest
+    container_name: oakcan-config-server-test
+    profiles:
+      - core
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "9002:8071"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://discovery-server:8761/eureka/apps/config-server" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+  gateway:
+    image: oakcan/gateway:latest
+    container_name: oakcan-gateway-test
+    profiles:
+      - core
+    ports:
+      - "9003:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8084/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+  file-service:
+    image: oakcan/file-service:latest
+    container_name: oakcan-file-service-test
+    profiles:
+      - core
+    ports:
+      - "9004:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+  sync-service:
+    image: oakcan/sync-service:latest
+    container_name: oakcan-sync-service-test
+    profiles:
+      - core
+    ports:
+      - "9005:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+  user-service:
+    image: oakcan/user-service:latest
+    container_name: oakcan-user-service-test
+    profiles:
+      - core
+    ports:
+      - "9006:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - USER_TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TEST_MAIL_HOST=mailhog
+      - TEST_MAIL_PORT=1025
+    depends_on:
+      user-test-db:
+        condition: service_healthy
+  user-test-db:
+    image: postgres:17-alpine
+    container_name: user-test-db
+    profiles:
+      - infra
+    ports:
+      - "15433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=user-test-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5

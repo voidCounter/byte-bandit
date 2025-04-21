@@ -1,0 +1,39 @@
+example:
+  property: I AM THE DEV
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    defer-datasource-initialization: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  sql:
+    init:
+      mode: always
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${USER_DEV_DB_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+    initialization-mode: always
+  mail:
+    host: ${DEV_MAIL_HOST}
+    port: ${DEV_MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+api:
+  prefix: ${DEV_API_PREFIX:/api/v1/user}
+  host:
+    uri: ${DEV_API_HOST_URI:http://localhost:8084}
+client:
+  host:
+    uri: ${DEV_CLIENT_HOST_URI:http://localhost:3000}

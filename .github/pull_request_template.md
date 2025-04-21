@@ -30,5 +30,5 @@ Please include a summary of the changes made, and why these changes are necessar
 
 ### Additional Context
 
-Any other information or context that is helpful to understand your changes (e.g., implementation details, reasoning,
-etc.).
+<!-- Any other information or context that is helpful to understand your changes (e.g., implementation details, reasoning,
+etc.). -->

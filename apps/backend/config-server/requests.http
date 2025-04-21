@@ -1,0 +1,5 @@
+# Get user-service configuration(dev profile)
+// @no-log
+GET http://localhost:8071/user-service/dev
+
+
