@@ -50,7 +50,7 @@ public class SharedItemsPrivateEntity {
     private Timestamp updatedAt;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "share_id", nullable = false)
-    private SharedItemsPrivateEntity share;
+    @JoinColumn(name = "item_id", nullable = false)
+    private FileSystemItemEntity item;
 
 }

@@ -77,7 +77,10 @@ public class FileSystemItemEntity {
     )
     private FileSystemItemEntity parent;
 
-    @OneToMany(mappedBy = "share", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FileSystemItemEntity> sharedItems;
-
+    @OneToMany(
+        mappedBy = "item",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<SharedItemsPrivateEntity> sharedItems;
 }
