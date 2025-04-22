@@ -1,4 +1,4 @@
-package com.bytebandit.gateway.exception;
+package lib.core.exception;
 
 /**
  * Exception thrown when a cookie with the specified name is not found in the HTTP request.
@@ -10,3 +10,4 @@ public class CookieNotFoundException extends RuntimeException {
         super(message);
     }
 }
+
