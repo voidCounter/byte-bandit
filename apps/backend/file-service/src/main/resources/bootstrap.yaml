@@ -2,7 +2,7 @@ spring:
   application:
     name: file-service
   profiles:
-    active: default
+    active: dev
   cloud:
     config:
       discovery:
