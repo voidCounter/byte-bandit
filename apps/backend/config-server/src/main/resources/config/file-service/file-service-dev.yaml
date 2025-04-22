@@ -16,3 +16,11 @@ spring:
   sql:
     init:
       mode: always
+logging:
+  level:
+    com.byte-bandit.file-service: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.boot.autoconfigure.security.servlet: DEBUG
+    org.springframework.boot.autoconfigure.web.servlet.error: DEBUG

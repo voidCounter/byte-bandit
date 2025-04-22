@@ -18,6 +18,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -59,9 +60,13 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     }
     
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
-        logger.debug("Processing request: " + request.getServletPath());
+    protected void doFilterInternal(
+        @NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain
+    ) throws ServletException, IOException {
+        logger.info("permittedRoutes: " + permittedRoutes);
+        logger.info("request.getServletPath(): " + request.getServletPath());
         
         if (isPermittedRoute(request.getServletPath())) {
             logger.debug("Permitted route, bypassing authentication");
@@ -70,47 +75,22 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         }
         
         String accessToken = getAccessToken(request);
-        if (accessToken == null) {
-            throw new CookieNotFoundException("Access token cookie not found");
-        }
-        
         String username = tokenService.extractUsername(accessToken);
-        if (username == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        
         UserDetails user = userDetailsService.loadUserByUsername(username);
         UUID userId = processToken(accessToken, user, request, response);
-        if (userId == null) {
-            logger.debug("No userId, proceeding without X-User-Id");
-            filterChain.doFilter(request, response);
-            return;
-        }
-        
         HttpServletRequest wrappedRequest = wrapRequestWithUserId(request, userId);
         logger.debug("Added X-User-Id: " + userId);
         filterChain.doFilter(wrappedRequest, response);
     }
     
-    /**
-     * Checks if the request path matches any permitted routes.
-     */
     private boolean isPermittedRoute(String path) {
         return permittedRoutes.stream().anyMatch(route -> pathMatcher.match(route, path));
     }
     
-    /**
-     * Retrieves the access token from the request's cookie.
-     */
     private String getAccessToken(HttpServletRequest request) {
         return CookieUtil.getCookieValue(request, CookieKey.ACCESS_TOKEN.getKey());
     }
     
-    /**
-     * Processes the token: validates it or handles expiration by issuing a new token. Returns the
-     * userId if authentication is successful.
-     */
     private UUID processToken(String accessToken, UserDetails user, HttpServletRequest request,
                               HttpServletResponse response) {
         try {
@@ -123,9 +103,6 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         }
     }
     
-    /**
-     * Sets the authentication context for a valid token.
-     */
     private void setAuthentication(UserDetails user, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken token =
             new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -133,9 +110,6 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(token);
     }
     
-    /**
-     * Handles expired tokens by generating a new access token and refresh token.
-     */
     private UUID handleExpiredToken(String accessToken, UserDetails user,
                                     HttpServletResponse response) {
         UUID userId = tokenService.extractUserId(accessToken);
@@ -146,9 +120,6 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         return userId;
     }
     
-    /**
-     * Wraps the request to include the X-User-Id header.
-     */
     private HttpServletRequest wrapRequestWithUserId(HttpServletRequest request, UUID userId) {
         return new HttpServletRequestWrapper(request) {
             @Override

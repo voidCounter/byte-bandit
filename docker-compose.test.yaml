@@ -84,17 +84,17 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=test
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - USER_TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
+      - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/test-db
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - TEST_MAIL_HOST=mailhog
       - TEST_MAIL_PORT=1025
     depends_on:
-      user-test-db:
+      test-db:
         condition: service_healthy
-  user-test-db:
+  test-db:
     image: postgres:17-alpine
-    container_name: user-test-db
+    container_name: test-db
     profiles:
       - infra
     ports:
@@ -102,7 +102,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=user-test-db
+      - POSTGRES_DB=test-db
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
