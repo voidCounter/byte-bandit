@@ -30,6 +30,11 @@ spring:
           auth: false
           starttls:
             enable: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 api:
   prefix: ${DEV_API_PREFIX:/api/v1/user}
   host:

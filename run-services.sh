@@ -3,7 +3,7 @@ set -e  # Exit on error
 
 # List of backend services
 COMPOSE_FILE="docker-compose.apps.yml"
-INFRA_SERVICES="user-dev-db mailhog"
+INFRA_SERVICES="user-dev-db mailhog kafka zookeeper"
 INFRA_TEST_SERVICES="test-db"
 BACKEND_SERVICES="discovery-server config-server gateway user-service file-service sync-service"
 FRONTEND_SERVICE="client"
