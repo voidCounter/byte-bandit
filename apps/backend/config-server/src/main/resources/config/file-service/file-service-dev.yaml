@@ -18,7 +18,7 @@ spring:
       mode: always
 logging:
   level:
-    com.byte-bandit.file-service: DEBUG
+    com.bytebandit.file-service: DEBUG
     org.springframework.web: DEBUG
     org.springframework.security: DEBUG
     org.springframework.cloud.gateway: DEBUG

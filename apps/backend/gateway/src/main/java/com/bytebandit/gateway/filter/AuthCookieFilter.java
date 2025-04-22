@@ -2,7 +2,6 @@ package com.bytebandit.gateway.filter;
 
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
 import com.bytebandit.gateway.enums.CookieKey;
-import com.bytebandit.gateway.exception.CookieNotFoundException;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
 import com.bytebandit.gateway.utils.CookieUtil;
@@ -38,6 +37,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private static final String userIdHeader = "X-User-Id";
     
     @Value("${app.access-token-expiration}")
     private long accessTokenExpirationTime;
@@ -65,11 +65,12 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        logger.info("permittedRoutes: " + permittedRoutes);
-        logger.info("request.getServletPath(): " + request.getServletPath());
+        logger.debug("permittedRoutes: " + permittedRoutes);
+        logger.debug("request.getServletPath(): " + request.getServletPath());
         
         if (isPermittedRoute(request.getServletPath())) {
             logger.debug("Permitted route, bypassing authentication");
+            SecurityContextHolder.clearContext();
             filterChain.doFilter(request, response);
             return;
         }
@@ -99,7 +100,9 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             return tokenService.extractUserId(accessToken);
         } catch (ExpiredJwtException e) {
             logger.warn("Expired JWT, generating new token");
-            return handleExpiredToken(accessToken, user, response);
+            UUID userId = handleExpiredToken(accessToken, user, response);
+            setAuthentication(user, request);
+            return userId;
         }
     }
     
@@ -115,7 +118,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         UUID userId = tokenService.extractUserId(accessToken);
         String newAccessToken = tokenService.generateToken(user, accessTokenExpirationTime, userId);
         tokenService.generateAndSaveRefreshToken(user, refreshTokenExpirationTime, accessToken);
-        CookieUtil.setCookie(response, CookieKey.ACCESS_TOKEN.getKey(), newAccessToken, false,
+        CookieUtil.setCookie(response, CookieKey.ACCESS_TOKEN.getKey(), newAccessToken, true,
             24 * 60 * 60, "/", false);
         return userId;
     }
@@ -124,7 +127,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         return new HttpServletRequestWrapper(request) {
             @Override
             public String getHeader(String name) {
-                if ("X-User-Id".equalsIgnoreCase(name)) {
+                if (userIdHeader.equalsIgnoreCase(name)) {
                     return userId.toString();
                 }
                 return super.getHeader(name);
@@ -132,7 +135,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             
             @Override
             public Enumeration<String> getHeaders(String name) {
-                if ("X-User-Id".equalsIgnoreCase(name)) {
+                if (userIdHeader.equalsIgnoreCase(name)) {
                     return Collections.enumeration(Collections.singletonList(userId.toString()));
                 }
                 return super.getHeaders(name);
@@ -141,7 +144,9 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             @Override
             public Enumeration<String> getHeaderNames() {
                 List<String> names = Collections.list(super.getHeaderNames());
-                names.add("X-User-Id");
+                if (!names.contains(userIdHeader)) {
+                    names.add(userIdHeader);
+                }
                 return Collections.enumeration(names);
             }
         };
