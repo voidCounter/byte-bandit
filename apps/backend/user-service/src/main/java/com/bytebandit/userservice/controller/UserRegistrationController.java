@@ -27,7 +27,9 @@ public class UserRegistrationController {
      */
     
     @PostMapping("/register")
-    ResponseEntity<?> register(@Valid @RequestBody UserRegistrationRequest request) {
+    ResponseEntity<ApiResponse<UserRegistrationResponse>> register(
+        @Valid @RequestBody UserRegistrationRequest request
+    ) {
         return ResponseEntity.ok(ApiResponse.<UserRegistrationResponse>builder()
             .data(userRegistrationService.register(request))
             .message("User registered successfully")
