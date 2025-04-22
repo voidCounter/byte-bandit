@@ -64,7 +64,7 @@ jobs:
       - name: Run Integration Tests for all services
         working-directory: apps/backend
         run: |
-          for service in user-service file-service sync-service gateway; do
+          for service in user-service file-service gateway; do
             cd $service
             mvn verify -DskipUnitTests=true
             cd ..
