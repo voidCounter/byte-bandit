@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(
-    name = "file_system_item"
+    name = "file_system_items"
 )
 @EntityListeners(AuditingEntityListener.class)
 public class FileSystemItemEntity {
