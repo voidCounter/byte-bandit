@@ -41,12 +41,12 @@ public class TokenVerificationService {
             tokenRepository.findByUserIdAndTypeAndCreatedAtBeforeAndExpiresAtAfterAndUsedIsFalse(
                 UUID.fromString(userId), tokenType, Timestamp.from(Instant.now()),
                 Timestamp.from(Instant.now())).orElseThrow(() -> {
-                if (tokenType == TokenType.EMAIL_VERIFICATION) {
-                    return new EmailVerificationExpiredException(
-                        "Email verification token is expired.");
-                }
-                return new TokenExpiredException("Token is expired.");
-            });
+                    if (tokenType == TokenType.EMAIL_VERIFICATION) {
+                        return new EmailVerificationExpiredException(
+                            "Email verification token is expired.");
+                    }
+                    return new TokenExpiredException("Token is expired.");
+                });
         
         if (!passwordEncoder.matches(token, tokenEntity.getTokenHash())) {
             
