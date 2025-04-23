@@ -1,9 +1,9 @@
-package com.bytebandit.gateway.utils;
+package lib.core.utils;
 
-import com.bytebandit.gateway.exception.CookieNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lib.core.exception.CookieNotFoundException;
 import org.springframework.web.util.WebUtils;
 
 /** Utility class for managing cookies in HTTP requests and responses. */
@@ -78,3 +78,4 @@ public class CookieUtil {
         return cookie;
     }
 }
+

@@ -8,6 +8,7 @@ import com.bytebandit.userservice.model.TokenEntity;
 import com.bytebandit.userservice.model.UserEntity;
 import com.bytebandit.userservice.repository.TokenRepository;
 import com.bytebandit.userservice.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
@@ -35,6 +36,7 @@ public class TokenVerificationService {
      * @param userId    The user ID associated with the token
      * @param tokenType The type of token (e.g., EMAIL_VERIFICATION)
      */
+    @Transactional
     public void verifyToken(String token, String userId, TokenType tokenType) {
         
         TokenEntity tokenEntity =

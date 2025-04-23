@@ -3,6 +3,7 @@ package com.bytebandit.fileservice.model;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users_snapshot")
+@Table(name = "users_snapshot", indexes = {
+    @Index(name = "idx_email_index", columnList = "email")
+})
 public class UserSnapshotEntity {
     
     @Id

@@ -63,6 +63,7 @@ services:
       - "8081:8081"
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     depends_on:
       gateway:
         condition: service_healthy
@@ -96,6 +97,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
       - USER_DEV_DB_URL=jdbc:postgresql://user-dev-db:5432/user-dev-db
       - POSTGRES_USERNAME=postgres
@@ -171,6 +173,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+    volumes:
+      - kafka-data:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -199,3 +203,5 @@ services:
       context: docs
     ports:
       - "8000:8000"
+volumes:
+  kafka-data:
