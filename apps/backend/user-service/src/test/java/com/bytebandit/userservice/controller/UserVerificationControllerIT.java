@@ -1,5 +1,7 @@
 package com.bytebandit.userservice.controller;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
@@ -7,11 +9,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.bytebandit.userservice.configurer.AbstractPostgresContainer;
+import com.bytebandit.userservice.exception.EmailAlreadyVerifiedException;
 import com.bytebandit.userservice.exception.FailedEmailVerificationAttemptException;
 import com.bytebandit.userservice.exception.GlobalExceptionHandler;
 import com.bytebandit.userservice.service.UserRegistrationService;
+import io.restassured.RestAssured;
+import io.restassured.specification.RequestSpecification;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lib.core.enums.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -30,7 +37,17 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserVerificationControllerIT {
+class UserVerificationControllerIT extends AbstractPostgresContainer {
+
+    @BeforeEach
+    void setup(@Value("${local.server.port}") int port) {
+        RestAssured.port = port;
+    }
+
+    private RequestSpecification requestSpec() {
+        return given()
+            .contentType("application/json");
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -91,5 +108,36 @@ class UserVerificationControllerIT {
         assert result.getBody() != null && result.getBody().contains(
             "Failed to redirect, please go to " + clientHostUri + "/login"
         );
+    }
+
+    /**
+     * When UserRegistrationService.resendVerificationEmail(...) throws
+     * EmailAlreadyVerifiedException, the GlobalExceptionHandler should
+     * catch it and return 400 with the proper ErrorResponse JSON.
+     */
+    @Test
+    void resendVerification_shouldReturnBadRequestWhenAlreadyVerified() {
+
+        String email = "foo@example.com";
+        doThrow(new EmailAlreadyVerifiedException("Email already verified for " + email))
+            .when(userRegistrationService).resendVerificationEmail(email);
+
+        String json = """
+                {"email":"foo@example.com"}
+                """;
+
+        requestSpec()
+            .body(json)
+            .when()
+            .post(RESEND_PATH)
+            .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value())
+            .body("status", equalTo(400))
+            .body("error", equalTo("Bad Request"))
+            .body("errorCode", equalTo(ErrorCode.EMAIL_ALREADY_VERIFIED.getCode()))
+            .body("message", equalTo(ErrorCode.EMAIL_ALREADY_VERIFIED.getMessage()))
+            .body("details", equalTo("Email already verified for " + email))
+            .body("path", equalTo(RESEND_PATH))
+            .body("timestamp", org.hamcrest.Matchers.notNullValue());
     }
 }
