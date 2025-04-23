@@ -1,16 +1,23 @@
 package com.bytebandit.fileservice.service;
 
 import com.bytebandit.fileservice.dto.ItemSharePrivateRequest;
-import java.util.List;
+import com.bytebandit.fileservice.dto.ItemSharePrivateResponse;
+import com.bytebandit.fileservice.projection.ShareItemPrivateProjection;
+import com.bytebandit.fileservice.repository.SharedItemsPrivateRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PrivatePermissionService {
+
+    private final SharedItemsPrivateRepository sharedItemsPrivateRepository;
+    private final TransactionTemplate transactionTemplate;
+
 
     /**
      * Implementations.
@@ -31,8 +38,23 @@ public class PrivatePermissionService {
      *     </ul>
      * </ol>
     */
-    public void givePermissionToUsers(ItemSharePrivateRequest request) {
-
+    public ItemSharePrivateResponse givePermissionToUsers(ItemSharePrivateRequest request) {
+        ShareItemPrivateProjection sharedPermissions = transactionTemplate.execute(result ->
+            sharedItemsPrivateRepository.shareItemPrivate(
+                UUID.fromString(request.getItemId()),
+                request.getSharedBy(),
+                request.getSharedTo(),
+                request.getPermissions()
+            )
+        );
+        if (sharedPermissions == null) {
+            log.error("Failed to share item with id: {}", request.getItemId());
+            throw new IllegalStateException("Failed to share item");
+        }
+        log.info("Item with id: {} shared successfully", request.getItemId());
+        return ItemSharePrivateResponse.builder()
+            .permissionForEachUser(sharedPermissions.getPermissionForEachUser())
+            .build();
     }
 
 }

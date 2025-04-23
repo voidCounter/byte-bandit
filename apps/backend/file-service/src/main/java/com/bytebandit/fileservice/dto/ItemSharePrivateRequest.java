@@ -25,5 +25,7 @@ public class ItemSharePrivateRequest {
     @NotBlank
     @ValidId
     private String sharedBy;
-    
+
+    @NotBlank
+    private List<String> permissions;
 }

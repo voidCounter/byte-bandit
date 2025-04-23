@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION share_item_private(
-    input_item_id TEXT,
+    input_item_id UUID,
     shared_by_email TEXT,
     input_shared_to_emails TEXT[],
     input_permissions TEXT[]
