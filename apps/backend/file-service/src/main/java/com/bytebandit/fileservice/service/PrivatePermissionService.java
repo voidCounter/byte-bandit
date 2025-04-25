@@ -1,8 +1,6 @@
 package com.bytebandit.fileservice.service;
 
 import com.bytebandit.fileservice.dto.ItemSharePrivateRequest;
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class PrivatePermissionService {
-
+    
     /**
      * Implementations.
      * <ol>
@@ -30,9 +28,9 @@ public class PrivatePermissionService {
      *         </ol>
      *     </ul>
      * </ol>
-    */
+     */
     public void givePermissionToUsers(ItemSharePrivateRequest request) {
-
+        // Implement this method
     }
-
+    
 }
