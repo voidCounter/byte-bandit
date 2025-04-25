@@ -1,7 +1,7 @@
 package com.bytebandit.fileservice.dto;
 
 import com.bytebandit.fileservice.validator.ValidId;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,18 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ItemSharePrivateRequest {
 
-    @NotBlank
+    @NotNull
     @ValidId
     private String itemId;
 
-    @NotBlank
+    @NotNull
     private List<String> sharedTo;
 
-    @NotBlank
-    private String sharedType;
-
-    @NotBlank
-    @ValidId
+    @NotNull
     private String sharedBy;
-    
+
+    @NotNull
+    private List<String> permissions;
 }

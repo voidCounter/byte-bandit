@@ -1,15 +1,25 @@
 package com.bytebandit.fileservice.service;
 
 import com.bytebandit.fileservice.dto.ItemSharePrivateRequest;
+import com.bytebandit.fileservice.dto.ItemSharePrivateResponse;
+import com.bytebandit.fileservice.projection.ShareItemPrivateProjection;
+import com.bytebandit.fileservice.repository.SharedItemsPrivateRepository;
+import java.util.Arrays;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class PrivatePermissionService {
-    
+
+    private final SharedItemsPrivateRepository sharedItemsPrivateRepository;
+    private final TransactionTemplate transactionTemplate;
+
+
     /**
      * Implementations.
      * <ol>
@@ -28,9 +38,33 @@ public class PrivatePermissionService {
      *         </ol>
      *     </ul>
      * </ol>
-     */
-    public void givePermissionToUsers(ItemSharePrivateRequest request) {
-        // Implement this method
+    */
+    public ItemSharePrivateResponse givePermissionToUsers(ItemSharePrivateRequest request) {
+        String[] sharedTo = request.getSharedTo().toArray(new String[0]);
+        String[] permissions = request.getPermissions().toArray(new String[0]);
+        String[] sharedPermissions = transactionTemplate.execute(result -> {
+
+                log.info("sharedTo: {}", (Object) sharedTo);
+                log.info("permissions: {}", (Object) permissions);
+
+                return sharedItemsPrivateRepository.shareItemPrivate(
+                    UUID.fromString(request.getItemId()),
+                    request.getSharedBy(),
+                    sharedTo,
+                    permissions
+                );
+            }
+        );
+        if (sharedPermissions == null) {
+            log.error("Failed to share item with id: {}", request.getItemId());
+            throw new IllegalStateException("Failed to share item");
+        }
+        log.info("Item with id: {} shared successfully", request.getItemId());
+        ItemSharePrivateResponse response = ItemSharePrivateResponse.builder()
+            .permissionForEachUser(Arrays.asList(sharedPermissions))
+            .build();
+        log.info("Private share response: {}", response.getPermissionForEachUser());
+        return response;
     }
-    
+
 }

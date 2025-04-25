@@ -43,7 +43,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     
     @Autowired
     private UserRepository userRepository;
-    
+
     private final String requestPath = "/api/v1/auth/login";
     private final UUID userId = UUID.randomUUID();
     private String csrfToken;
@@ -175,7 +175,6 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
         
         Map<String, String> cookies = loginResponse.getCookies();
         
-        // Access the /me endpoint with the same cookies
         RestAssured
             .given()
             .cookies(cookies)
@@ -190,5 +189,4 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
             .body("timestamp", notNullValue())
             .body("path", equalTo("/api/v1/auth/me"));
     }
-    
 }
