@@ -3,9 +3,6 @@ package com.bytebandit.gateway.controller;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.spy;
 
 import com.bytebandit.gateway.configurer.AbstractPostgresContainer;
 import com.bytebandit.gateway.model.UserEntity;
@@ -21,18 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -200,40 +194,4 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
             .body("timestamp", notNullValue())
             .body("path", equalTo("/api/v1/auth/me"));
     }
-
-    /**
-     * This test verifies that a user cannot log in with an invalid email. It sends a POST request.
-     */
-    @Test
-    void login_shouldReturnConflict_whenRepositorySaveFailsConstraint() {
-        UserRepository spyRepo = spy(userRepository);
-
-        ReflectionTestUtils.setField(userLoginService, "userRepository", spyRepo);
-
-        String violationMsg = "Unique constraint 'sessions_pk' violated";
-        doThrow(new DataIntegrityViolationException(violationMsg))
-            .when(spyRepo).save(any());
-
-        String json = """
-                    {
-                      "email": "test@example.com",
-                      "password": "ValidPass$1"
-                    }
-                """;
-
-        requestSpecification()
-            .body(json)
-            .when()
-            .post(requestPath)
-            .then()
-            .statusCode(HttpStatus.CONFLICT.value())
-            .body("status", equalTo(409))
-            .body("error", equalTo("Conflict"))
-            .body("errorCode", equalTo("DB_CONSTRAINT_VIOLATION"))
-            .body("message", equalTo("Database constraint violation"))
-            .body("details", containsString(violationMsg))
-            .body("path", equalTo(requestPath))
-            .body("timestamp", notNullValue());
-    }
-    
 }

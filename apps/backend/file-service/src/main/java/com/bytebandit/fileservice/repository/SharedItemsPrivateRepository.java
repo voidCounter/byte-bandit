@@ -1,8 +1,6 @@
 package com.bytebandit.fileservice.repository;
 
 import com.bytebandit.fileservice.model.SharedItemsPrivateEntity;
-import com.bytebandit.fileservice.projection.ShareItemPrivateProjection;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,14 +12,17 @@ public interface SharedItemsPrivateRepository extends
     JpaRepository<SharedItemsPrivateEntity, UUID> {
 
     @Query(
-        value = "SELECT * FROM share_item_private"
-            + "(:input_item_id, :shared_by_email, :input_shared_to_emails, :input_permissions)",
+        value = "SELECT * FROM share_item_private("
+            + "CAST(:input_item_id AS UUID), "
+            + "CAST(:shared_by_email AS TEXT), "
+            + "CAST(:input_shared_to_emails AS TEXT[]), "
+            + "CAST(:input_permissions AS TEXT[]))",
         nativeQuery = true
     )
-    ShareItemPrivateProjection shareItemPrivate(
+    String[] shareItemPrivate(
         @Param("input_item_id") UUID inputItemId,
         @Param("shared_by_email") String sharedByEmail,
-        @Param("input_shared_to_emails") List<String> inputSharedToEmails,
-        @Param("input_permissions") List<String> inputPermissions
+        @Param("input_shared_to_emails") String[] inputSharedToEmails,
+        @Param("input_permissions") String[] inputPermissions
     );
 }

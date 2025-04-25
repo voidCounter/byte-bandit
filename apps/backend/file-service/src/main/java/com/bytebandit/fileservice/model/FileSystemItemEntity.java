@@ -64,7 +64,7 @@ public class FileSystemItemEntity {
     @Column(nullable = false, updatable = false)
     private FileSystemItemType type;
 
-    @Column(columnDefinition = "jsonb", nullable = false)
+    @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode chunks;
 
@@ -75,7 +75,10 @@ public class FileSystemItemEntity {
     @Column(nullable = false)
     private String s3Url;
 
-    @ManyToOne
+    @ManyToOne(
+        cascade = CascadeType.ALL,
+        fetch = FetchType.LAZY
+    )
     @JoinColumn(
         name = "parent_id",
         referencedColumnName = "id"

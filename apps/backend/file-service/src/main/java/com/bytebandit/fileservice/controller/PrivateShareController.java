@@ -6,6 +6,7 @@ import com.bytebandit.fileservice.service.PrivatePermissionService;
 import jakarta.validation.Valid;
 import lib.core.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/share/private")
 @RequiredArgsConstructor
+@Slf4j
 public class PrivateShareController {
 
     private final PrivatePermissionService privatePermissionService;
@@ -39,7 +41,7 @@ public class PrivateShareController {
             .timestamp(String.valueOf(System.currentTimeMillis()))
             .path("/share/private")
             .build();
-
+        log.debug("{}", response.getData());
         return ResponseEntity.ok(response);
     }
 }
