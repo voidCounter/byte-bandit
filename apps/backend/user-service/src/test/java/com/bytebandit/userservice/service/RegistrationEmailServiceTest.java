@@ -11,8 +11,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @ActiveProfiles("test")
-public class RegistrationEmailServiceTest {
-
+class RegistrationEmailServiceTest {
+    
     /**
      * Tests the {@code confirmationUrl} method of {@link RegistrationEmailService} to ensure it
      * generates the correct confirmation URL using the provided token and user ID.
@@ -31,26 +31,26 @@ public class RegistrationEmailServiceTest {
      * </ul>
      */
     @Test
-    public void confirmationUrl_ShouldGenerateCorrectUrl() {
+    void confirmationUrl_ShouldGenerateCorrectUrl() {
         String backendHost = "http://localhost:8080";
         String apiPrefix = "/api";
         String token = "abc123";
         UUID userId = UUID.randomUUID();
-
+        
         SpringTemplateEngine templateEngine = mock(SpringTemplateEngine.class);
         JavaMailSenderImpl mailSender = mock(JavaMailSenderImpl.class);
-
+        
         RegistrationEmailService service = new RegistrationEmailService(templateEngine, mailSender);
         ReflectionTestUtils.setField(service, "backendHost", backendHost);
         ReflectionTestUtils.setField(service, "apiPrefix", apiPrefix);
-
+        
         String confirmationUrl = ReflectionTestUtils.invokeMethod(
             service,
             "confirmationUrl",
             token,
             userId
         );
-
+        
         assertThat(confirmationUrl).isEqualTo(
             String.format("%s%s/verify?token=%s&userid=%s", backendHost, apiPrefix, token, userId)
         );

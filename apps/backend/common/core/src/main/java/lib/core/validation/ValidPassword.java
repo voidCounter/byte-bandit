@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Documented
 @NotNull(message = "Password field cannot be null")
 @Pattern(
-    regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
+    regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
     message =
         "Password must be at least 8 characters long and contain at least one digit, one uppercase "
             + "letter, one lowercase letter, and one special character"

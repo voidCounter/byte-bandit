@@ -116,7 +116,7 @@ class CookieUtilsTest {
                 && cookie.getValue().isEmpty()
                 && cookie.getMaxAge() == 0
                 && cookie.getPath().equals("/")
-                && !cookie.isHttpOnly()
+                && cookie.isHttpOnly()
                 && !cookie.getSecure()
         ));
     }

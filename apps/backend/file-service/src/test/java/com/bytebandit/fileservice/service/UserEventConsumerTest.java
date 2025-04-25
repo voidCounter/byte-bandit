@@ -25,7 +25,7 @@ class UserEventConsumerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userEventConsumer = new UserEventConsumer(null, userEventHandlers);
+        userEventConsumer = new UserEventConsumer(userEventHandlers);
     }
     
     /**

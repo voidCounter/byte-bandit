@@ -11,6 +11,8 @@ public enum ErrorCode {
     AUTH_TOKEN_EXPIRED("AUTH-02", "Authentication token has expired."),
     AUTH_ACCESS_DENIED("AUTH-03", "Access denied for the requested resource."),
     
+    DATABASE_ERROR("DB-02", "Database error occurred."),
+    
     USER_NOT_FOUND("USER-01", "User not found."),
     USER_ALREADY_EXISTS("USER-02", "User already exists."),
     USER_INVALID_INPUT("USER-03", "Invalid user input provided."),

@@ -15,9 +15,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserEntity extends UserEntityTemplate {
-
+    
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TokenEntity> tokens = new HashSet<>();
-
 }
+
 
