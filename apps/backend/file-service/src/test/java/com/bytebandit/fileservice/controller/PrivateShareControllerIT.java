@@ -137,8 +137,7 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
         UserSnapshotEntity sharedWithAsViewer = userSnapshotRepository.save(
             new UserSnapshotEntity(UUID.randomUUID(), "test-4@gmail.com")
         );
-
-
+        
         SharedItemsPrivateEntity privateSharedItem = new SharedItemsPrivateEntity();
         privateSharedItem.setItem(fileSystemItemEntity);
         privateSharedItem.setUserId(ownerId);
@@ -149,7 +148,6 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
         UserSnapshotEntity sharedWithAsEditor = userSnapshotRepository.save(
             new UserSnapshotEntity(UUID.randomUUID(), "test-5@gmail.com")
         );
-
 
         UUID itemId = fileSystemItemEntity.getId();
 
@@ -162,9 +160,6 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
             }
             """.formatted(itemId.toString(), sharedWithAsViewer.getEmail(),
             sharedWithAsEditor.getEmail(), FileSystemPermission.EDITOR.name());
-
-
-
 
         requestSpecification()
             .body(requestBody)

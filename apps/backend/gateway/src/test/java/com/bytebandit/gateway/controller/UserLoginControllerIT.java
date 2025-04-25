@@ -7,7 +7,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import com.bytebandit.gateway.configurer.AbstractPostgresContainer;
 import com.bytebandit.gateway.model.UserEntity;
 import com.bytebandit.gateway.repository.UserRepository;
-import com.bytebandit.gateway.service.UserLoginService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -45,10 +44,6 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private UserLoginService userLoginService;
-
-    
     private final String requestPath = "/api/v1/auth/login";
     private final UUID userId = UUID.randomUUID();
     private String csrfToken;

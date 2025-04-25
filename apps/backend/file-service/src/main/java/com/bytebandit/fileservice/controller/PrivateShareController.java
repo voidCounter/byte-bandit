@@ -24,8 +24,6 @@ public class PrivateShareController {
 
     /**
      * Share item with private permission.
-     * @param request
-     * @return
      */
     @PostMapping
     public ResponseEntity<ApiResponse<ItemSharePrivateResponse>> sharePrivate(
@@ -34,7 +32,8 @@ public class PrivateShareController {
         ItemSharePrivateResponse permissionResponse =
             privatePermissionService.givePermissionToUsers(request);
 
-        ApiResponse<ItemSharePrivateResponse> response = ApiResponse.<ItemSharePrivateResponse>builder()
+        ApiResponse<ItemSharePrivateResponse> response
+            = ApiResponse.<ItemSharePrivateResponse>builder()
             .status(HttpStatus.OK.value())
             .message("Shared item successfully")
             .data(permissionResponse)
