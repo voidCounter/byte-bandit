@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,10 +30,8 @@ public class UserEventHandlers {
     protected void createUserSnapshot(UUID userId, String email) {
         try {
             if (!userSnapshotRepository.existsById(userId)) {
-                UserSnapshotEntity userSnapshot = UserSnapshotEntity.builder()
-                    .userId(userId)
-                    .email(email)
-                    .build();
+                UserSnapshotEntity userSnapshot =
+                    UserSnapshotEntity.builder().userId(userId).email(email).build();
                 
                 userSnapshotRepository.save(userSnapshot);
                 logger.debug("Created user snapshot: userId={}, email={}", userId, email);
@@ -40,8 +39,8 @@ public class UserEventHandlers {
                 logger.debug("User snapshot already exists: userId={}", userId);
             }
         } catch (Exception e) {
-            logger.error("Failed to create user snapshot: userId={}, email={}", userId, email, e);
-            throw new RuntimeException("Failed to create user snapshot", e);
+            throw new DataAccessException("Failed to create user snapshot", e) {
+            };
         }
     }
 }
