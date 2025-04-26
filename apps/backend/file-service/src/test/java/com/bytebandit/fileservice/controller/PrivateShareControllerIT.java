@@ -16,7 +16,6 @@ import com.bytebandit.fileservice.repository.UserSnapshotRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import jakarta.servlet.ServletRequest;
 import java.util.List;
 import java.util.UUID;
 import lib.core.enums.CustomHttpHeader;
@@ -179,9 +178,11 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
             .body("path", equalTo("/share/private"));
     }
 
-
+    /**
+     * Test case for sharing an item with private permissions when the user is not.
+     */
     @Test
-    void canNotMakeShareReuqestWithoutUserIdHeader() {
+    void canNotMakeShareRequestWithoutUserIdHeader() {
         String sharedBy = "test-6@gmail.com";
 
         UserSnapshotEntity userSnapshotEntity = new UserSnapshotEntity(ownerId, sharedBy);
