@@ -50,9 +50,9 @@ BEGIN
                              AND shared_with = target_user_id
                              AND (
                                (input_permissions[ARRAY_POSITION(input_shared_to_emails, shared_to_email)] = ''EDITOR''
-                                   AND permission IN (''EDITOR'', ''VIEWER'')) OR
-                               (input_permissions[ARRAY_POSITION(input_shared_to_emails, shared_to_email)] = ''VIEWER''
-                                   AND permission = ''VIEWER'')
+                                   AND permission IN (''EDITOR'', ''VIEWER''))
+--                                (input_permissions[ARRAY_POSITION(input_shared_to_emails, shared_to_email)] = ''VIEWER''
+--                                    AND permission = ''VIEWER'')
                                )
                        )
                            THEN ''ALLOWED''
