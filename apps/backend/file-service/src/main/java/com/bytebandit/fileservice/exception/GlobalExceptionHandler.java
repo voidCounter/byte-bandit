@@ -31,6 +31,22 @@ public class GlobalExceptionHandler {
             ex.getMessage());
     }
     
+    /**
+     * Handles PublicShareException and returns a ResponseEntity with an error response.
+     *
+     * @param ex      the PublicShareException to handle
+     * @param request the HttpServletRequest object
+     *
+     * @return a ResponseEntity with an error response
+     */
+    @ExceptionHandler(PublicShareException.class)
+    public ResponseEntity<ErrorResponse> handlePublicShareException(
+        PublicShareException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.PUBLIC_SHARE_ERROR,
+            request,
+            ex.getMessage());
+    }
+    
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode,
                                                         HttpServletRequest request,
                                                         String details) {

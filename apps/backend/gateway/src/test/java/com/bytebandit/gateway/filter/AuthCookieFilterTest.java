@@ -55,9 +55,6 @@ class AuthCookieFilterTest {
     private final UUID userId = UUID.randomUUID();
     private final UserEntity mockUser = new UserEntity();
     
-    /**
-     * Setup method to initialize the test environment.
-     */
     @BeforeEach
     void setup() {
         ReflectionTestUtils.setField(authFilter, "accessTokenExpirationTime", 3600L);

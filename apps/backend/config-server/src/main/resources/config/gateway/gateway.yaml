@@ -12,6 +12,7 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
     register-with-eureka: true
+    registry-fetch-interval-seconds: 40
     fetch-registry: true
 management:
   endpoint:
