@@ -1,21 +1,15 @@
 CREATE OR REPLACE FUNCTION share_item_private(
     input_item_id UUID,
-    shared_by_email TEXT,
+    shared_by_user_id UUID,
     input_shared_to_emails TEXT[],
     input_permissions TEXT[]
 )
     RETURNS TEXT[] AS '
 DECLARE
-    shared_by_user_id UUID;
     is_owner BOOLEAN;
     result_permissions TEXT[];
     target_user_ids UUID[];
 BEGIN
-    -- Check if the user (shared_by_email) is the owner of the item
-    SELECT user_id
-    INTO shared_by_user_id
-    FROM users_snapshot
-    WHERE email = shared_by_email;
 
     SELECT CASE
                WHEN COUNT(*) > 0 THEN TRUE
@@ -34,7 +28,6 @@ BEGIN
        )
     INTO target_user_ids;
 
-
     IF is_owner THEN
         -- If the user is the owner, grant all permissions as "ALLOWED"
         SELECT ARRAY(SELECT ''ALLOWED''
@@ -51,9 +44,9 @@ BEGIN
                              AND shared_with = target_user_id
                              AND (
                                (input_permissions[ARRAY_POSITION(input_shared_to_emails, shared_to_email)] = ''EDITOR''
-                                   AND permission IN (''EDITOR'', ''VIEWER'')) OR
-                               (input_permissions[ARRAY_POSITION(input_shared_to_emails, shared_to_email)] = ''VIEWER''
-                                   AND permission = ''VIEWER'')
+                                   AND permission IN (''EDITOR'', ''VIEWER''))
+--                                (input_permissions[ARRAY_POSITION(input_shared_to_emails, shared_to_email)] = ''VIEWER''
+--                                    AND permission = ''VIEWER'')
                                )
                        )
                            THEN ''ALLOWED''
@@ -69,6 +62,9 @@ BEGIN
 
     FOR i IN 1..array_length(input_shared_to_emails, 1)
         LOOP
+            IF target_user_ids[i] = shared_by_user_id THEN
+                result_permissions[i] = ''NOT_ALLOWED'';
+            END IF;
             IF result_permissions[i] = ''ALLOWED'' THEN
                 INSERT
                 INTO shared_items_private (id, created_at, permission, shared_with, updated_at, user_id, item_id)

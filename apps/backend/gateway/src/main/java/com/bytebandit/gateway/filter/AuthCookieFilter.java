@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
+import lib.core.enums.CustomHttpHeader;
 import lib.core.utils.CookieUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
@@ -37,8 +38,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
-    private static final String USERID_HEADER = "X-User-Id";
-    
+
     @Value("${app.access-token-expiration}")
     private long accessTokenExpirationTime;
     
@@ -127,7 +127,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         return new HttpServletRequestWrapper(request) {
             @Override
             public String getHeader(String name) {
-                if (USERID_HEADER.equalsIgnoreCase(name)) {
+                if (CustomHttpHeader.USER_ID.getValue().equalsIgnoreCase(name)) {
                     return userId.toString();
                 }
                 return super.getHeader(name);
@@ -135,7 +135,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             
             @Override
             public Enumeration<String> getHeaders(String name) {
-                if (USERID_HEADER.equalsIgnoreCase(name)) {
+                if (CustomHttpHeader.USER_ID.getValue().equalsIgnoreCase(name)) {
                     return Collections.enumeration(Collections.singletonList(userId.toString()));
                 }
                 return super.getHeaders(name);
@@ -144,8 +144,8 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             @Override
             public Enumeration<String> getHeaderNames() {
                 List<String> names = Collections.list(super.getHeaderNames());
-                if (!names.contains(USERID_HEADER)) {
-                    names.add(USERID_HEADER);
+                if (!names.contains(CustomHttpHeader.USER_ID.getValue())) {
+                    names.add(CustomHttpHeader.USER_ID.getValue());
                 }
                 return Collections.enumeration(names);
             }

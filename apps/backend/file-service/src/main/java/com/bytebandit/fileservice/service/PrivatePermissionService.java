@@ -2,7 +2,6 @@ package com.bytebandit.fileservice.service;
 
 import com.bytebandit.fileservice.dto.ItemSharePrivateRequest;
 import com.bytebandit.fileservice.dto.ItemSharePrivateResponse;
-import com.bytebandit.fileservice.projection.ShareItemPrivateProjection;
 import com.bytebandit.fileservice.repository.SharedItemsPrivateRepository;
 import java.util.Arrays;
 import java.util.UUID;
@@ -49,7 +48,7 @@ public class PrivatePermissionService {
 
                 return sharedItemsPrivateRepository.shareItemPrivate(
                     UUID.fromString(request.getItemId()),
-                    request.getSharedBy(),
+                    UUID.fromString(request.getSharedByUserId()),
                     sharedTo,
                     permissions
                 );
@@ -66,5 +65,4 @@ public class PrivatePermissionService {
         log.info("Private share response: {}", response.getPermissionForEachUser());
         return response;
     }
-
 }
