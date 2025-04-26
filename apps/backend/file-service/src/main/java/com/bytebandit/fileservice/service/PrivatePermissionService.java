@@ -65,5 +65,4 @@ public class PrivatePermissionService {
         log.info("Private share response: {}", response.getPermissionForEachUser());
         return response;
     }
-
 }
