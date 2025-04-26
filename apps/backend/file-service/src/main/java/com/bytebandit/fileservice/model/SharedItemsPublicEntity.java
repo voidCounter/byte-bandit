@@ -1,6 +1,7 @@
 package com.bytebandit.fileservice.model;
 
 import com.bytebandit.fileservice.enums.FileSystemPermission;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -51,6 +52,9 @@ public class SharedItemsPublicEntity {
     @UpdateTimestamp
     @Column(nullable = false)
     private Timestamp updatedAt;
+
+    @Column(nullable = false)
+    private Timestamp expiresAt;
 
     @OneToOne
     @JoinColumn(

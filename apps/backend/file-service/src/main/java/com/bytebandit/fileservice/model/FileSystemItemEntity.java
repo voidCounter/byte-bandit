@@ -27,6 +27,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -71,6 +72,9 @@ public class FileSystemItemEntity {
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;
+
+    @UpdateTimestamp
+    private Timestamp updatedAt;
 
     @Column(nullable = false)
     private String s3Url;
