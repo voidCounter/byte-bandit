@@ -54,7 +54,7 @@ Oakcan is a file management system that allows users to upload, download, and ma
 <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
     <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_byte-bandit&metric=duplicated_lines_density" alt="Duplicated Lines (%)">
 </a>
-<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_earendel">
+<a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
     <img src="https://sonarcloud.io/api/project_badges/measure?project=Learnathon-By-Geeky-Solutions_earendel&metric=coverage" alt="Coverage">
 </a>
 <a href="https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit">
