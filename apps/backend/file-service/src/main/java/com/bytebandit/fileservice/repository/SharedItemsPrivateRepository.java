@@ -21,7 +21,7 @@ public interface SharedItemsPrivateRepository extends
     )
     String[] shareItemPrivate(
         @Param("input_item_id") UUID inputItemId,
-        @Param("shared_by_email") UUID sharedByUserId,
+        @Param("shared_by_user_id") UUID sharedByUserId,
         @Param("input_shared_to_emails") String[] inputSharedToEmails,
         @Param("input_permissions") String[] inputPermissions
     );

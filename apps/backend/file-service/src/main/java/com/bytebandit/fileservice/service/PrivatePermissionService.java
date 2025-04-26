@@ -48,7 +48,7 @@ public class PrivatePermissionService {
 
                 return sharedItemsPrivateRepository.shareItemPrivate(
                     UUID.fromString(request.getItemId()),
-                    request.getSharedBy(),
+                    UUID.fromString(request.getSharedByUserId()),
                     sharedTo,
                     permissions
                 );

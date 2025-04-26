@@ -1,5 +1,6 @@
 package com.bytebandit.fileservice.controller;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 import com.bytebandit.fileservice.configurer.AbstractPostgresContainer;
@@ -15,8 +16,12 @@ import com.bytebandit.fileservice.repository.UserSnapshotRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import jakarta.servlet.ServletRequest;
 import java.util.List;
 import java.util.UUID;
+import lib.core.enums.CustomHttpHeader;
+import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -27,6 +32,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -44,6 +50,9 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
 
     @Autowired
     private FileSystemItemRepository fileSystemItemRepository;
+
+    private final UUID ownerId = UUID.randomUUID();
+
 
     /**
      * Constructor for PrivateShareControllerIT.
@@ -73,7 +82,6 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
      */
     @Test
     void shouldShareItemWithPrivatePermissionsSuccessfully() {
-        UUID ownerId = UUID.randomUUID();
         String sharedBy = "test-1@gmail.com";
 
         UserSnapshotEntity userSnapshotEntity = new UserSnapshotEntity(ownerId, sharedBy);
@@ -99,14 +107,14 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
         String requestBody = """
             {
                 "itemId": "%s",
-                "sharedBy": "%s",
                 "sharedTo": ["%s"],
                 "permissions": ["%s"]
             }
-            """.formatted(itemId.toString(), sharedBy, sharedWith.getEmail(),
+            """.formatted(itemId.toString(), sharedWith.getEmail(),
             FileSystemPermission.EDITOR.name());
 
         requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), ownerId)
             .body(requestBody)
             .when()
             .post("/share/private")
@@ -124,9 +132,7 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
      */
     @Test
     void shouldNotShareItemWithEditorPermission_IfNotOwnerOrViewer() {
-        UUID ownerId = UUID.randomUUID();
         String sharedBy = "test-3@gmail.com";
-
         UserSnapshotEntity userSnapshotEntity = new UserSnapshotEntity(ownerId, sharedBy);
 
         userSnapshotRepository.save(userSnapshotEntity);
@@ -154,14 +160,14 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
         String requestBody = """
             {
                 "itemId": "%s",
-                "sharedBy": "%s",
                 "sharedTo": ["%s"],
                 "permissions": ["%s"]
             }
-            """.formatted(itemId.toString(), sharedWithAsViewer.getEmail(),
+            """.formatted(itemId.toString(),
             sharedWithAsEditor.getEmail(), FileSystemPermission.EDITOR.name());
 
         requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), sharedWithAsViewer.getUserId())
             .body(requestBody)
             .when()
             .post("/share/private")
@@ -171,6 +177,43 @@ class PrivateShareControllerIT extends AbstractPostgresContainer {
             .body("message", equalTo("Shared item successfully"))
             .body("data.permissionForEachUser", equalTo(List.of("NOT_ALLOWED")))
             .body("path", equalTo("/share/private"));
+    }
+
+
+    @Test
+    void canNotMakeShareReuqestWithoutUserIdHeader() {
+        String sharedBy = "test-6@gmail.com";
+
+        UserSnapshotEntity userSnapshotEntity = new UserSnapshotEntity(ownerId, sharedBy);
+        userSnapshotRepository.save(userSnapshotEntity);
+
+        FileSystemItemEntity fileSystemItemEntity =
+            fileSystemItemRepository.save(createAFile(ownerId));
+
+        UserSnapshotEntity sharedWith = userSnapshotRepository.save(
+            new UserSnapshotEntity(UUID.randomUUID(), "test-7@gmail.com")
+        );
+
+        UUID itemId = fileSystemItemEntity.getId();
+
+        String requestBody = """
+            {
+                "itemId": "%s",
+                "sharedTo": ["%s"],
+                "permissions": ["%s"]
+            }
+            """.formatted(itemId.toString(), sharedWith.getEmail(),
+            FileSystemPermission.VIEWER.name());
+
+        requestSpecification()
+            .body(requestBody)
+            .when()
+            .post("/share/private")
+            .then()
+            .statusCode(HttpStatus.UNAUTHORIZED.value())
+            .body("status", CoreMatchers.equalTo(401))
+            .body("errorCode", CoreMatchers.equalTo("HEADER-01"))
+            .body("message", containsString("Required header is missing."));
     }
 
     /**
