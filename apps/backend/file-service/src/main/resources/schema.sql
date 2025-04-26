@@ -34,7 +34,6 @@ BEGIN
        )
     INTO target_user_ids;
 
-
     IF is_owner THEN
         -- If the user is the owner, grant all permissions as "ALLOWED"
         SELECT ARRAY(SELECT ''ALLOWED''
@@ -69,6 +68,9 @@ BEGIN
 
     FOR i IN 1..array_length(input_shared_to_emails, 1)
         LOOP
+            IF target_user_ids[i] = shared_by_user_id THEN
+                result_permissions[i] = ''NOT_ALLOWED'';
+            END IF;
             IF result_permissions[i] = ''ALLOWED'' THEN
                 INSERT
                 INTO shared_items_private (id, created_at, permission, shared_with, updated_at, user_id, item_id)
