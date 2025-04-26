@@ -2,7 +2,6 @@ package com.bytebandit.fileservice.service;
 
 import com.bytebandit.fileservice.dto.ItemSharePrivateRequest;
 import com.bytebandit.fileservice.dto.ItemSharePrivateResponse;
-import com.bytebandit.fileservice.projection.ShareItemPrivateProjection;
 import com.bytebandit.fileservice.repository.SharedItemsPrivateRepository;
 import java.util.Arrays;
 import java.util.UUID;
