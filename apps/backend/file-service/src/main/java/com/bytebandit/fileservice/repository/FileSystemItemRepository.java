@@ -10,6 +10,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEntity, UUID> {
 
+    /**
+     * Get the permission of a file system item recursively.
+     *
+     * @param inputItemId the ID of the item
+     * @param inputUserId the ID of the user
+     * @return the permission string
+     */
     @Query(
         value = "SELECT * FROM get_permission_recursive("
             + "CAST(:input_item_id AS UUID), "
