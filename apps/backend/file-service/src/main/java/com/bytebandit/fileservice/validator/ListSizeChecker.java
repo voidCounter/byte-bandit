@@ -23,7 +23,10 @@ public class ListSizeChecker implements ConstraintValidator<ListSizeEqual, Objec
             Object firstList = null;
             Object secondList = null;
 
-            for (PropertyDescriptor pd : Introspector.getBeanInfo(value.getClass()).getPropertyDescriptors()) {
+            for (PropertyDescriptor pd : Introspector
+                .getBeanInfo(
+                    value.getClass()).getPropertyDescriptors()
+            ) {
                 if (pd.getName().equals(list1FieldName)) {
                     firstList = pd.getReadMethod().invoke(value);
                 } else if (pd.getName().equals(list2FieldName)) {
