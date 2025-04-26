@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,9 +29,8 @@ public class ItemSharePrivateRequest {
     @Size(min = 1, message = "At least one email must be provided")
     private List<@Email(message = "Invalid Email Format") String> sharedTo;
 
-    @NotNull
-    @Email(message = "Invalid Email Format")
-    private String sharedBy;
+    @ValidId
+    private UUID sharedByUserId;
 
     @NotNull
     @Size(min = 1, message = "At least one permission must be provided")

@@ -1,21 +1,15 @@
 CREATE OR REPLACE FUNCTION share_item_private(
     input_item_id UUID,
-    shared_by_email TEXT,
+    shared_by_user_id UUID,
     input_shared_to_emails TEXT[],
     input_permissions TEXT[]
 )
     RETURNS TEXT[] AS '
 DECLARE
-    shared_by_user_id UUID;
     is_owner BOOLEAN;
     result_permissions TEXT[];
     target_user_ids UUID[];
 BEGIN
-    -- Check if the user (shared_by_email) is the owner of the item
-    SELECT user_id
-    INTO shared_by_user_id
-    FROM users_snapshot
-    WHERE email = shared_by_email;
 
     SELECT CASE
                WHEN COUNT(*) > 0 THEN TRUE
