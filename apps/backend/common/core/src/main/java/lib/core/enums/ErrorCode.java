@@ -10,6 +10,8 @@ public enum ErrorCode {
     AUTH_INVALID_CREDENTIALS("AUTH-01", "Invalid email or password provided."),
     AUTH_TOKEN_EXPIRED("AUTH-02", "Authentication token has expired."),
     AUTH_ACCESS_DENIED("AUTH-03", "Access denied for the requested resource."),
+
+    HEADER_MISSING("HEADER-01", "Required header is missing."),
     
     DATABASE_ERROR("DB-02", "Database error occurred."),
     
