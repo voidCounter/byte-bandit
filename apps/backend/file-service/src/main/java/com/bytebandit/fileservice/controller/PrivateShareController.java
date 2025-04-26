@@ -1,14 +1,14 @@
 package com.bytebandit.fileservice.controller;
 
+import static com.bytebandit.fileservice.utils.HttpHeaderUtils.getUserIdHeader;
+
 import com.bytebandit.fileservice.dto.ItemSharePrivateRequest;
 import com.bytebandit.fileservice.dto.ItemSharePrivateResponse;
-import com.bytebandit.fileservice.exception.UnauthenticatedException;
 import com.bytebandit.fileservice.service.PrivatePermissionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lib.core.dto.response.ApiResponse;
-import lib.core.enums.CustomHttpHeader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -35,15 +35,7 @@ public class PrivateShareController {
         @NotNull HttpServletRequest servletRequest
     ) {
 
-        String userIdHeader = servletRequest.getHeader(CustomHttpHeader.USER_ID.getValue());
-
-        if (userIdHeader == null) {
-            throw new UnauthenticatedException("User ID header is missing");
-        }
-
-        log.info("Shared by user id : {}", userIdHeader);
-
-        request.setSharedByUserId(userIdHeader);
+        request.setSharedByUserId(getUserIdHeader(servletRequest));
         ItemSharePrivateResponse permissionResponse =
             privatePermissionService.givePermissionToUsers(request);
 
