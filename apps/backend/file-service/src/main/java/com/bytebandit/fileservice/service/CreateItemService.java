@@ -6,6 +6,7 @@ import com.bytebandit.fileservice.enums.FileSystemItemType;
 import com.bytebandit.fileservice.enums.UploadStatus;
 import com.bytebandit.fileservice.exception.ItemNotFoundException;
 import com.bytebandit.fileservice.exception.NotEnoughPermissionException;
+import com.bytebandit.fileservice.mapper.FileSystemItemsMapper;
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.repository.FileSystemItemRepository;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 public class CreateItemService {
 
     private final FileSystemItemRepository fileSystemItemRepository;
+    private final FileSystemItemsMapper fileSystemItemsMapper;
 
     /**
      * Creates a new file system item.
@@ -24,6 +26,13 @@ public class CreateItemService {
     public CreateItemResponse createItem(
         CreateItemRequest createItemRequest
     ) {
+
+        final FileSystemItemEntity parent = fileSystemItemRepository.findById(
+            UUID.fromString(createItemRequest.getParentId())
+        ).orElseThrow(() -> new ItemNotFoundException(
+            "Parent item not found."
+        ));
+
         final String permission
             = fileSystemItemRepository.getPermissionRecursive(
             UUID.fromString(createItemRequest.getParentId()),
@@ -35,12 +44,6 @@ public class CreateItemService {
                 "You do not have enough permission to create this item."
             );
         }
-
-        FileSystemItemEntity parent = fileSystemItemRepository.findById(
-            UUID.fromString(createItemRequest.getParentId())
-        ).orElseThrow(() -> new ItemNotFoundException(
-            "Parent item not found."
-        ));
 
         FileSystemItemEntity fileSystemItemEntity = FileSystemItemEntity.builder()
             .chunks(createItemRequest.getChunks())
@@ -54,6 +57,8 @@ public class CreateItemService {
             .parent(parent)
             .build();
 
-        
+        return fileSystemItemsMapper.toCreateItemResponse(
+            fileSystemItemRepository.save(fileSystemItemEntity)
+        );
     }
 }

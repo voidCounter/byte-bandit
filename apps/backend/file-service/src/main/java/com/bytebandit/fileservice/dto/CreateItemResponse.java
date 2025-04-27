@@ -21,4 +21,5 @@ public class CreateItemResponse {
     private Long size;
     private String type;
     private String parentId;
+    private String mimeType;
 }

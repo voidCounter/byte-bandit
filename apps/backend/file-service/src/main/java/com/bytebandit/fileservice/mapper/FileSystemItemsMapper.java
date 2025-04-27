@@ -9,5 +9,6 @@ import org.mapstruct.Mapping;
 public interface FileSystemItemsMapper {
 
     @Mapping(source = "id", target = "itemId")
-    CreateItemResponse toCreateItemResponse(FileSystemItemEntity fileSystemItemEntity);
+    @Mapping(source = "item.parent.id", target = "parentId")
+    CreateItemResponse toCreateItemResponse(FileSystemItemEntity item);
 }
