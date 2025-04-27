@@ -169,12 +169,10 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
     private FileSystemItemEntity createAFolder(UUID ownerId) {
         return FileSystemItemEntity.builder()
             .name("ParentFolder")
-            .size(0L)
             .mimeType("folder")
             .owner(ownerId)
             .status(UploadStatus.UPLOADED)
             .type(FileSystemItemType.FOLDER)
-            .s3Url("https://s3.bucket.com/parent_folder/")
             .build();
     }
 }
