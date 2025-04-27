@@ -29,6 +29,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -66,7 +67,7 @@ public class FileSystemItemEntity {
     @Column(nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private FileSystemItemType type;
-    
+
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode chunks;
@@ -74,7 +75,10 @@ public class FileSystemItemEntity {
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;
-    
+
+    @UpdateTimestamp
+    private Timestamp updatedAt;
+
     private String s3Url;
 
     @ManyToOne(

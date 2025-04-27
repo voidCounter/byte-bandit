@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SharedItemsPublicRepository extends JpaRepository<SharedItemsPublicEntity, UUID> {
-    @Query(value = "SELECT * FROM share_item_public(:p_user_id, :p_item_id, :p_permission, :p_password_hash)", nativeQuery = true)
+    @Query(value =
+        "SELECT * FROM share_item_public(:p_user_id, :p_item_id, :p_permission, :p_password_hash)",
+        nativeQuery = true)
     List<Object[]> callShareItemPublic(
         @Param("p_user_id") UUID userId,
         @Param("p_item_id") UUID itemId,

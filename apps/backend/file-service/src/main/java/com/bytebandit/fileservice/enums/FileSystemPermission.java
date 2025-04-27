@@ -19,6 +19,13 @@ public enum FileSystemPermission {
         return name().toLowerCase();
     }
     
+    /**
+     * Convert a string value to a FileSystemPermission enum.
+     *
+     * @param value the string value to convert
+     *
+     * @return the corresponding FileSystemPermission enum
+     */
     @JsonCreator
     public static FileSystemPermission fromValue(String value) {
         for (FileSystemPermission permission : FileSystemPermission.values()) {
