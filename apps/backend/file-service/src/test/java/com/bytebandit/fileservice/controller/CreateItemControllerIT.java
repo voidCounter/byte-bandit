@@ -33,22 +33,22 @@ import org.springframework.test.context.ActiveProfiles;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("test")
 class CreateItemControllerIT extends AbstractPostgresContainer {
-
+    
     @LocalServerPort
     private int port;
-
+    
     @Autowired
     private FileSystemItemRepository fileSystemItemRepository;
-
+    
     @Autowired
     private UserSnapshotRepository userSnapshotRepository;
-
+    
     private final UUID ownerId = UUID.randomUUID();
-
-
+    
+    
     /**
-     * This method is used to set up the test environment before each test.
-     * It initializes the RestAssured port and clears the database.
+     * This method is used to set up the test environment before each test. It initializes the
+     * RestAssured port and clears the database.
      */
     @BeforeEach
     void setUp() {
@@ -56,12 +56,12 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
         fileSystemItemRepository.deleteAll();
         userSnapshotRepository.deleteAll();
     }
-
+    
     private RequestSpecification requestSpecification() {
         return RestAssured.given()
             .contentType(ContentType.JSON);
     }
-
+    
     /**
      * Create a folder with the given owner ID.
      */
@@ -72,7 +72,7 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
         );
         FileSystemItemEntity parentFolder = createAFolder(ownerId);
         fileSystemItemRepository.save(parentFolder);
-
+        
         String requestBody = """
             {
                 "name": "new_file.txt",
@@ -85,7 +85,7 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
                 "parentId": "%s"
             }
             """.formatted(parentFolder.getId());
-
+        
         requestSpecification()
             .header(CustomHttpHeader.USER_ID.getValue(), ownerId)
             .body(requestBody)
@@ -102,24 +102,24 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
             .body("data.status", equalTo("UPLOADED"))
             .body("data.type", equalTo("FILE"));
     }
-
+    
     /**
-     * When user has no permission to create an item, the request should fail.
-     * with proper ErrorResponse.
+     * When user has no permission to create an item, the request should fail. with proper
+     * ErrorResponse.
      */
     @Test
     void shouldFailToCreateItem_WhenNoPermission() {
         FileSystemItemEntity parentFolder = createAFolder(UUID.randomUUID());
         fileSystemItemRepository.save(parentFolder);
-
+        
         userSnapshotRepository.save(
             new UserSnapshotEntity(ownerId, "valid-mail-2@domain.com")
         );
-
+        
         userSnapshotRepository.save(
             new UserSnapshotEntity(parentFolder.getOwner(), "valid-mail-3@domain.com")
         );
-
+        
         String requestBody = """
             {
                 "name": "unauthorized_file.txt",
@@ -132,7 +132,7 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
                 "parentId": "%s"
             }
             """.formatted(parentFolder.getId());
-
+        
         requestSpecification()
             .header(CustomHttpHeader.USER_ID.getValue(), ownerId)
             .body(requestBody)
@@ -149,19 +149,18 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
             .body("errorId", notNullValue())
             .body("timestamp", notNullValue());
     }
-
+    
     /**
-     * When the parent item is not found, the request should fail with a
-     * proper ErrorResponse.
+     * When the parent item is not found, the request should fail with a proper ErrorResponse.
      */
     @Test
     void shouldFailToCreateItem_WhenParentNotFound() {
         String nonExistingParentId = UUID.randomUUID().toString();
-
+        
         userSnapshotRepository.save(
             new UserSnapshotEntity(ownerId, "valid-mail-4@domain.com")
         );
-
+        
         String requestBody = """
             {
                 "name": "file_with_missing_parent.txt",
@@ -174,7 +173,7 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
                 "parentId": "%s"
             }
             """.formatted(nonExistingParentId);
-
+        
         requestSpecification()
             .header(CustomHttpHeader.USER_ID.getValue(), ownerId)
             .body(requestBody)
@@ -191,18 +190,18 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
             .body("errorId", notNullValue())
             .body("timestamp", notNullValue());
     }
-
+    
     /**
-     * When the user ID is not found in the snapshot, the request should fail
-     * with a proper ErrorResponse indicating user not found.
+     * When the user ID is not found in the snapshot, the request should fail with a proper
+     * ErrorResponse indicating user not found.
      */
     @Test
     void shouldFailToCreateItem_WhenUserNotFoundInSnapshot() {
         FileSystemItemEntity parentFolder = createAFolder(UUID.randomUUID());
         fileSystemItemRepository.save(parentFolder);
-
+        
         UUID nonExistingUserId = UUID.randomUUID();
-
+        
         String requestBody = """
             {
                 "name": "file_by_non_existing_user.txt",
@@ -215,7 +214,7 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
                 "parentId": "%s"
             }
             """.formatted(parentFolder.getId());
-
+        
         requestSpecification()
             .header(CustomHttpHeader.USER_ID.getValue(), nonExistingUserId)
             .body(requestBody)
@@ -232,11 +231,10 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
             .body("errorId", notNullValue())
             .body("timestamp", notNullValue());
     }
-
+    
     private FileSystemItemEntity createAFolder(UUID ownerId) {
         return FileSystemItemEntity.builder()
             .name("ParentFolder")
-            .mimeType("folder")
             .owner(ownerId)
             .status(UploadStatus.UPLOADED)
             .type(FileSystemItemType.FOLDER)

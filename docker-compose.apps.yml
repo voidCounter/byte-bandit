@@ -120,6 +120,8 @@ services:
   user-dev-db:
     image: postgres:17-alpine
     container_name: user-dev-db
+    volumes:
+      - user-dev-db-data:/var/lib/postgresql/data
     profiles:
       - infra
     ports:
@@ -173,8 +175,6 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
-    volumes:
-      - kafka-data:/var/lib/kafka/data
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -204,4 +204,5 @@ services:
     ports:
       - "8000:8000"
 volumes:
-  kafka-data:
+  user-dev-db-data:
+    driver: local

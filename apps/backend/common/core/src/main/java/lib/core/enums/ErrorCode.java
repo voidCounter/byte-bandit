@@ -48,6 +48,9 @@ public enum ErrorCode {
     SERVICE_UNAVAILABLE("SYS-02", "The service is temporarily unavailable."),
     DB_CONSTRAINT_VIOLATION("DB-01", "Database constraint violation."),
     
+    PUBLIC_SHARE_ERROR("SHARE-01", "Error occurred while sharing the file."),
+    PRIVATE_SHARE_ERROR("SHARE-02", "Error occurred while sharing the file privately."),
+    
     UNKNOWN_ERROR("UNKNOWN", "An unknown error has occurred.");
     
     private final String code;

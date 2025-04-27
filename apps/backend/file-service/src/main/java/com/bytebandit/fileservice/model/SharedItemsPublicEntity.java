@@ -29,32 +29,30 @@ import org.hibernate.annotations.UpdateTimestamp;
     name = "shared_items_public"
 )
 public class SharedItemsPublicEntity {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FileSystemPermission permission;
-
+    
     @Column(nullable = false)
     private UUID sharedBy;
-
-    @Column(nullable = false)
+    
     private String passwordHash;
-
+    
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Timestamp createdAt;
-
+    
     @UpdateTimestamp
     @Column(nullable = false)
     private Timestamp updatedAt;
-
-    @Column(nullable = false)
+    
     private Timestamp expiresAt;
-
+    
     @OneToOne
     @JoinColumn(
         name = "item_id",

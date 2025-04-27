@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BACKEND_SERVICES="discovery-server config-server gateway user-service file-service sync-service"
-INFRA_SERVICES="user-dev-db mailhog"
+INFRA_SERVICES="user-dev-db mailhog kafka zookeeper"
 FRONTEND_SERVICE="client"
 DOCS_SERVICE="docs"
 ALL_SERVICES="$BACKEND_SERVICES $FRONTEND_SERVICE $DOCS_SERVICE $INFRA_SERVICES"

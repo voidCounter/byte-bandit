@@ -53,7 +53,6 @@ public class FileSystemItemEntity {
     
     private Long size;
     
-    @Column(nullable = false)
     private String mimeType;
     
     @Column(nullable = false)
@@ -81,7 +80,7 @@ public class FileSystemItemEntity {
     private String s3Url;
     
     @ManyToOne(
-        cascade = CascadeType.ALL,
+        cascade = CascadeType.MERGE,
         fetch = FetchType.LAZY
     )
     @JoinColumn(
@@ -123,11 +122,11 @@ public class FileSystemItemEntity {
     private void validateItemTypeConstraints() {
         boolean isFolder = type == FileSystemItemType.FOLDER;
         boolean isFile = type == FileSystemItemType.FILE;
-        if ((isFolder) && (s3Url != null || size != null)) {
-            throw new IllegalStateException("Folder cannot have an S3 URL or size");
+        if ((isFolder) && (s3Url != null || size != null || mimeType != null)) {
+            throw new IllegalStateException("Folder cannot have an S3 URL or size or mimeType");
         }
-        if ((isFile) && (s3Url == null || size == null)) {
-            throw new IllegalStateException("File must have an S3 URL and size");
+        if ((isFile) && (s3Url == null || size == null || mimeType == null)) {
+            throw new IllegalStateException("File must have an S3 URL mimeType and size");
         }
     }
 }

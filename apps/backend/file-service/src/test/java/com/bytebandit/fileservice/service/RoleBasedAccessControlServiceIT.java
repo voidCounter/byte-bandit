@@ -1,7 +1,6 @@
 package com.bytebandit.fileservice.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 
 import com.bytebandit.fileservice.configurer.AbstractPostgresContainer;
 import com.bytebandit.fileservice.enums.FileSystemItemType;

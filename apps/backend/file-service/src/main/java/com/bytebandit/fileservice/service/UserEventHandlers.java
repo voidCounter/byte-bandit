@@ -1,12 +1,12 @@
 package com.bytebandit.fileservice.service;
 
+import com.bytebandit.fileservice.exception.DataAccessException;
 import com.bytebandit.fileservice.model.UserSnapshotEntity;
 import com.bytebandit.fileservice.repository.UserSnapshotRepository;
 import jakarta.transaction.Transactional;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,7 +39,7 @@ public class UserEventHandlers {
                 logger.debug("User snapshot already exists: userId={}", userId);
             }
         } catch (Exception e) {
-            throw new DataAccessException("Failed to create user snapshot", e) {
+            throw new DataAccessException("Failed to create user snapshot") {
             };
         }
     }
