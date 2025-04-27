@@ -8,7 +8,9 @@ import com.bytebandit.fileservice.configurer.AbstractPostgresContainer;
 import com.bytebandit.fileservice.enums.FileSystemItemType;
 import com.bytebandit.fileservice.enums.UploadStatus;
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
+import com.bytebandit.fileservice.model.UserSnapshotEntity;
 import com.bytebandit.fileservice.repository.FileSystemItemRepository;
+import com.bytebandit.fileservice.repository.UserSnapshotRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -38,12 +40,21 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
     @Autowired
     private FileSystemItemRepository fileSystemItemRepository;
 
+    @Autowired
+    private UserSnapshotRepository userSnapshotRepository;
+
     private final UUID ownerId = UUID.randomUUID();
 
+
+    /**
+     * This method is used to set up the test environment before each test.
+     * It initializes the RestAssured port and clears the database.
+     */
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
         fileSystemItemRepository.deleteAll();
+        userSnapshotRepository.deleteAll();
     }
 
     private RequestSpecification requestSpecification() {
@@ -56,6 +67,9 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
      */
     @Test
     void shouldCreateItemSuccessfully_WhenOwnerOrEditor() {
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(ownerId, "valid-mail@domain.com")
+        );
         FileSystemItemEntity parentFolder = createAFolder(ownerId);
         fileSystemItemRepository.save(parentFolder);
 
@@ -95,8 +109,16 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
      */
     @Test
     void shouldFailToCreateItem_WhenNoPermission() {
-        FileSystemItemEntity parentFolder = createAFolder(UUID.randomUUID()); // Different owner
+        FileSystemItemEntity parentFolder = createAFolder(UUID.randomUUID());
         fileSystemItemRepository.save(parentFolder);
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(ownerId, "valid-mail-2@domain.com")
+        );
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(parentFolder.getOwner(), "valid-mail-3@domain.com")
+        );
 
         String requestBody = """
             {
@@ -136,6 +158,10 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
     void shouldFailToCreateItem_WhenParentNotFound() {
         String nonExistingParentId = UUID.randomUUID().toString();
 
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(ownerId, "valid-mail-4@domain.com")
+        );
+
         String requestBody = """
             {
                 "name": "file_with_missing_parent.txt",
@@ -161,6 +187,47 @@ class CreateItemControllerIT extends AbstractPostgresContainer {
             .body("errorCode", equalTo("ITEM-01"))
             .body("message", equalTo("Item not found."))
             .body("details", containsString("Parent item not found"))
+            .body("path", equalTo("/create"))
+            .body("errorId", notNullValue())
+            .body("timestamp", notNullValue());
+    }
+
+    /**
+     * When the user ID is not found in the snapshot, the request should fail
+     * with a proper ErrorResponse indicating user not found.
+     */
+    @Test
+    void shouldFailToCreateItem_WhenUserNotFoundInSnapshot() {
+        FileSystemItemEntity parentFolder = createAFolder(UUID.randomUUID());
+        fileSystemItemRepository.save(parentFolder);
+
+        UUID nonExistingUserId = UUID.randomUUID();
+
+        String requestBody = """
+            {
+                "name": "file_by_non_existing_user.txt",
+                "size": 101112,
+                "mimeType": "text/plain",
+                "status": "UPLOADED",
+                "type": "FILE",
+                "chunks": null,
+                "s3Url": "https://s3.bucket.com/file_by_non_existing_user.txt",
+                "parentId": "%s"
+            }
+            """.formatted(parentFolder.getId());
+
+        requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), nonExistingUserId)
+            .body(requestBody)
+            .when()
+            .post("/create")
+            .then()
+            .statusCode(HttpStatus.NOT_FOUND.value())
+            .body("status", equalTo(HttpStatus.NOT_FOUND.value()))
+            .body("error", equalTo("Not Found"))
+            .body("errorCode", equalTo("USER-01"))
+            .body("message", equalTo("User not found."))
+            .body("details", containsString("User not found"))
             .body("path", equalTo("/create"))
             .body("errorId", notNullValue())
             .body("timestamp", notNullValue());

@@ -6,6 +6,7 @@ import com.bytebandit.fileservice.enums.FileSystemItemType;
 import com.bytebandit.fileservice.enums.UploadStatus;
 import com.bytebandit.fileservice.exception.ItemNotFoundException;
 import com.bytebandit.fileservice.exception.NotEnoughPermissionException;
+import com.bytebandit.fileservice.exception.UserNotFoundException;
 import com.bytebandit.fileservice.mapper.FileSystemItemsMapper;
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.repository.FileSystemItemRepository;
@@ -38,6 +39,10 @@ public class CreateItemService {
             UUID.fromString(createItemRequest.getParentId()),
             createItemRequest.getOwnerId()
         ).toLowerCase();
+
+        if (permission.equals("no_user_found")) {
+            throw new UserNotFoundException("User not found.");
+        }
 
         if (!(permission.equals("owner") || permission.equals("editor"))) {
             throw new NotEnoughPermissionException(

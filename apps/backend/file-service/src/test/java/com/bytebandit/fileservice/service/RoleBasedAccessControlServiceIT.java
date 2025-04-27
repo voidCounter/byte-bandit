@@ -10,9 +10,11 @@ import com.bytebandit.fileservice.enums.UploadStatus;
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.model.SharedItemsPrivateEntity;
 import com.bytebandit.fileservice.model.SharedItemsPublicEntity;
+import com.bytebandit.fileservice.model.UserSnapshotEntity;
 import com.bytebandit.fileservice.repository.FileSystemItemRepository;
 import com.bytebandit.fileservice.repository.SharedItemsPrivateRepository;
 import com.bytebandit.fileservice.repository.SharedItemsPublicRepository;
+import com.bytebandit.fileservice.repository.UserSnapshotRepository;
 import io.restassured.RestAssured;
 import jakarta.transaction.Transactional;
 import java.sql.Timestamp;
@@ -50,6 +52,9 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
     @Autowired
     private RoleBasedAccessControlService permissionService;
 
+    @Autowired
+    private UserSnapshotRepository userSnapshotRepository;
+
     private UUID ownerId;
     private UUID otherUserId;
 
@@ -82,6 +87,10 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
         item.setS3Url("s3://test-bucket/test-file");
         item = fileSystemItemRepository.save(item);
 
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(ownerId, "valid-mail-1@domain.com")
+        );
+
         String permission = permissionService.getPermission(item.getId().toString(), ownerId);
 
         assertThat(permission).isEqualTo("OWNER");
@@ -102,6 +111,14 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
         item.setType(FileSystemItemType.FILE);
         item.setS3Url("s3://test-bucket/shared-file");
         item = fileSystemItemRepository.save(item);
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(item.getOwner(), "valid-mail-2@domain.com")
+        );
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(otherUserId, "valid-mail-3@domain.com")
+        );
 
         SharedItemsPrivateEntity privateShare = new SharedItemsPrivateEntity();
         privateShare.setItem(item);
@@ -131,6 +148,14 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
         item.setS3Url("s3://test-bucket/viewer-file");
         item = fileSystemItemRepository.save(item);
 
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(item.getOwner(), "valid-mail-2@domain.com")
+        );
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(otherUserId, "valid-mail-3@domain.com")
+        );
+
         SharedItemsPrivateEntity privateShare = new SharedItemsPrivateEntity();
         privateShare.setItem(item);
         privateShare.setUserId(item.getOwner());
@@ -159,6 +184,14 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
         item.setS3Url("s3://test-bucket/private-file");
         item = fileSystemItemRepository.save(item);
 
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(item.getOwner(), "valid-mail-2@domain.com")
+        );
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(otherUserId, "valid-mail-3@domain.com")
+        );
+
         String permission = permissionService.getPermission(item.getId().toString(), otherUserId);
 
         assertThat(permission).isEqualTo("NO_ACCESS");
@@ -179,6 +212,14 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
         item.setType(FileSystemItemType.FILE);
         item.setS3Url("s3://test-bucket/public-shared-file");
         item = fileSystemItemRepository.save(item);
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(item.getOwner(), "valid-mail-2@domain.com")
+        );
+
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(otherUserId, "valid-mail-3@domain.com")
+        );
 
         SharedItemsPublicEntity publicShare = new SharedItemsPublicEntity();
         publicShare.setItem(item);
