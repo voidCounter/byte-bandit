@@ -12,6 +12,8 @@ public enum ErrorCode {
     AUTH_ACCESS_DENIED("AUTH-03", "Access denied for the requested resource."),
 
     HEADER_MISSING("HEADER-01", "Required header is missing."),
+    PERMISSION_DENIED("PERM-01", "You do not have permission to access this resource."),
+    ITEM_NOT_FOUND("ITEM-01", "Item not found."),
     
     DATABASE_ERROR("DB-02", "Database error occurred."),
     
