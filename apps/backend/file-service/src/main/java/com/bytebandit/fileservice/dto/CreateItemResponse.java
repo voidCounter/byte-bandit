@@ -18,6 +18,7 @@ public class CreateItemResponse {
     private String updatedAt;
     private BigInteger fileSize;
     private String status;
+    private Long size;
     private String type;
     private String parentId;
 }

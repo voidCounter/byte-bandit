@@ -1,7 +1,6 @@
 package com.bytebandit.fileservice.model;
 
 import com.bytebandit.fileservice.enums.FileSystemPermission;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

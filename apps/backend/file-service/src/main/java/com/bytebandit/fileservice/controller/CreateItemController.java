@@ -32,6 +32,6 @@ public class CreateItemController {
                 getUserIdHeader(servletRequest)
             )
         );
-        return null; // to do
+        
     }
 }

@@ -2,9 +2,9 @@ package com.bytebandit.fileservice.dto;
 
 import com.bytebandit.fileservice.enums.FileSystemItemType;
 import com.bytebandit.fileservice.validator.ValidId;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import java.math.BigInteger;
 import java.util.UUID;
 import lib.core.validation.EnumValidator;
 import lombok.Data;
@@ -13,7 +13,7 @@ import lombok.Data;
 public class CreateItemRequest {
 
     @Valid
-    private Chunks chunks;
+    private JsonNode chunks;
 
     private String mimeType;
 
@@ -32,7 +32,7 @@ public class CreateItemRequest {
     )
     private String type;
 
-    private BigInteger size;
+    private Long size;
 
     @ValidId
     private String parentId;
