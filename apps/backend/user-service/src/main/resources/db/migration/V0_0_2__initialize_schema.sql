@@ -1,4 +1,4 @@
-CREATE TABLE users
+CREATE TABLE IF NOT EXISTS users
 (
     id            UUID    NOT NULL,
     email         VARCHAR(255),
@@ -11,7 +11,7 @@ CREATE TABLE users
     CONSTRAINT pk_users PRIMARY KEY (id)
 );
 
-CREATE TABLE tokens
+CREATE TABLE IF NOT EXISTS tokens
 (
     id         UUID                        NOT NULL,
     token_hash VARCHAR(512)                NOT NULL,
@@ -23,11 +23,29 @@ CREATE TABLE tokens
     CONSTRAINT pk_tokens PRIMARY KEY (id)
 );
 
-ALTER TABLE users
-    ADD CONSTRAINT uc_users_email UNIQUE (email);
+DO '
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM pg_constraint
+            WHERE conname = ''uc_users_email''
+        ) THEN
+            ALTER TABLE users
+                ADD CONSTRAINT uc_users_email UNIQUE (email);
+        END IF;
 
-ALTER TABLE tokens
-    ADD CONSTRAINT uc_tokens_token_hash UNIQUE (token_hash);
+        IF NOT EXISTS (SELECT 1
+        FROM pg_constraint
+        WHERE conname = ''uc_tokens_token_hash'') THEN
+            ALTER TABLE tokens
+                ADD CONSTRAINT uc_tokens_token_hash UNIQUE (token_hash);
+            END IF;
 
-ALTER TABLE tokens
-    ADD CONSTRAINT FK_TOKENS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
+        IF NOT EXISTS (SELECT 1
+        FROM pg_constraint
+        WHERE conname = ''fk_tokens_on_user'') THEN
+            ALTER TABLE tokens
+                ADD CONSTRAINT fk_tokens_on_user FOREIGN KEY (user_id) REFERENCES users (id);
+            END IF;
+    END
+';

@@ -10,9 +10,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
-#  sql:
-#    init:
-#      mode: always
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${USER_DEV_DB_URL}

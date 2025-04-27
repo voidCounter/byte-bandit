@@ -8,14 +8,17 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: update
-  sql:
-    init:
-      mode: always
+      ddl-auto: none
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    table: user_service_flyway_schema_history
   mail:
     host: ${TEST_MAIL_HOST:localhost}
     port: ${TEST_MAIL_PORT:1025}
