@@ -1,9 +1,11 @@
 package com.bytebandit.fileservice.dto;
 
 import com.bytebandit.fileservice.enums.FileSystemPermission;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.sql.Timestamp;
 import java.util.UUID;
-import lib.core.validation.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +21,8 @@ public class PublicShareRequest {
     private UUID sharedBy;
     @NotNull(message = "Permission cannot be null")
     private FileSystemPermission permission;
-    @ValidPassword(message = "Password must be at least 8 characters long")
+    @Size(min = 8, max = 64, message = "Password must be between 8 and 64 characters")
     private String password;
+    @Future(message = "Expiration date must be in the future")
+    private Timestamp expiresAt;
 }

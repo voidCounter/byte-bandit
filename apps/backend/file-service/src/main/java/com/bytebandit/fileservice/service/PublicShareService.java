@@ -9,22 +9,29 @@ import java.util.List;
 import java.util.UUID;
 import lib.core.dto.response.ApiResponse;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PublicShareService {
-    private static final Logger logger = LoggerFactory.getLogger(PublicShareService.class);
     private final PasswordEncoder passwordEncoder;
     private final SharedItemsPublicRepository sharedItemsPublicRepository;
+    private final RoleBasedAccessControlService roleBasedAccessControlService;
     
+    /**
+     * Constructor for PublicShareService.
+     *
+     * @param passwordEncoder               PasswordEncoder
+     * @param sharedItemsPublicRepository   SharedItemsPublicRepository
+     * @param roleBasedAccessControlService RoleBasedAccessControlService
+     */
     public PublicShareService(PasswordEncoder passwordEncoder,
-                              SharedItemsPublicRepository sharedItemsPublicRepository) {
+                              SharedItemsPublicRepository sharedItemsPublicRepository,
+                              RoleBasedAccessControlService roleBasedAccessControlService) {
         this.passwordEncoder = passwordEncoder;
         this.sharedItemsPublicRepository = sharedItemsPublicRepository;
+        this.roleBasedAccessControlService = roleBasedAccessControlService;
     }
     
     /**
@@ -38,44 +45,46 @@ public class PublicShareService {
     public ResponseEntity<ApiResponse<PublicShareResponse>> sharePublic(
         PublicShareRequest request) {
         try {
+            // Get user's permission on the item
+            String usersPermission = roleBasedAccessControlService.getPermission(
+                request.getItemId().toString(),
+                request.getSharedBy()
+            );
+            
+            // Check if user is authorized to share
+            if (!List.of("OWNER", "EDITOR").contains(usersPermission)) {
+                throw new PublicShareException("USER IS NOT AUTHORIZED TO SHARE THIS ITEM.");
+            }
+            
             List<Object[]> results = sharedItemsPublicRepository.callShareItemPublic(
                 request.getSharedBy(),
                 request.getItemId(),
                 request.getPermission().getPermission().toUpperCase(),
-                request.getPassword() != null ? passwordEncoder.encode(request.getPassword()) : null
+                usersPermission,
+                request.getPassword() != null ? passwordEncoder.encode(request.getPassword()) :
+                    null,
+                request.getExpiresAt()
             );
             
-            logger.debug("Function executed successfully");
-            
-            // Process the result set
-            if (results.isEmpty()) {
-                throw new PublicShareException("No results returned from function");
-            }
-            
             Object[] result = results.get(0);
-            UUID publicLinkId = result[0] != null ? (UUID) result[0] : null;
-            String errorMessage = result[1] != null ? (String) result[1] : null;
+            UUID publicLinkId = (UUID) result[0];
+            String status = (String) result[1];
             
-            if (errorMessage != null && !errorMessage.isEmpty()) {
-                logger.warn("Error sharing item: {}", errorMessage);
-                throw new PublicShareException(errorMessage);
+            if (publicLinkId == null) {
+                throw new PublicShareException(status);
             }
             
-            PublicShareResponse responseDto = PublicShareResponse.builder()
-                .link(publicLinkId != null ? publicLinkId.toString() : null)
-                .permission(request.getPermission().toString())
-                .build();
+            PublicShareResponse response =
+                PublicShareResponse.builder().link(publicLinkId.toString())
+                    .permission(request.getPermission().name()).build();
             
-            return ResponseEntity.ok().body(
-                ApiResponse.<PublicShareResponse>builder()
-                    .status(HttpStatus.SC_OK)
-                    .message("Item shared successfully")
-                    .data(responseDto)
-                    .build());
+            return ResponseEntity.ok(
+                ApiResponse.<PublicShareResponse>builder().data(response).status(HttpStatus.SC_OK)
+                    .message(status).path("/share/public").build());
         } catch (PublicShareException e) {
             throw e;
         } catch (Exception e) {
-            throw new PublicShareException("Unexpected error: " + e.getMessage());
+            throw new PublicShareException("Failed to share item: " + e.getMessage());
         }
     }
 }

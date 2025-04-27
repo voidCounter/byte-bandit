@@ -43,46 +43,44 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 )
 @EntityListeners(AuditingEntityListener.class)
 public class FileSystemItemEntity {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    
     @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false)
+    
     private Long size;
-
-    @Column(nullable = false)
+    
     private String mimeType;
-
+    
     @Column(nullable = false)
     private UUID owner;
-
+    
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UploadStatus status;
-
+    
     @Column(nullable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private FileSystemItemType type;
-
+    
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode chunks;
-
+    
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;
-
+    
     @UpdateTimestamp
     private Timestamp updatedAt;
-
+    
     private String s3Url;
-
+    
     @ManyToOne(
-        cascade = CascadeType.ALL,
+        cascade = CascadeType.MERGE,
         fetch = FetchType.LAZY
     )
     @JoinColumn(
@@ -90,7 +88,7 @@ public class FileSystemItemEntity {
         referencedColumnName = "id"
     )
     private FileSystemItemEntity parent;
-
+    
     @OneToMany(
         mappedBy = "item",
         fetch = FetchType.LAZY,
@@ -98,20 +96,20 @@ public class FileSystemItemEntity {
         orphanRemoval = true
     )
     private List<SharedItemsPrivateEntity> sharedItems;
-
+    
     @OneToOne(
         mappedBy = "item",
         orphanRemoval = true
     )
     private SharedItemsPublicEntity sharedItem;
-
+    
     @OneToOne(
         mappedBy = "item",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
     private ItemsStarredEntity starredItem;
-
+    
     @OneToOne(
         mappedBy = "item",
         cascade = CascadeType.ALL,
@@ -124,11 +122,11 @@ public class FileSystemItemEntity {
     private void validateItemTypeConstraints() {
         boolean isFolder = type == FileSystemItemType.FOLDER;
         boolean isFile = type == FileSystemItemType.FILE;
-        if ((isFolder) && (s3Url != null || size != null)) {
-            throw new IllegalStateException("Folder cannot have an S3 URL or size");
+        if ((isFolder) && (s3Url != null || size != null || mimeType != null)) {
+            throw new IllegalStateException("Folder cannot have an S3 URL or size or mimeType");
         }
-        if ((isFile) && (s3Url == null || size == null)) {
-            throw new IllegalStateException("File must have an S3 URL and size");
+        if ((isFile) && (s3Url == null || size == null || mimeType == null)) {
+            throw new IllegalStateException("File must have an S3 URL mimeType and size");
         }
     }
 }
