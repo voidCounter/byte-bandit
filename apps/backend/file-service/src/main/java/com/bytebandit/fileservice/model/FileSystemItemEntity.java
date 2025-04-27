@@ -121,7 +121,7 @@ public class FileSystemItemEntity {
     
     @PrePersist
     @PreUpdate
-    private void validateFolderConstraints() {
+    private void validateItemTypeConstraints() {
         boolean isFolder = type == FileSystemItemType.FOLDER;
         boolean isFile = type == FileSystemItemType.FILE;
         if ((isFolder) && (s3Url != null || size != null)) {
