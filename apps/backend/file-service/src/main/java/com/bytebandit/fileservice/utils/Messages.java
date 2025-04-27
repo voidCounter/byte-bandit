@@ -2,14 +2,14 @@ package com.bytebandit.fileservice.utils;
 
 public final class Messages {
     public static final String USER_NOT_AUTHORIZED_TO_SHARE =
-        "User is not authorized to share this item.";
-    public static final String ITEM_SHARED_SUCCESSFULLY = "Item shared successfully.";
+        "USER IS NOT AUTHORIZED TO SHARE THIS ITEM.";
+    public static final String ITEM_SHARED_SUCCESSFULLY = "ITEM SHARED SUCCESSFULLY.";
     public static final String ITEM_SHARED_WITH_PASSWORD =
-        "Item shared successfully with password.";
+        "ITEM SHARED SUCCESSFULLY WITH PASSWORD.";
     public static final String ITEM_SHARED_WITH_EXPIRES_AT =
-        "Item shared successfully with expiration time.";
+        "ITEM SHARED SUCCESSFULLY WITH EXPIRATION TIME.";
     public static final String ITEM_SHARED_WITH_PASSWORD_AND_EXPIRES_AT =
-        "Item shared successfully with password and expiration time.";
+        "ITEM SHARED SUCCESSFULLY WITH PASSWORD AND EXPIRATION TIME.";
     
     private Messages() {
         // Prevent instantiation

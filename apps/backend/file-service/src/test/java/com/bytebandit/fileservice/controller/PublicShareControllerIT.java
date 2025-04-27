@@ -67,7 +67,6 @@ class PublicShareControllerIT extends AbstractPostgresContainer {
         fileSystemItemRepository.deleteAll();
         sharedItemsPrivateRepository.deleteAll();
         sharedItemsPublicRepository.deleteAll();
-        System.out.println("Repository class: " + sharedItemsPublicRepository.getClass().getName());
     }
     
     private RequestSpecification requestSpecification() {
@@ -409,7 +408,7 @@ class PublicShareControllerIT extends AbstractPostgresContainer {
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .body("status", equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .body("errorCode", equalTo("SHARE-01"))
-            .body("details", equalTo("USER IS NOT AUTHORIZED TO SHARE THIS ITEM."));
+            .body("details", equalTo(Messages.USER_NOT_AUTHORIZED_TO_SHARE));
     }
     
     /**
@@ -445,7 +444,7 @@ class PublicShareControllerIT extends AbstractPostgresContainer {
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .body("status", equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .body("errorCode", equalTo("SHARE-01"))
-            .body("details", equalTo("USER IS NOT AUTHORIZED TO SHARE THIS ITEM."));
+            .body("details", equalTo(Messages.USER_NOT_AUTHORIZED_TO_SHARE));
     }
     
     /**
@@ -478,7 +477,7 @@ class PublicShareControllerIT extends AbstractPostgresContainer {
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .body("status", equalTo(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .body("errorCode", equalTo("SHARE-01"))
-            .body("details", equalTo("USER IS NOT AUTHORIZED TO SHARE THIS ITEM."));
+            .body("details", equalTo(Messages.USER_NOT_AUTHORIZED_TO_SHARE));
     }
     
     

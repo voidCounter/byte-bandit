@@ -62,7 +62,7 @@ public class FileSystemItemEntity {
     @Enumerated(EnumType.STRING)
     private UploadStatus status;
     
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FileSystemItemType type;
     

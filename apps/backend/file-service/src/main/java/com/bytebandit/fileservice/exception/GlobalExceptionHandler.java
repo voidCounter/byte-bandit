@@ -55,6 +55,27 @@ public class GlobalExceptionHandler {
             ex.getMessage());
     }
 
+    @ExceptionHandler(NotEnoughPermissionException.class)
+    public ResponseEntity<ErrorResponse> handleNotEnoughPermissionException(
+        NotEnoughPermissionException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.FORBIDDEN, ErrorCode.PERMISSION_DENIED, request,
+            ex.getMessage());
+    }
+
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleItemNotFoundException(
+        ItemNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.ITEM_NOT_FOUND, request,
+            ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(
+        UserNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.USER_NOT_FOUND, request,
+            ex.getMessage());
+    }
+
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode,
                                                         HttpServletRequest request,
                                                         String details) {

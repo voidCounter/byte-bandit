@@ -1,5 +1,6 @@
 package com.bytebandit.fileservice.dto;
 
+import com.bytebandit.fileservice.enums.FileSystemPermission;
 import lombok.Builder;
 import lombok.Data;
 

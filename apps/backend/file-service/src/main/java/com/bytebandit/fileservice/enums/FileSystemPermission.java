@@ -10,13 +10,15 @@ import lombok.RequiredArgsConstructor;
 public enum FileSystemPermission {
     
     VIEWER("viewer"),
-    EDITOR("editor");
+    EDITOR("editor"),
+    OWNER("owner"),
+    NO_ACCESS("no_access");
     
     private final String permission;
     
     @JsonValue
     public String getValue() {
-        return name().toLowerCase();
+        return permission;
     }
     
     /**

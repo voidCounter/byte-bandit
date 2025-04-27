@@ -2,10 +2,14 @@ package com.bytebandit.fileservice.service;
 
 import com.bytebandit.fileservice.dto.PublicShareRequest;
 import com.bytebandit.fileservice.dto.PublicShareResponse;
+import com.bytebandit.fileservice.enums.FileSystemPermission;
 import com.bytebandit.fileservice.exception.PublicShareException;
+import com.bytebandit.fileservice.projection.SharedItemPublicProjection;
 import com.bytebandit.fileservice.repository.SharedItemsPublicRepository;
+import com.bytebandit.fileservice.utils.Messages;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lib.core.dto.response.ApiResponse;
 import org.apache.http.HttpStatus;
@@ -51,24 +55,34 @@ public class PublicShareService {
                 request.getSharedBy()
             );
             
-            // Check if user is authorized to share
-            if (!List.of("OWNER", "EDITOR").contains(usersPermission)) {
-                throw new PublicShareException("USER IS NOT AUTHORIZED TO SHARE THIS ITEM.");
+            if (Objects.equals(usersPermission, "NO_USER_FOUND")
+                || Objects.equals(usersPermission, "NO_ACCESS")) {
+                throw new PublicShareException(Messages.USER_NOT_AUTHORIZED_TO_SHARE);
             }
             
-            List<Object[]> results = sharedItemsPublicRepository.callShareItemPublic(
-                request.getSharedBy(),
-                request.getItemId(),
-                request.getPermission().getPermission().toUpperCase(),
-                usersPermission,
-                request.getPassword() != null ? passwordEncoder.encode(request.getPassword()) :
-                    null,
-                request.getExpiresAt()
-            );
+            // Check if user is authorized to share
+            if (!List.of(FileSystemPermission.EDITOR, FileSystemPermission.OWNER)
+                .contains(FileSystemPermission.fromValue(usersPermission))) {
+                throw new PublicShareException(Messages.USER_NOT_AUTHORIZED_TO_SHARE);
+            }
             
-            Object[] result = results.get(0);
-            UUID publicLinkId = (UUID) result[0];
-            String status = (String) result[1];
+            List<SharedItemPublicProjection> results =
+                sharedItemsPublicRepository.callShareItemPublic(
+                    request.getSharedBy(),
+                    request.getItemId(),
+                    request.getPermission().name(),
+                    usersPermission,
+                    request.getPassword() != null ? passwordEncoder.encode(request.getPassword()) :
+                        null,
+                    request.getExpiresAt()
+                );
+            
+            SharedItemPublicProjection result = results.get(0);
+            if (result == null) {
+                throw new PublicShareException("Failed to share item.");
+            }
+            UUID publicLinkId = result.getPublicLinkId();
+            String status = result.getStatus();
             
             if (publicLinkId == null) {
                 throw new PublicShareException(status);
@@ -81,10 +95,8 @@ public class PublicShareService {
             return ResponseEntity.ok(
                 ApiResponse.<PublicShareResponse>builder().data(response).status(HttpStatus.SC_OK)
                     .message(status).path("/share/public").build());
-        } catch (PublicShareException e) {
-            throw e;
         } catch (Exception e) {
-            throw new PublicShareException("Failed to share item: " + e.getMessage());
+            throw new PublicShareException(e.getMessage());
         }
     }
 }

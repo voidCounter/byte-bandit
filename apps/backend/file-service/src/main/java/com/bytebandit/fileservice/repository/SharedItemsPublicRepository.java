@@ -1,6 +1,7 @@
 package com.bytebandit.fileservice.repository;
 
 import com.bytebandit.fileservice.model.SharedItemsPublicEntity;
+import com.bytebandit.fileservice.projection.SharedItemPublicProjection;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
@@ -15,7 +16,7 @@ public interface SharedItemsPublicRepository extends JpaRepository<SharedItemsPu
         "SELECT * FROM share_item_public(:p_user_id, :p_item_id, :p_permission, :p_permission_level"
             + ", :p_password_hash, :p_expires_at)",
         nativeQuery = true)
-    List<Object[]> callShareItemPublic(
+    List<SharedItemPublicProjection> callShareItemPublic(
         @Param("p_user_id") UUID userId,
         @Param("p_item_id") UUID itemId,
         @Param("p_permission") String permission,
