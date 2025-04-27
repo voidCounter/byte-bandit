@@ -6,19 +6,18 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
     show-sql: true
     hibernate:
-      ddl-auto: update
-  sql:
-    init:
-      mode: always
+      ddl-auto: none
+#  sql:
+#    init:
+#      mode: always
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${USER_DEV_DB_URL}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
-    initialization-mode: always
   mail:
     host: ${DEV_MAIL_HOST}
     port: ${DEV_MAIL_PORT}
