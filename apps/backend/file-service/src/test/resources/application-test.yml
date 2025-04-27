@@ -16,3 +16,6 @@ spring:
   sql:
     init:
       mode: always
+      schema-locations:
+        - classpath:schema.sql
+        - classpath:functions/*.sql

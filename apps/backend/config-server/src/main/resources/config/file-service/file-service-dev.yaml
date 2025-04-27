@@ -16,6 +16,9 @@ spring:
   sql:
     init:
       mode: always
+      schema-locations:
+        - classpath:schema.sql
+        - classpath:functions/*.sql
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
