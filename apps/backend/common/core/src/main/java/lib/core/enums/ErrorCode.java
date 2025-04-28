@@ -14,6 +14,7 @@ public enum ErrorCode {
     HEADER_MISSING("HEADER-01", "Required header is missing."),
     PERMISSION_DENIED("PERM-01", "You do not have permission to access this resource."),
     ITEM_NOT_FOUND("ITEM-01", "Item not found."),
+    ITEM_VIEW_ERROR("ITEM-02", "Error occurred while viewing the item."),
     
     DATABASE_ERROR("DB-02", "Database error occurred."),
     

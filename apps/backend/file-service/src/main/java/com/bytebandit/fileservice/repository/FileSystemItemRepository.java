@@ -1,6 +1,8 @@
 package com.bytebandit.fileservice.repository;
 
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
+import com.bytebandit.fileservice.projection.ItemViewProjection;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,5 +29,22 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
     String getPermissionRecursive(
         @Param("input_item_id") UUID inputItemId,
         @Param("input_user_id") UUID inputUserId
+    );
+
+    /**
+     * Get the permission of a file system item.
+     */
+    @Query(
+        value = "select * from view_items("
+            + ":input_item_id, "
+            + ":input_user_id, "
+            + ":input_user_permission"
+            + ")",
+        nativeQuery = true
+    )
+    Optional<ItemViewProjection> viewItems(
+        @Param("input_item_id") UUID itemId,
+        @Param("input_user_id") UUID userId,
+        @Param("input_user_permission") String permission
     );
 }

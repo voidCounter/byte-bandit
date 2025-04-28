@@ -76,6 +76,13 @@ public class GlobalExceptionHandler {
             ex.getMessage());
     }
 
+    @ExceptionHandler(ItemViewException.class)
+    public ResponseEntity<ErrorResponse> handleItemViewException(
+        ItemViewException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.ITEM_VIEW_ERROR, request,
+            ex.getMessage());
+    }
+
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode,
                                                         HttpServletRequest request,
                                                         String details) {
