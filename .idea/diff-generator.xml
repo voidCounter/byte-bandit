@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DiffGenerationConfig">
+  <component name="DiffGenerationConfig" isInitGenerateDdl="true">
+    <option name="initGenerateDdl" value="true" />
     <option name="snapshotDb" value="false" />
     <option name="snapshotModelValue" value="user-service:user-service" />
     <option name="sourceDbValue" value="513570d3-74f3-4a2b-add4-b6d8cda0e0f5" />
-    <option name="sourceDiffType" value="DB" />
-    <option name="sourceModelValue" value="user-service:user-service" />
+    <option name="sourceModelValue" value="file-service:file-service" />
     <option name="targetDbValue" value="513570d3-74f3-4a2b-add4-b6d8cda0e0f5" />
   </component>
 </project>

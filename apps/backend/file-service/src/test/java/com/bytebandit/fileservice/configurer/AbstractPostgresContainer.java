@@ -38,7 +38,6 @@ public abstract class AbstractPostgresContainer {
         registry.add("spring.datasource.driver-class-name",
             POSTGRESQL_CONTAINER::getDriverClassName
         );
-        registry.add("spring.jpa.defer-datasource-initialization", () -> true);
-        registry.add("spring.sql.init.mode", () -> "always");
+        registry.add("spring.jpa.defer-datasource-initialization", () -> false);
     }
 }

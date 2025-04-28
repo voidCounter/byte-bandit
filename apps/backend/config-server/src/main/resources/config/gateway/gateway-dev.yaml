@@ -6,7 +6,7 @@ spring:
     show-sql: true
     defer-datasource-initialization: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${USER_DEV_DB_URL}

@@ -12,13 +12,14 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
   flyway:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
     validate-on-migrate: true
     table: user_service_flyway_schema_history
+    baseline-version: 0
   mail:
     host: ${TEST_MAIL_HOST:localhost}
     port: ${TEST_MAIL_PORT:1025}
