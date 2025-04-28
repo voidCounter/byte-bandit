@@ -9,15 +9,9 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@TestPropertySource(properties = {
-    "spring.cloud.config.discovery.enabled=false",
-    "spring.cloud.config.enabled=false",
-    "eureka.client.enabled=false"
-})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CsrfFilterIT {
     
