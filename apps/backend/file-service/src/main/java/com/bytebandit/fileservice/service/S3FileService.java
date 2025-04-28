@@ -41,7 +41,7 @@ public class S3FileService {
                 .status(400)
                 .message("File name cannot be empty")
                 .timestamp(Instant.now().toString())
-                .path("/api/files/presigned-upload")
+                .path("/api/v1/files/upload/presigned-url")
                 .build();
         }
         
@@ -67,7 +67,7 @@ public class S3FileService {
             .message("Pre-signed URL generated successfully")
             .data(presignedUrl)
             .timestamp(Instant.now().toString())
-            .path("/api/files/presigned-upload")
+            .path("/api/v1/files/upload/presigned-url")
             .build();
     }
     

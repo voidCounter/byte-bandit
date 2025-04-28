@@ -1,4 +1,3 @@
-import {User} from "@/types/User/User";
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {AuthenticatedUser} from "@/types/User/AuthenticatedUser";
@@ -26,7 +25,6 @@ export const useAuthStore = create<AuthStore>()(
                 set({authenticatedUser: null});
             }
         }),
-        // TODO: implement a encrypted storage option
         {
             name: "auth-storage"
         }

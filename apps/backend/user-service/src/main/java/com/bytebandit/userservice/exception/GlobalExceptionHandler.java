@@ -15,9 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -148,27 +146,6 @@ public class GlobalExceptionHandler {
         DataIntegrityViolationException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.CONFLICT, ErrorCode.DB_CONSTRAINT_VIOLATION, request,
             ex.getMostSpecificCause().getMessage());
-    }
-
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingParameter(
-        MissingServletRequestParameterException ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_INPUT_FORMAT, request,
-            "Missing parameter: " + ex.getParameterName());
-    }
-
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleUnsupportedMediaType(
-        HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
-        return buildResponse(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ErrorCode.INVALID_IMAGE_FORMAT,
-            request, "Provided media type: " + ex.getContentType());
-    }
-
-    @ExceptionHandler(TooManyRequestsException.class)
-    public ResponseEntity<ErrorResponse> handleTooManyRequests(TooManyRequestsException ex,
-                                                               HttpServletRequest request) {
-        return buildResponse(HttpStatus.TOO_MANY_REQUESTS, ErrorCode.TOO_MANY_REQUESTS, request,
-            ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

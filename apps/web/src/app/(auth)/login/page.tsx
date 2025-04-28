@@ -17,6 +17,7 @@ import {useMutation} from "@tanstack/react-query";
 import Loading from "@/components/ui/loading";
 import {APIErrorResponse} from "@/types/APIErrorResponse";
 import {FormStatus} from "@/app/components/ui/status";
+import SignInWithGoogle from "@/app/components/ui/sign-in-google";
 
 const loginSchema = z.object({
     email: z.string().email(),
@@ -123,6 +124,14 @@ export default function Login() {
                         </div>
                     </form>
                 </Form>
+                    <div>
+                        <div className="flex flex-row my-2 justify-center items-center">
+                            <hr className="flex-1 border border-foreground/20"/>
+                            <span className="px-2 text-sm text-foreground/20">or</span>
+                            <hr className="flex-1 border border-foreground/20"/>
+                        </div>
+                        <SignInWithGoogle/>
+                    </div>
                     <Link
                         href={"/register"}
                         className={"mt-6 hover:underline active:underline"}>{`Don't have an account? `}<span

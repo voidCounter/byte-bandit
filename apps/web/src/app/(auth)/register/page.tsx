@@ -19,6 +19,7 @@ import {APIErrorResponse} from "@/types/APIErrorResponse";
 import {FormStatus} from "@/app/components/ui/status";
 import {UserRegistrationResponse} from "@/types/User/UserRegistrationResponse";
 import {APISuccessResponse} from "@/types/APISuccessResponse";
+import SignInWithGoogle from "@/app/components/ui/sign-in-google";
 
 const registerSchema = z.object({
     fullName: z.string().min(1, {message: "Must have at least 1 character."}).regex(/^[A-Za-z]+[A-Za-z\s]*$/, {message: "Name must contain only letters and spaces(e.g. Jane Doe)."}),
@@ -151,7 +152,14 @@ export default function Register() {
                         </div>
                     </form>
                 </Form>
-
+                <div>
+                    <div className="flex flex-row my-2 justify-center items-center">
+                        <hr className="flex-1 border border-foreground/20"/>
+                        <span className="px-2 text-sm text-foreground/20">or</span>
+                        <hr className="flex-1 border border-foreground/20"/>
+                    </div>
+                    <SignInWithGoogle/>
+                </div>
                 <Link
                     href={"/login"}
                     className={"mt-6 hover:underline active:underline"}>{`Already have an account? `}<span
