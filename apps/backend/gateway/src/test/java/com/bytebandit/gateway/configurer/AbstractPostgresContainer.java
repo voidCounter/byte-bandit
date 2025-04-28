@@ -38,5 +38,7 @@ public abstract class AbstractPostgresContainer {
         registry.add("spring.datasource.driver-class-name",
             POSTGRESQL_CONTAINER::getDriverClassName
         );
+
+        registry.add("spring.flyway.baseline-version", () -> 0);
     }
 }

@@ -8,14 +8,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: update
-  sql:
-    init:
-      mode: always
-      schema-locations:
-        - classpath:schema.sql
-        - classpath:functions/*.sql
+      ddl-auto: none
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    table: file_service_flyway_schema_history
+    baseline-version: 0

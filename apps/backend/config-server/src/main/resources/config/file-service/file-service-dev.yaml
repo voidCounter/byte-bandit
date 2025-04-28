@@ -1,24 +1,18 @@
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ${FILE_DEV_DB_URL}
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
     show-sql: true
     hibernate:
-      ddl-auto: update
-  sql:
-    init:
-      mode: always
-      schema-locations:
-        - classpath:schema.sql
-        - classpath:functions/*.sql
+      ddl-auto: none
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${FILE_DEV_DB_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
