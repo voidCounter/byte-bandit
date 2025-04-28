@@ -139,6 +139,28 @@ services:
       resources:
         limits:
           memory: 500m
+  file-dev-db:
+    image: postgres:17-alpine
+    container_name: file-dev-db
+    volumes:
+      - file-dev-db-data:/var/lib/postgresql/data
+    profiles:
+      - infra
+    ports:
+      - "15532:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=file-dev-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 500m
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
@@ -205,4 +227,6 @@ services:
       - "8000:8000"
 volumes:
   user-dev-db-data:
+    driver: local
+  file-dev-db-data:
     driver: local

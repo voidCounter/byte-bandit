@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lib.core.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -24,6 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserLoginController {
     
     private final UserLoginService userLoginService;
+    @Value("${google.oauth.client-id}")
+    private String googleClientId;
+    
+    @Value("${google.oauth.redirect-uri}")
+    private String googleRedirectUri;
+    
+    @Value("${google.oauth.scope}")
+    private String googleScope;
     
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Boolean>> login(
@@ -43,4 +54,61 @@ public class UserLoginController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return ResponseEntity.ok(userLoginService.getAuthenticatedUser(authentication));
     }
+    
+    /**
+     * Handles a GET request to initiate google login.
+     *
+     * @return ResponseEntity with a successful HTTP status.
+     */
+    @GetMapping("/google")
+    public ResponseEntity<ApiResponse<String>> initiateGoogleLogin() {
+        String authUrl = String.format(
+            "https://accounts.google.com/o/oauth2/v2/auth?client_id=%s&redirect_uri=%s&response_type=code&scope=%s&access_type=offline",
+            googleClientId, googleRedirectUri, googleScope
+        );
+        return ResponseEntity.ok(
+            ApiResponse.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("Google OAuth URL generated")
+                .data(authUrl)
+                .timestamp(String.valueOf(System.currentTimeMillis()))
+                .path("/api/v1/auth/google")
+                .build()
+        );
+    }
+    
+    /**
+     * Handles a GET request as Google callback after a user selects any Google account to log in.
+     * This redirect-uri is provided in the authurl. Then Google request to this endpoint with code
+     * if a user is authorized through Google consent screen, or with error if a user is
+     * unauthorized through Google consent screen.
+     *
+     * @param code     code passed by Google for successful authorization.
+     * @param error    error passed by Google when authorization fails.
+     * @param response HTTPServlet response.
+     *
+     * @return ResponseEntity with a successful ApiResponse.
+     */
+    @GetMapping("/google/callback")
+    public ResponseEntity<ApiResponse<Boolean>> handleGoogleCallback(
+        @RequestParam(value = "code", required = false) String code,
+        @RequestParam(value = "error", required = false) String error,
+        HttpServletResponse response
+    ) {
+        if (error != null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                    ApiResponse.<Boolean>builder()
+                        .status(HttpStatus.UNAUTHORIZED.value())
+                        .message("Google OAuth error: " + error)
+                        .data(Boolean.FALSE)
+                        .timestamp(String.valueOf(System.currentTimeMillis()))
+                        .path("/api/v1/auth/google/callback")
+                        .build()
+                );
+        }
+        // The code is single-use credential. It proves that the user authorized our application.
+        return ResponseEntity.ok(userLoginService.handleGoogleLogin(code, response));
+    }
+    
 }
