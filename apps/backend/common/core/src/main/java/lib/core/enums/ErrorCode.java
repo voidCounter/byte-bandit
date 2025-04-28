@@ -10,7 +10,11 @@ public enum ErrorCode {
     AUTH_INVALID_CREDENTIALS("AUTH-01", "Invalid email or password provided."),
     AUTH_TOKEN_EXPIRED("AUTH-02", "Authentication token has expired."),
     AUTH_ACCESS_DENIED("AUTH-03", "Access denied for the requested resource."),
-
+    AUTH_EMAIL_USED_WITH_GOOGLE("AUTH-05",
+        "This email is already associated with a Google account. Please use Google Sign-In."),
+    
+    GOOGLE_OAUTH_ERROR("GOOGLE_OAUTH_ERROR", "Google OAuth error."),
+    
     HEADER_MISSING("HEADER-01", "Required header is missing."),
     PERMISSION_DENIED("PERM-01", "You do not have permission to access this resource."),
     ITEM_NOT_FOUND("ITEM-01", "Item not found."),
