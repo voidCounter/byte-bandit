@@ -23,8 +23,19 @@ jwt:
   secret: ${JWT_SECRET}
 app:
   permitted:
-    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*
+    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/resend-verification,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*,/api/v1/auth/refresh-token,/api/v1/auth/logout,/api/v1/user/forgot-password,/api/v1/auth/google,/api/v1/auth/google/callback
   access-token-expiration: 3600
   refresh-token-expiration: 86400
 cors:
   allowed_origins: http://localhost:3000
+google:
+  oauth:
+    client-id: test-google-client-id
+    client-secret: test-google-client-secret
+    redirect-uri: http://localhost:test/callback
+    scope: profile email
+    token-endpoint: https://test-oauth2.googleapis.com/token
+    userinfo-endpoint: https://test-openidconnect.googleapis.com/v1/userinfo
+client:
+  host:
+    uri: http://test-client-host-uri

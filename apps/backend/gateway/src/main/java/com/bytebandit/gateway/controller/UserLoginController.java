@@ -2,13 +2,16 @@ package com.bytebandit.gateway.controller;
 
 import com.bytebandit.gateway.dto.AuthenticatedUserDto;
 import com.bytebandit.gateway.dto.LoginRequest;
+import com.bytebandit.gateway.exception.GoogleLoginException;
 import com.bytebandit.gateway.service.UserLoginService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import lib.core.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -35,6 +38,10 @@ public class UserLoginController {
     
     @Value("${google.oauth.scope}")
     private String googleScope;
+    
+    
+    @Value("${client.host.uri}")
+    private String clientHostUri;
     
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Boolean>> login(
@@ -94,7 +101,7 @@ public class UserLoginController {
         @RequestParam(value = "code", required = false) String code,
         @RequestParam(value = "error", required = false) String error,
         HttpServletResponse response
-    ) {
+    ) throws GoogleLoginException {
         if (error != null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(
@@ -108,7 +115,21 @@ public class UserLoginController {
                 );
         }
         // The code is single-use credential. It proves that the user authorized our application.
-        return ResponseEntity.ok(userLoginService.handleGoogleLogin(code, response));
+        ApiResponse<Boolean> apiResponse = userLoginService.handleGoogleLogin(code, response);
+        if (apiResponse.getStatus() == HttpStatus.OK.value()) {
+            return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, clientHostUri + "/app")
+                .build();
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(
+                ApiResponse.<Boolean>builder()
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .message("Google OAuth error: " + apiResponse.getMessage())
+                    .data(Boolean.FALSE)
+                    .timestamp(String.valueOf(System.currentTimeMillis()))
+                    .path("/api/v1/auth/google/callback")
+                    .build()
+            );
     }
-    
 }

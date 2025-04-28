@@ -16,6 +16,8 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -54,6 +56,7 @@ public class UserLoginService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final UserServiceClient userServiceClient;
+    private final GoogleIdTokenVerifier googleIdTokenVerifier;
     
     @Value("${app.access-token-expiration}")
     private long accessTokenExpirationInSeconds;
@@ -233,7 +236,10 @@ public class UserLoginService {
     private GoogleTokenResponse exchangeCodeForToken(String code) {
         String tokenRequestBody = String.format(
             "code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=authorization_code",
-            code, googleClientId, googleClientSecret, googleRedirectUri
+            URLEncoder.encode(code, StandardCharsets.UTF_8), URLEncoder.encode(googleClientId,
+                StandardCharsets.UTF_8),
+            URLEncoder.encode(googleClientSecret, StandardCharsets.UTF_8),
+            URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8)
         );
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -260,6 +266,13 @@ public class UserLoginService {
     
     private UserEntity findOrCreateUser(String email, String fullName, String oauthId) {
         return userRepository.findByEmail(email)
+            .map(u -> {
+                if (u.getOauthId() == null) {
+                    u.setOauthId(oauthId);
+                    return userRepository.save(u);
+                }
+                return u;
+            })
             .orElseGet(() -> {
                 UserEntity newUser = new UserEntity();
                 newUser.setEmail(email);
@@ -271,13 +284,9 @@ public class UserLoginService {
     }
     
     private GoogleIdToken verifyIdToken(String idToken) {
-        GoogleIdTokenVerifier verifier =
-            new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
-                .setAudience(Collections.singletonList(googleClientId))
-                .build();
         GoogleIdToken googleIdToken;
         try {
-            googleIdToken = verifier.verify(idToken);
+            googleIdToken = googleIdTokenVerifier.verify(idToken);
         } catch (GeneralSecurityException | IOException e) {
             throw new GoogleLoginException("Invalid ID token: " + e.getMessage());
         }

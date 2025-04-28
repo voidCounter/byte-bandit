@@ -12,11 +12,6 @@ spring:
     url: ${USER_DEV_DB_URL}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 jwt:
   secret: ${JWT_SECRET}
 cors:
@@ -42,3 +37,6 @@ google:
     scope: profile email
     token-endpoint: ${GOOGLE_OAUTH_TOKEN_ENDPOINT}
     userinfo-endpoint: ${GOOGLE_OAUTH_USERINFO_ENDPOINT}
+client:
+  host:
+    uri: ${DEV_CLIENT_HOST_URI:http://localhost:3000}

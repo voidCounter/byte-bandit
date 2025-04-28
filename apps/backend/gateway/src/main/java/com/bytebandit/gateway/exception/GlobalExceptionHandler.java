@@ -195,6 +195,14 @@ public class GlobalExceptionHandler {
         );
     }
     
+    /**
+     * Handles EmailAlreadyUsedWithGoogleAccountException thrown by the application.
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     *
+     * @return an ErrorResponse with status CONFLICT
+     */
     @ExceptionHandler(EmailAlreadyUsedWithGoogleAccountException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleEmailAlreadyUsedWithGoogleAccount(
