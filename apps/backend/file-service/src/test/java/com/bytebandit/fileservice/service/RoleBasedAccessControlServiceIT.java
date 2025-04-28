@@ -15,7 +15,6 @@ import com.bytebandit.fileservice.repository.SharedItemsPrivateRepository;
 import com.bytebandit.fileservice.repository.SharedItemsPublicRepository;
 import com.bytebandit.fileservice.repository.UserSnapshotRepository;
 import io.restassured.RestAssured;
-import jakarta.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
@@ -63,9 +62,6 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
-        sharedItemsPrivateRepository.deleteAll();
-        sharedItemsPublicRepository.deleteAll();
-        fileSystemItemRepository.deleteAll();
         ownerId = UUID.randomUUID();
         otherUserId = UUID.randomUUID();
     }
@@ -74,8 +70,11 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
      * Test for getPermission method.
      */
     @Test
-    @Transactional
     void shouldReturnOwnerPermissionWhenUserIsOwner() {
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(ownerId, "valid-mail-1@domain.com")
+        );
+
         FileSystemItemEntity item = new FileSystemItemEntity();
         item.setName("Test File");
         item.setSize(100L);
@@ -86,9 +85,6 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
         item.setS3Url("s3://test-bucket/test-file");
         item = fileSystemItemRepository.save(item);
 
-        userSnapshotRepository.save(
-            new UserSnapshotEntity(ownerId, "valid-mail-1@domain.com")
-        );
 
         String permission = permissionService.getPermission(item.getId().toString(), ownerId);
 
@@ -99,8 +95,11 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
      * Test for getPermission method when user is not the owner.
      */
     @Test
-    @Transactional
     void shouldReturnEditorPermissionWhenUserHasPrivateEditorShare() {
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(otherUserId, "valid-mail-3@domain.com")
+        );
+
         FileSystemItemEntity item = new FileSystemItemEntity();
         item.setName("Shared File");
         item.setSize(200L);
@@ -113,10 +112,6 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
 
         userSnapshotRepository.save(
             new UserSnapshotEntity(item.getOwner(), "valid-mail-2@domain.com")
-        );
-
-        userSnapshotRepository.save(
-            new UserSnapshotEntity(otherUserId, "valid-mail-3@domain.com")
         );
 
         SharedItemsPrivateEntity privateShare = new SharedItemsPrivateEntity();
@@ -135,7 +130,6 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
      * Test for getPermission method when user has viewer permission.
      */
     @Test
-    @Transactional
     void shouldReturnViewerPermissionWhenUserHasPrivateViewerShare() {
         FileSystemItemEntity item = new FileSystemItemEntity();
         item.setName("Viewer Shared File");
@@ -171,7 +165,6 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
      * Test for getPermission method when user has no permission.
      */
     @Test
-    @Transactional
     void shouldReturnNoAccessWhenUserHasNoPermission() {
         FileSystemItemEntity item = new FileSystemItemEntity();
         item.setName("Private File");
@@ -200,7 +193,6 @@ class RoleBasedAccessControlServiceIT extends AbstractPostgresContainer {
      * Test for getPermission method when user has public share.
      */
     @Test
-    @Transactional
     void shouldReturnEditorPermissionFromPublicShare() {
         FileSystemItemEntity item = new FileSystemItemEntity();
         item.setName("Public Shared File");
