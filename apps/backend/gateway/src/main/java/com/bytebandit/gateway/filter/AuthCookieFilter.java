@@ -2,6 +2,7 @@ package com.bytebandit.gateway.filter;
 
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
 import com.bytebandit.gateway.enums.CookieKey;
+import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -94,16 +95,17 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     
     private UUID processToken(String accessToken, UserDetails user, HttpServletRequest request,
                               HttpServletResponse response) {
-        try {
-            tokenService.isValidToken(accessToken, user);
-            setAuthentication(user, request);
-            return tokenService.extractUserId(accessToken);
-        } catch (ExpiredJwtException e) {
-            logger.warn("Expired JWT, generating new token");
-            UUID userId = handleExpiredToken(accessToken, user, response);
-            setAuthentication(user, request);
-            return userId;
+        UUID userId = null;
+        if (tokenService.isValidToken(accessToken, user)) {
+            logger.debug("Valid token, no action needed");
+            userId = tokenService.extractUserId(accessToken);
         }
+        if (tokenService.isTokenExpired(accessToken)) {
+            logger.debug("Token expired, generating new token");
+            userId = handleExpiredToken(accessToken, user, response);
+        }
+        setAuthentication(user, request);
+        return userId;
     }
     
     private void setAuthentication(UserDetails user, HttpServletRequest request) {

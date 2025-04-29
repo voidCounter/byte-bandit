@@ -6,15 +6,21 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lib.user.model.TokenEntityTemplate;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "tokens")
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class TokenEntity extends TokenEntityTemplate {
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;

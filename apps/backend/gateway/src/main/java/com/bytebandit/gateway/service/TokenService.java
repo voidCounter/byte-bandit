@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import lib.user.enums.TokenType;
+import lib.user.model.TokenEntityTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -76,16 +77,22 @@ public class TokenService {
             throw new InvalidTokenException("Token is invalid");
         }
         
-        TokenEntity tokenEntity = tokenRepository.findByUserIdAndType(
-            userId,
-            TokenType.REFRESH
-        ).orElseThrow(() -> new InvalidTokenException("Refresh token not found for user"));
+        // looking for a valid(not used) refresh token
+        List<TokenEntity> tokenEntities =
+            tokenRepository.findAllByUserIdAndTypeAndUsed(userId, TokenType.REFRESH, false);
+        if (tokenEntities.isEmpty()) {
+            throw new InvalidTokenException("Valid refresh token not found");
+        }
         
-        tokenEntity.setTokenHash(generateToken(user, expirationTimeInSeconds, userId));
-        tokenEntity.setExpiresAt(
-            new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000)
-        );
-        tokenRepository.save(tokenEntity);
+        invalidateAllRefreshToken(userId);
+        
+        // create a new token
+        tokenRepository.save(TokenEntity.builder()
+            .tokenHash(generateToken(user, expirationTimeInSeconds, userId))
+            .used(false)
+            .type(TokenType.REFRESH)
+            .expiresAt(new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000))
+            .user(userRepository.findById(userId).orElseThrow()).build());
     }
     
     /**
@@ -101,15 +108,33 @@ public class TokenService {
         UserEntity userEntity = userRepository.findById(userId)
             .orElseThrow(() -> new InvalidTokenException("User not found"));
         
-        TokenEntity tokenEntity = new TokenEntity();
-        tokenEntity.setType(TokenType.REFRESH);
-        tokenEntity.setTokenHash(generateToken(user, expirationTimeInSeconds, userId));
-        tokenEntity.setExpiresAt(
-            new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000)
-        );
-        tokenEntity.setUser(userEntity);
+        invalidateAllRefreshToken(userId);
+        TokenEntity tokenEntity = TokenEntity.builder()
+            .user(userEntity)
+            .type(TokenType.REFRESH)
+            .used(false)
+            .tokenHash(generateToken(user, expirationTimeInSeconds, userId))
+            .expiresAt(new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000))
+            .build();
         
         tokenRepository.save(tokenEntity);
+    }
+    
+    /**
+     * Invalidate all refresh tokens for the given user ID.
+     *
+     * @param userId the user ID
+     */
+    @Transactional
+    protected void invalidateAllRefreshToken(UUID userId) {
+        List<TokenEntity> tokens =
+            tokenRepository.findAllByUserIdAndTypeAndUsed(userId,
+                TokenType.REFRESH, false).stream().toList();
+        for (TokenEntity token : tokens) {
+            token.setUsed(true);
+            token.setExpiresAt(new Timestamp(System.currentTimeMillis()));
+        }
+        tokenRepository.saveAll(tokens);
     }
     
     /**
