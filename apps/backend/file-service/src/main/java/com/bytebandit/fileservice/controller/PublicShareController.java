@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
-import java.util.zip.DataFormatException;
 import lib.core.dto.response.ApiResponse;
 import lib.core.enums.CustomHttpHeader;
 import org.springframework.http.ResponseEntity;
