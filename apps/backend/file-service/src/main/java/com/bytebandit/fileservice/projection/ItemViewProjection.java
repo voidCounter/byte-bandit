@@ -1,7 +1,6 @@
 package com.bytebandit.fileservice.projection;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.UUID;
 
 public interface ItemViewProjection {

@@ -2,7 +2,6 @@ package com.bytebandit.fileservice.repository;
 
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.projection.ItemViewProjection;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
