@@ -1,12 +1,18 @@
 package com.bytebandit.fileservice.controller;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 import com.bytebandit.fileservice.configurer.AbstractPostgresContainer;
 import com.bytebandit.fileservice.enums.FileSystemItemType;
 import com.bytebandit.fileservice.enums.FileSystemPermission;
 import com.bytebandit.fileservice.enums.UploadStatus;
+import com.bytebandit.fileservice.exception.ItemPasswordVerificationFailedException;
+import com.bytebandit.fileservice.exception.ItemProtectedWithPasswordException;
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.model.SharedItemsPrivateEntity;
 import com.bytebandit.fileservice.model.SharedItemsPublicEntity;
@@ -19,6 +25,9 @@ import com.bytebandit.fileservice.service.RoleBasedAccessControlService;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -33,6 +42,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -62,6 +72,9 @@ class ItemViewControllerIT extends AbstractPostgresContainer {
     private RoleBasedAccessControlService roleBasedAccessControlService;
 
     private final UUID ownerId = UUID.randomUUID();
+    private final UUID anotherUserId = UUID.randomUUID();
+    private final String rawPassword = "secure-password";
+    private final String passwordHash = new BCryptPasswordEncoder().encode(rawPassword);
 
     /**
      * This method sets up the test environment by configuring the RestAssured port and.
@@ -72,6 +85,8 @@ class ItemViewControllerIT extends AbstractPostgresContainer {
         RestAssured.port = port;
         fileSystemItemRepository.deleteAll();
         userSnapshotRepository.deleteAll();
+        sharedItemsPublicRepository.deleteAll();
+        sharedItemsPrivateRepository.deleteAll();
     }
 
     private RequestSpecification requestSpecification() {
@@ -298,6 +313,190 @@ class ItemViewControllerIT extends AbstractPostgresContainer {
             .body("data.name", equalTo("public_folder"))
             .body("data.permission", equalTo("VIEWER"))
             .body("data.children.size()", equalTo(1));
+    }
+
+    /**
+     * This test verifies that the item view request returns an error when the user does not have
+     * access to the item.
+     */
+    @Test
+    void shouldRejectAccess_WhenPasswordProtectedItemIsAccessedWithoutPassword() {
+
+        userSnapshotRepository.save(new UserSnapshotEntity(ownerId, "owner@domain.com"));
+        userSnapshotRepository.save(new UserSnapshotEntity(anotherUserId, "guest@domain.com"));
+
+        FileSystemItemEntity folder = FileSystemItemEntity.builder()
+            .name("Shared Folder")
+            .type(FileSystemItemType.FOLDER)
+            .owner(ownerId)
+            .status(UploadStatus.UPLOADED)
+            .build();
+        folder = fileSystemItemRepository.save(folder);
+
+        sharedItemsPublicRepository.save(
+            SharedItemsPublicEntity.builder()
+                .sharedBy(ownerId)
+                .passwordHash(passwordHash)
+                .permission(FileSystemPermission.EDITOR)
+                .item(folder)
+                .expiresAt(Timestamp.from(Instant.now().plus(Duration.ofHours(1))))
+                .build()
+        );
+
+        Mockito.when(roleBasedAccessControlService.getPermission(
+            folder.getId().toString(),
+            anotherUserId
+        )).thenReturn("EDITOR");
+
+        Mockito.when(roleBasedAccessControlService.isPasswordProtected(
+            folder.getId().toString()
+        )).thenReturn(true);
+
+        doThrow(
+            new ItemProtectedWithPasswordException("The item you are trying to access is "
+                + "protected by  password")
+        ).when(
+            roleBasedAccessControlService
+        ).validatePassword(folder.getId(), null);
+
+        String requestBody = """
+            {
+                "itemId": "%s"
+            }
+            """.formatted(folder.getId().toString());
+
+        requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), anotherUserId)
+            .body(requestBody)
+            .when()
+            .post("/view")
+            .then()
+            .statusCode(HttpStatus.FORBIDDEN.value())
+            .body("errorCode", equalTo("ITEM-03"))
+            .body("message", containsString("protected item"));
+    }
+
+    /**
+     * This test verifies that the item view request returns an error when the user does not have
+     * access to the item.
+     */
+    @Test
+    void shouldRejectAccess_WhenWrongPasswordIsProvided() {
+
+        userSnapshotRepository.save(new UserSnapshotEntity(ownerId, "owner@domain.com"));
+        userSnapshotRepository.save(new UserSnapshotEntity(anotherUserId, "guest@domain.com"));
+
+        FileSystemItemEntity folder = FileSystemItemEntity.builder()
+            .name("Shared Folder")
+            .type(FileSystemItemType.FOLDER)
+            .owner(ownerId)
+            .status(UploadStatus.UPLOADED)
+            .build();
+        folder = fileSystemItemRepository.save(folder);
+
+        sharedItemsPublicRepository.save(
+            SharedItemsPublicEntity.builder()
+                .sharedBy(ownerId)
+                .passwordHash(passwordHash)
+                .permission(FileSystemPermission.EDITOR)
+                .item(folder)
+                .expiresAt(Timestamp.from(Instant.now().plus(Duration.ofHours(1))))
+                .build()
+        );
+
+        Mockito.when(roleBasedAccessControlService.getPermission(
+            folder.getId().toString(),
+            anotherUserId
+        )).thenReturn("EDITOR");
+
+        Mockito.when(roleBasedAccessControlService.isPasswordProtected(
+            folder.getId().toString()
+        )).thenReturn(true);
+
+        String wrongPassword = "wrong-password";
+        doThrow(
+            new ItemPasswordVerificationFailedException("Provided password is wrong")
+        ).when(
+            roleBasedAccessControlService
+        ).validatePassword(folder.getId(), wrongPassword);
+
+        String requestBody = """
+            {
+                "itemId": "%s",
+                "password": "%s"
+            }
+            """.formatted(folder.getId().toString(), wrongPassword);
+
+        requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), anotherUserId)
+            .body(requestBody)
+            .when()
+            .post("/view")
+            .then()
+            .statusCode(HttpStatus.FORBIDDEN.value())
+            .body("errorCode", equalTo("ITEM-04"))
+            .body("message", containsString("Wrong password"));
+    }
+
+    /**
+     * This test verifies that the item view request returns an error when the user does not have
+     * access to the item.
+     */
+    @Test
+    void shouldAllowAccess_WhenCorrectPasswordIsProvided() {
+
+        userSnapshotRepository.save(new UserSnapshotEntity(ownerId, "owner@domain.com"));
+        userSnapshotRepository.save(new UserSnapshotEntity(anotherUserId, "guest@domain.com"));
+
+        FileSystemItemEntity folder = FileSystemItemEntity.builder()
+            .name("Shared Folder")
+            .type(FileSystemItemType.FOLDER)
+            .owner(ownerId)
+            .status(UploadStatus.UPLOADED)
+            .build();
+        folder = fileSystemItemRepository.save(folder);
+
+        sharedItemsPublicRepository.save(
+            SharedItemsPublicEntity.builder()
+                .sharedBy(ownerId)
+                .passwordHash(passwordHash)
+                .permission(FileSystemPermission.EDITOR)
+                .item(folder)
+                .expiresAt(Timestamp.from(Instant.now().plus(Duration.ofHours(1))))
+                .build()
+        );
+
+        Mockito.when(roleBasedAccessControlService.getPermission(
+            folder.getId().toString(),
+            anotherUserId
+        )).thenReturn("EDITOR");
+
+        Mockito.when(roleBasedAccessControlService.isPasswordProtected(
+            folder.getId().toString()
+        )).thenReturn(true);
+
+        doNothing()
+            .when(roleBasedAccessControlService)
+            .validatePassword(folder.getId(), rawPassword);
+
+        String requestBody = """
+            {
+                "itemId": "%s",
+                "password": "%s"
+            }
+            """.formatted(folder.getId().toString(), rawPassword);
+
+        requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), anotherUserId)
+            .body(requestBody)
+            .when()
+            .post("/view")
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("status", equalTo(200))
+            .body("data.itemId", equalTo(folder.getId().toString()))
+            .body("data.name", equalTo("Shared Folder"))
+            .body("data.permission", equalTo("EDITOR"));
     }
 
     private FileSystemItemEntity createAFolder(UUID ownerId, String folderName) {

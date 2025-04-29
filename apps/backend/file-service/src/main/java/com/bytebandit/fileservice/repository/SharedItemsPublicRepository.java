@@ -24,4 +24,8 @@ public interface SharedItemsPublicRepository extends JpaRepository<SharedItemsPu
         @Param("p_password_hash") String passwordHash,
         @Param("p_expires_at") Timestamp expiresAt
     );
+
+    SharedItemsPublicEntity findByItemId(UUID uuid);
+
+    SharedItemsPublicEntity findByItemIdAndExpiresAtIsBefore(UUID itemId, Timestamp from);
 }
