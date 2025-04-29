@@ -14,23 +14,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex,
                                                                HttpServletRequest request) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.UNKNOWN_ERROR, request,
             ex.getMessage());
     }
-    
+
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ErrorResponse> handleDataAccessException(
         DataAccessException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.DATABASE_ERROR, request,
             ex.getMessage());
     }
-    
+
     /**
      * Handles PublicShareException and returns a ResponseEntity with an error response.
      *
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
             request,
             ex.getMessage());
     }
-    
+
 
     @ExceptionHandler(UnauthenticatedException.class)
     public ResponseEntity<ErrorResponse> handleUnauthenticatedException(
@@ -73,6 +73,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(
         UserNotFoundException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.USER_NOT_FOUND, request,
+            ex.getMessage());
+    }
+
+    @ExceptionHandler(ItemViewException.class)
+    public ResponseEntity<ErrorResponse> handleItemViewException(
+        ItemViewException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.ITEM_VIEW_ERROR, request,
             ex.getMessage());
     }
 
