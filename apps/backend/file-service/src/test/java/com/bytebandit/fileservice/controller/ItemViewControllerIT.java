@@ -161,7 +161,7 @@ class ItemViewControllerIT extends AbstractPostgresContainer {
     }
 
     /**
-     *
+     * Any user with permission editor can view the item.
      */
     @Test
     void shouldAllowEditorToViewSharedFolderWithChildrenSuccessfully() {
