@@ -36,8 +36,23 @@ public class ItemViewService {
             itemViewRequest.getItemId(),
             userId
         ).toUpperCase();
+
+        log.info("permission: {}", permission);
+
         if (permission.equals("NO_ACCESS")) {
             throw new ItemViewException("You do not have access to this item.");
+        }
+
+        boolean isAccessible = permission.equals("OWNER")
+            || !roleBasedAccessControlService.isPasswordProtected(itemViewRequest.getItemId());
+
+        log.info("protected? {}", isAccessible);
+
+        if (!isAccessible) {
+            roleBasedAccessControlService.validatePassword(
+                UUID.fromString(itemViewRequest.getItemId()),
+                itemViewRequest.getPassword()
+            );
         }
 
         try {

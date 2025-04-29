@@ -30,6 +30,11 @@ import {
 } from "@/components/ui/sidebar"
 import {useAuthStore} from "@/store/AuthStore";
 import Link from "next/link";
+import {AxiosInstance} from "@/utils/AxiosInstance";
+import {APISuccessResponse} from "@/types/APISuccessResponse";
+import {useMutation} from "@tanstack/react-query";
+import {APIErrorResponse} from "@/types/APIErrorResponse";
+import {toast} from "sonner";
 
 export function NavUser() {
     const {isMobile} = useSidebar()
@@ -39,6 +44,15 @@ export function NavUser() {
         email: authenticatedUser?.email,
         avatarUrl: authenticatedUser?.avatarUrl
     }
+    const {mutate: logout, isPending} = useMutation({
+        mutationFn: (data) => AxiosInstance.post("/api/v1/auth/logout", data),
+        onSuccess: data => {
+            window.location.href = "/login";
+        },
+        onError: error => {
+            toast.error("Logout failed. Please try again.");
+        }
+    })
 
     return (
         <SidebarMenu>
@@ -98,7 +112,9 @@ export function NavUser() {
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator/>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => {
+                            logout();
+                        }}>
                             <LogOutIcon/>
                             Log out
                         </DropdownMenuItem>
