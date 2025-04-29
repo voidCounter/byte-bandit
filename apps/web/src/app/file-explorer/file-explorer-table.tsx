@@ -43,7 +43,7 @@ const handleShare = (item: FileSystemItem) => {
 
 interface FileExplorerTableProps {
     data: FileSystemItem[];
-    columns: ColumnDef<FileSystemItem, any>[];
+    columns: ColumnDef<FileSystemItem>[];
 }
 
 export function FileExplorerTable({data, columns}: FileExplorerTableProps) {

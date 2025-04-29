@@ -2,12 +2,9 @@ package com.bytebandit.gateway.filter;
 
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
 import com.bytebandit.gateway.enums.CookieKey;
-import com.bytebandit.gateway.exception.CookieNotFoundException;
-import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.micrometer.core.instrument.config.validate.Validated;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

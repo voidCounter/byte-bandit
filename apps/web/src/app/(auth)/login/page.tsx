@@ -18,6 +18,7 @@ import Loading from "@/components/ui/loading";
 import {APIErrorResponse} from "@/types/APIErrorResponse";
 import {FormStatus} from "@/app/components/ui/status";
 import SignInWithGoogle from "@/app/components/ui/sign-in-google";
+import {APISuccessResponse} from "@/types/APISuccessResponse";
 
 const loginSchema = z.object({
     email: z.string().email(),
@@ -40,9 +41,10 @@ export default function Login() {
     const {mutate: login, isPending} = useMutation({
         mutationFn: (data: z.infer<typeof loginSchema>) => AxiosInstance.post("/api/v1/auth/login", data),
         onSuccess: data => {
-            const response: AxiosResponse<User> = data;
-            setAuthenticatedUser(response.data);
-            router.push("/app");
+            const response: AxiosResponse<APISuccessResponse<boolean>> = data;
+            if (response.data.data) {
+                router.push("/app");
+            }
         },
         onError: error => {
             if (error instanceof AxiosError && error.response) {
