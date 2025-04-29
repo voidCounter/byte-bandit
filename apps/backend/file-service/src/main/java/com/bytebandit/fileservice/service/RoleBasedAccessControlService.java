@@ -31,9 +31,10 @@ public class RoleBasedAccessControlService {
      * Check if an item is password protected.
      */
     public boolean isPasswordProtected(String itemId) {
-        return sharedItemsPublicRepository.findByItemId(
+        SharedItemsPublicEntity entity = sharedItemsPublicRepository.findByItemId(
                 UUID.fromString(itemId)
-            ).getPasswordHash() != null;
+            );
+        return entity != null && entity.getPasswordHash() != null;
     }
 
     /**
@@ -45,7 +46,7 @@ public class RoleBasedAccessControlService {
                 + "protected by  password");
         }
         SharedItemsPublicEntity publicShareItems =
-            sharedItemsPublicRepository.findByItemIdAndExpiresAtIsBefore(
+            sharedItemsPublicRepository.findByItemIdAndExpiresAtAfter(
                 itemId, Timestamp.from(Instant.now())
             );
         if (!passwordEncoder.matches(password, publicShareItems.getPasswordHash())) {

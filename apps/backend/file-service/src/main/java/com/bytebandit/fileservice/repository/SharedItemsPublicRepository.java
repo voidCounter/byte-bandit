@@ -27,5 +27,5 @@ public interface SharedItemsPublicRepository extends JpaRepository<SharedItemsPu
 
     SharedItemsPublicEntity findByItemId(UUID uuid);
 
-    SharedItemsPublicEntity findByItemIdAndExpiresAtIsBefore(UUID itemId, Timestamp from);
+    SharedItemsPublicEntity findByItemIdAndExpiresAtAfter(UUID itemId, Timestamp expiresAtAfter);
 }
