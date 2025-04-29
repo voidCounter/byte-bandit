@@ -18,6 +18,10 @@ public enum ErrorCode {
     HEADER_MISSING("HEADER-01", "Required header is missing."),
     PERMISSION_DENIED("PERM-01", "You do not have permission to access this resource."),
     ITEM_NOT_FOUND("ITEM-01", "Item not found."),
+    ITEM_VIEW_ERROR("ITEM-02", "Error occurred while viewing the item."),
+    ITEM_PROTECTED_WITH_PASSWORD("ITEM-03","Trying to access protected item"
+        + " without providing password."),
+    ITEM_WRONG_PASSWORD("ITEM-04", "Wrong password provided for the item."),
     
     DATABASE_ERROR("DB-02", "Database error occurred."),
     
@@ -56,7 +60,7 @@ public enum ErrorCode {
     PRIVATE_SHARE_ERROR("SHARE-02", "Error occurred while sharing the file privately."),
     
     UNKNOWN_ERROR("UNKNOWN", "An unknown error has occurred.");
-    
+
     private final String code;
     private final String message;
 }

@@ -6,7 +6,6 @@ import com.bytebandit.gateway.exception.GoogleLoginException;
 import com.bytebandit.gateway.service.UserLoginService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import java.io.IOException;
 import lib.core.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

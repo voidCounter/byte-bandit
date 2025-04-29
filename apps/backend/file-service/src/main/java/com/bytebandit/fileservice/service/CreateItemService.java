@@ -22,48 +22,52 @@ public class CreateItemService {
     private final FileSystemItemsMapper fileSystemItemsMapper;
 
     /**
-     * Creates a new file system item.
+     * Creates a new item in the file system.
+     *
+     * @param createItemRequest the request containing item details
+     * @return the response containing created item details
      */
-    public CreateItemResponse createItem(
-        CreateItemRequest createItemRequest
-    ) {
+    public CreateItemResponse createItem(CreateItemRequest createItemRequest) {
+        UUID parentId = UUID.fromString(createItemRequest.getParentId());
+        UUID ownerId = createItemRequest.getOwnerId();
 
-        final FileSystemItemEntity parent = fileSystemItemRepository.findById(
-            UUID.fromString(createItemRequest.getParentId())
-        ).orElseThrow(() -> new ItemNotFoundException(
-            "Parent item not found."
-        ));
+        FileSystemItemEntity parent = getParentItem(parentId);
+        validateUserPermission(parentId, ownerId);
 
-        final String permission
-            = fileSystemItemRepository.getPermissionRecursive(
-            UUID.fromString(createItemRequest.getParentId()),
-            createItemRequest.getOwnerId()
-        ).toLowerCase();
+        FileSystemItemEntity newItem = buildFileSystemItem(createItemRequest, parent);
+        return fileSystemItemsMapper.toCreateItemResponse(fileSystemItemRepository.save(newItem));
+    }
 
-        if (permission.equals("no_user_found")) {
+    private FileSystemItemEntity getParentItem(UUID parentId) {
+        return fileSystemItemRepository.findById(parentId)
+            .orElseThrow(() -> new ItemNotFoundException("Parent item not found."));
+    }
+
+    private void validateUserPermission(UUID parentId, UUID ownerId) {
+        String permission = fileSystemItemRepository.getPermissionRecursive(parentId, ownerId)
+            .toLowerCase();
+        if ("no_user_found".equals(permission)) {
             throw new UserNotFoundException("User not found.");
         }
-
-        if (!(permission.equals("owner") || permission.equals("editor"))) {
+        if (!("owner".equals(permission) || "editor".equals(permission))) {
             throw new NotEnoughPermissionException(
                 "You do not have enough permission to create this item."
             );
         }
+    }
 
-        FileSystemItemEntity fileSystemItemEntity = FileSystemItemEntity.builder()
-            .chunks(createItemRequest.getChunks())
-            .mimeType(createItemRequest.getMimeType())
-            .name(createItemRequest.getName())
-            .owner(createItemRequest.getOwnerId())
-            .s3Url(createItemRequest.getS3Url())
-            .status(UploadStatus.valueOf(createItemRequest.getStatus()))
-            .type(FileSystemItemType.valueOf(createItemRequest.getType()))
-            .size(createItemRequest.getSize())
+    private FileSystemItemEntity buildFileSystemItem(
+        CreateItemRequest request, FileSystemItemEntity parent) {
+        return FileSystemItemEntity.builder()
+            .chunks(request.getChunks())
+            .mimeType(request.getMimeType())
+            .name(request.getName())
+            .owner(request.getOwnerId())
+            .s3Url(request.getS3Url())
+            .status(UploadStatus.valueOf(request.getStatus()))
+            .type(FileSystemItemType.valueOf(request.getType()))
+            .size(request.getSize())
             .parent(parent)
             .build();
-
-        return fileSystemItemsMapper.toCreateItemResponse(
-            fileSystemItemRepository.save(fileSystemItemEntity)
-        );
     }
 }
