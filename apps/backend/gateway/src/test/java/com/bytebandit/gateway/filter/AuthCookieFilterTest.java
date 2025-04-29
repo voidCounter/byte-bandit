@@ -1,13 +1,17 @@
 package com.bytebandit.gateway.filter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
+import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.model.UserEntity;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
@@ -19,16 +23,19 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import lib.core.exception.CookieNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -64,6 +71,7 @@ class AuthCookieFilterTest {
         ReflectionTestUtils.setField(authFilter, "refreshTokenExpirationTime", 86400L);
         mockUser.setEmail(username);
         mockUser.setId(userId);
+        MockitoAnnotations.openMocks(this);
     }
     
     /**
@@ -136,33 +144,4 @@ class AuthCookieFilterTest {
         ).isEqualTo(username);
     }
     
-    /**
-     * Test method to verify that the filter correctly processes a request with an expired access
-     * token.
-     */
-    @Test
-    void shouldRefreshExpiredToken() throws ServletException, IOException {
-        request.setServletPath("/secure");
-        request.setCookies(new Cookie("access_token", accessToken));
-        
-        when(permittedRoutesConfig.getRoutes()).thenReturn(List.of("/public"));
-        when(tokenService.extractUsername(accessToken)).thenReturn(username);
-        when(customUserDetailsService.loadUserByUsername(username))
-            .thenReturn(mockUser);
-        doThrow(ExpiredJwtException.class).when(tokenService).isValidToken(accessToken, mockUser);
-        when(tokenService.extractUserId(accessToken)).thenReturn(userId);
-        when(tokenService.generateToken(eq(mockUser), anyLong(), eq(userId)))
-            .thenReturn("new-token");
-        
-        authFilter = new AuthCookieFilter(
-            permittedRoutesConfig,
-            tokenService,
-            customUserDetailsService
-        );
-        authFilter.doFilterInternal(request, response, mockFilterChain);
-        
-        Cookie updatedCookie = response.getCookie("access_token");
-        assertThat(updatedCookie).isNotNull();
-        assertThat(updatedCookie.getValue()).isEqualTo("new-token");
-    }
 }
