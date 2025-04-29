@@ -32,13 +32,13 @@ import org.springframework.test.context.TestPropertySource;
     "spring.cloud.config.discovery.enabled=false",
 })
 class UserEntityIT {
-
+    
     @Autowired
     private TestEntityManager entityManager;
-
+    
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    
     /** Test that the email is unique. */
     @Test
     void whenEmailIsDuplicate_thenConstraintViolation() {
@@ -52,12 +52,13 @@ class UserEntityIT {
         user2.setEmail("duplicate@example.com");
         user2.setFullName("John Doe");
         user2.setPasswordHash(passwordEncoder.encode("ValidPass1@"));
+        
+        entityManager.persist(user2);
         assertThrows(ConstraintViolationException.class, () -> {
-            entityManager.persist(user2);
             entityManager.flush();
         });
     }
-
+    
     /** Test that the password is valid. */
     @Test
     void whenUserIsCreated_thenVerifiedIsFalse() {
@@ -69,7 +70,7 @@ class UserEntityIT {
         entityManager.flush();
         assertFalse(user.isEnabled());
     }
-
+    
     /** Test that the verified status is updated correctly. */
     @Test
     void whenUserIsVerified_thenVerifiedIsUpdatesCorrectly() {
@@ -85,7 +86,7 @@ class UserEntityIT {
         UserEntity foundUser = entityManager.find(UserEntity.class, user.getId());
         assertTrue(foundUser.isEnabled());
     }
-
+    
     /** Test that the password is hashed. */
     @Test
     void whenUserIsSaved_thenPasswordIsHashed() {

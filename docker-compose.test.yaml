@@ -63,6 +63,7 @@ services:
       - "9004:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=test
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-test:9093
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
   sync-service:
     image: oakcan/sync-service:latest
@@ -83,18 +84,51 @@ services:
       - "9006:8083"
     environment:
       - SPRING_PROFILES_ACTIVE=test
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-test:9093
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - USER_TEST_DB_URL=jdbc:postgresql://user-test-db:5432/user-test-db
+      - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/test-db
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - TEST_MAIL_HOST=mailhog
       - TEST_MAIL_PORT=1025
     depends_on:
-      user-test-db:
+      test-db:
         condition: service_healthy
-  user-test-db:
+  zookeeper-test:
+    image: confluentinc/cp-zookeeper:latest
+    profiles:
+      - infra
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2182
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2182:2182"
+
+  kafka-test:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper-test
+    profiles:
+      - infra
+    healthcheck:
+      test: [ "CMD", "kafka-topics", "--bootstrap-server", "localhost:9093", "--list" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-test:2182
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-test:9093,PLAINTEXT_HOST://localhost:29093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "29093:29093"
+
+  test-db:
     image: postgres:17-alpine
-    container_name: user-test-db
+    container_name: test-db
     profiles:
       - infra
     ports:
@@ -102,7 +136,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=user-test-db
+      - POSTGRES_DB=test-db
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s

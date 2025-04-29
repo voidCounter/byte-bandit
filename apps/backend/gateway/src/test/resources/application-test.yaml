@@ -5,18 +5,37 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
+    defer-datasource-initialization: false
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${USER_TEST_DB_URL:jdbc:postgresql://localhost:15433/user-test-db}
+    url: ${TEST_DB_URL:jdbc:postgresql://localhost:15433/test-db}
     username: ${POSTGRES_USERNAME:postgres}
     password: ${POSTGRES_PASSWORD}
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: false
+    table: user_service_flyway_schema_history
+#    baseline-version: 1
 jwt:
   secret: ${JWT_SECRET}
 app:
   permitted:
-    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*
-  access-token-expiration: 300
+    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/resend-verification,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*,/api/v1/auth/refresh-token,/api/v1/auth/logout,/api/v1/user/forgot-password,/api/v1/auth/google,/api/v1/auth/google/callback
+  access-token-expiration: 3600
   refresh-token-expiration: 86400
 cors:
   allowed_origins: http://localhost:3000
+google:
+  oauth:
+    client-id: test-google-client-id
+    client-secret: test-google-client-secret
+    redirect-uri: http://localhost:test/callback
+    scope: profile email
+    token-endpoint: https://test-oauth2.googleapis.com/token
+    userinfo-endpoint: https://test-openidconnect.googleapis.com/v1/userinfo
+client:
+  host:
+    uri: http://test-client-host-uri

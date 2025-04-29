@@ -1,0 +1,112 @@
+CREATE OR REPLACE FUNCTION SHARE_ITEM_PUBLIC(
+    P_USER_ID UUID,
+    P_ITEM_ID UUID,
+    P_PERMISSION VARCHAR(255),
+    P_PERMISSION_LEVEL VARCHAR(255),
+    P_PASSWORD_HASH VARCHAR(255) DEFAULT NULL,
+    P_EXPIRES_AT TIMESTAMP DEFAULT NULL)
+    RETURNS TABLE
+            (
+                PUBLIC_LINK_ID UUID,
+                STATUS         VARCHAR(255)
+            )
+    LANGUAGE PLPGSQL
+AS
+'
+    DECLARE
+        V_PUBLIC_LINK_ID UUID;
+        V_STATUS         VARCHAR(255);
+        V_IS_OWNER       BOOLEAN := FALSE;
+    BEGIN
+        -- VALIDATE USER_ID
+        IF NOT EXISTS (SELECT 1
+                       FROM USERS_SNAPSHOT
+                       WHERE USER_ID = P_USER_ID) THEN
+            V_STATUS := ''USER DOES NOT EXIST.'';
+            RETURN QUERY SELECT NULL::UUID AS PUBLIC_LINK_ID,
+                                V_STATUS   AS STATUS;
+            RETURN;
+        END IF;
+
+        -- VALIDATE PERMISSION
+        IF P_PERMISSION NOT IN (''VIEWER'', ''EDITOR'') THEN
+            V_STATUS := ''INVALID PERMISSION. MUST BE VIEWER OR EDITOR.'';
+            RETURN QUERY SELECT NULL::UUID AS PUBLIC_LINK_ID,
+                                V_STATUS   AS STATUS;
+            RETURN;
+        END IF;
+
+        -- CHECK IF THE ITEM EXISTS
+        IF NOT EXISTS (SELECT 1
+                       FROM FILE_SYSTEM_ITEMS
+                       WHERE ID = P_ITEM_ID) THEN
+            V_STATUS := ''ITEM DOES NOT EXIST.'';
+            RETURN QUERY SELECT NULL::UUID AS PUBLIC_LINK_ID,
+                                V_STATUS   AS STATUS;
+            RETURN;
+        END IF;
+
+        -- CHECK USER''S PERMISSION LEVEL
+        IF P_PERMISSION_LEVEL NOT IN (''OWNER'', ''EDITOR'') THEN
+            V_STATUS := ''USER IS NOT AUTHORIZED TO SHARE THIS ITEM.'';
+            RETURN QUERY SELECT NULL::UUID AS PUBLIC_LINK_ID,
+                                V_STATUS   AS STATUS;
+            RETURN;
+        END IF;
+
+        -- SET OWNER FLAG
+        V_IS_OWNER := (P_PERMISSION_LEVEL = ''OWNER'');
+
+        -- CHECK IF A PUBLIC LINK ALREADY EXISTS
+        IF EXISTS (SELECT 1
+                   FROM SHARED_ITEMS_PUBLIC
+                   WHERE ITEM_ID = P_ITEM_ID) THEN
+            -- UPDATE EXISTING PUBLIC LINK
+            UPDATE SHARED_ITEMS_PUBLIC
+            SET PERMISSION    = P_PERMISSION,
+                PASSWORD_HASH = CASE
+                                    WHEN V_IS_OWNER AND P_PASSWORD_HASH IS NOT NULL THEN P_PASSWORD_HASH
+                                    ELSE PASSWORD_HASH
+                    END,
+                EXPIRES_AT    = CASE
+                                    WHEN P_EXPIRES_AT IS NOT NULL AND V_IS_OWNER THEN P_EXPIRES_AT
+                                    ELSE EXPIRES_AT
+                    END,
+                UPDATED_AT    = CURRENT_TIMESTAMP,
+                SHARED_BY     = P_USER_ID
+            WHERE ITEM_ID = P_ITEM_ID
+            RETURNING ID INTO V_PUBLIC_LINK_ID;
+        ELSE
+            -- CREATE NEW PUBLIC LINK
+            INSERT INTO SHARED_ITEMS_PUBLIC (ID, CREATED_AT, PASSWORD_HASH, PERMISSION, SHARED_BY, UPDATED_AT, ITEM_ID)
+            VALUES (GEN_RANDOM_UUID(), CURRENT_TIMESTAMP, CASE WHEN V_IS_OWNER THEN P_PASSWORD_HASH ELSE NULL END,
+                    P_PERMISSION, P_USER_ID, CURRENT_TIMESTAMP,
+                    P_ITEM_ID)
+            RETURNING ID INTO V_PUBLIC_LINK_ID;
+        END IF;
+
+        -- SET SUCCESS STATUS
+        IF V_IS_OWNER THEN
+            IF P_PASSWORD_HASH IS NOT NULL AND P_EXPIRES_AT IS NOT NULL THEN
+                V_STATUS := ''ITEM SHARED SUCCESSFULLY WITH PASSWORD AND EXPIRATION TIME.'';
+            ELSIF P_PASSWORD_HASH IS NOT NULL THEN
+                V_STATUS := ''ITEM SHARED SUCCESSFULLY WITH PASSWORD.'';
+            ELSIF P_EXPIRES_AT IS NOT NULL THEN
+                V_STATUS := ''ITEM SHARED SUCCESSFULLY WITH EXPIRATION TIME.'';
+            ELSE
+                V_STATUS := ''ITEM SHARED SUCCESSFULLY.'';
+            END IF;
+        ELSE
+            V_STATUS := ''ITEM SHARED SUCCESSFULLY.'';
+        END IF;
+
+        -- RETURN SUCCESS RESULT
+        RETURN QUERY SELECT V_PUBLIC_LINK_ID AS PUBLIC_LINK_ID,
+                            V_STATUS         AS STATUS;
+    EXCEPTION
+        WHEN OTHERS THEN
+            V_STATUS := ''AN ERROR OCCURRED: '' || SQLERRM;
+            RETURN QUERY SELECT NULL::UUID AS PUBLIC_LINK_ID,
+                                V_STATUS   AS STATUS;
+    END;
+';

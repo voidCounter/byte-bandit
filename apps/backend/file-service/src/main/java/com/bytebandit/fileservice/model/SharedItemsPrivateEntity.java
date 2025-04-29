@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.sql.Timestamp;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(
-    name = "shared_items_private"
+    name = "shared_items_private",
+    uniqueConstraints = {@UniqueConstraint(columnNames = {"shared_with", "item_id"})}
 )
 public class SharedItemsPrivateEntity {
 

@@ -17,6 +17,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,60 +28,60 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Data
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class UserEntityTemplate implements UserDetails, Principal {
-
+    
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    
     @Column(name = "email", unique = true)
     private String email;
-
+    
     @Column(name = "password_hash", length = 72)
     private String passwordHash;
-
+    
     @Column(name = "oauth_id")
     private String oauthId;
-
+    
     @Column(name = "name")
     private String fullName;
-
+    
     @Column(name = "verified", nullable = false)
     private boolean verified = false;
-
+    
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
-
+    
     @Column(name = "updated_at")
     @UpdateTimestamp
     private Timestamp updatedAt;
-
+    
     @Override
     public String getName() {
         return this.email;
     } // take note here
-
+    
     @Override
     public String getPassword() {
         return this.passwordHash;
     }
-
+    
     @Override
     public String getUsername() {
         return this.email;
     }
-
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(); // for now we don't have any roles
     }
-
+    
     @Override
     public boolean isEnabled() {
         return this.verified;

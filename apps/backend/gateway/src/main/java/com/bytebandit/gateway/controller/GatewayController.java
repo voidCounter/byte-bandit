@@ -19,14 +19,14 @@ public class GatewayController {
      * @return ResponseEntity with a successful HTTP status.
      */
     @GetMapping("/csrf")
-    public ResponseEntity<?> csrf(
+    public ResponseEntity<String> csrf(
         @RequestAttribute(name = "_csrf", required = false) CsrfToken csrfToken) {
         if (csrfToken != null) {
             return ResponseEntity.ok(csrfToken.getToken());
         }
         return ResponseEntity.badRequest().body("CSRF token not found");
     }
-
+    
     /**
      * Handles a POST request to validate CSRF protection.
      *

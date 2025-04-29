@@ -1,18 +1,32 @@
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ${FILE_DEV_DB_URL}
-    username: ${POSTGRES_USERNAME}
-    password: ${POSTGRES_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false
     show-sql: true
     hibernate:
-      ddl-auto: update
-  sql:
-    init:
-      mode: always
+      ddl-auto: none
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${FILE_DEV_DB_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    consumer:
+      group-id: file-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "lib.core.events,lib.core.enums"
+logging:
+  level:
+    com.bytebandit.file-service: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.boot.autoconfigure.security.servlet: DEBUG
+    org.springframework.boot.autoconfigure.web.servlet.error: DEBUG
