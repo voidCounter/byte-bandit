@@ -1,21 +1,13 @@
 package com.bytebandit.gateway.filter;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
-import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.model.UserEntity;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,19 +15,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import lib.core.exception.CookieNotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -57,7 +46,6 @@ class AuthCookieFilterTest {
     private final MockHttpServletResponse response = new MockHttpServletResponse();
     private final MockFilterChain mockFilterChain = new MockFilterChain();
     
-    private final String accessToken = "mocked.token.value";
     private final String username = "test-user@mail.com";
     private final UUID userId = UUID.randomUUID();
     private final UserEntity mockUser = new UserEntity();
@@ -71,7 +59,6 @@ class AuthCookieFilterTest {
         ReflectionTestUtils.setField(authFilter, "refreshTokenExpirationTime", 86400L);
         mockUser.setEmail(username);
         mockUser.setId(userId);
-        MockitoAnnotations.openMocks(this);
     }
     
     /**
@@ -122,6 +109,7 @@ class AuthCookieFilterTest {
     @Test
     void shouldAuthenticateWithValidToken() throws ServletException, IOException {
         request.setServletPath("/secure");
+        String accessToken = "mocked.token.value";
         Cookie cookie = new Cookie("access_token", accessToken);
         request.setCookies(cookie);
         

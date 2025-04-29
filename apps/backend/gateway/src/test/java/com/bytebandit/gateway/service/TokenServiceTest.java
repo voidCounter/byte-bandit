@@ -37,7 +37,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.testcontainers.shaded.org.yaml.snakeyaml.tokens.Token;
 
 @ExtendWith(MockitoExtension.class)
 class TokenServiceTest {
@@ -120,7 +119,7 @@ class TokenServiceTest {
         
         tokenService.generateAndSaveRefreshToken(userDetails, refreshTokenExpiration, accessToken);
         
-        verify(tokenRepository, times(2)).findAllByUserIdAndTypeAndUsed(
+        verify(tokenRepository, times(1)).findAllByUserIdAndTypeAndUsed(
             userId, TokenType.REFRESH,
             false);
         verify(tokenRepository).saveAll(argThat(iterable -> {
@@ -255,6 +254,45 @@ class TokenServiceTest {
         tokenService.invalidateAllRefreshToken(userId);
         
         // Assert
+        verify(tokenRepository).saveAll(argThat(tokens -> {
+            if (!(tokens instanceof List<TokenEntity> tokenList)) {
+                return false;
+            }
+            return tokens.spliterator().getExactSizeIfKnown() == 2
+                &&
+                tokenList.stream()
+                    .allMatch(token -> token.isUsed() && token.getExpiresAt().before(new Date()));
+        }));
+        
+        
+    }
+    
+    /**
+     * This method tests the invalidation of all refresh tokens for a list of tokens.
+     */
+    @Test
+    void invalidateAllRefreshToken_ShouldMarkAllTokensUsed_AndSetExpired_list() {
+        // Arrange
+        UserEntity userEntity = new UserEntity();
+        userEntity.setId(userId);
+        TokenEntity token1 = TokenEntity.builder()
+            .id(UUID.randomUUID())
+            .user(userEntity)
+            .type(TokenType.REFRESH)
+            .used(false)
+            .tokenHash(UUID.randomUUID().toString())
+            .expiresAt(new Timestamp(System.currentTimeMillis() + refreshTokenExpiration * 1000))
+            .build();
+        TokenEntity token2 = TokenEntity.builder()
+            .id(UUID.randomUUID())
+            .user(userEntity)
+            .type(TokenType.REFRESH)
+            .used(false)
+            .tokenHash(UUID.randomUUID().toString())
+            .expiresAt(new Timestamp(System.currentTimeMillis() + refreshTokenExpiration * 1000))
+            .build();
+        
+        tokenService.invalidateAllRefreshToken(Arrays.asList(token1, token2));
         verify(tokenRepository).saveAll(argThat(tokens -> {
             if (!(tokens instanceof List<TokenEntity> tokenList)) {
                 return false;

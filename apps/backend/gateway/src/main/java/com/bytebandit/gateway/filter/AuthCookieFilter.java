@@ -5,8 +5,6 @@ import com.bytebandit.gateway.enums.CookieKey;
 import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -120,7 +118,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
             }
             throw new InvalidTokenException("Invalid token");
         } catch (InvalidTokenException e) {
-            throw new InvalidTokenException("Invalid refresh token");
+            throw new InvalidTokenException(e.getMessage());
         }
     }
     

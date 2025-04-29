@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import lib.user.enums.TokenType;
-import lib.user.model.TokenEntityTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -84,7 +83,7 @@ public class TokenService {
             throw new InvalidTokenException("Valid refresh token not found");
         }
         
-        invalidateAllRefreshToken(userId);
+        invalidateAllRefreshToken(tokenEntities);
         
         // create a new token
         tokenRepository.save(TokenEntity.builder()
@@ -130,6 +129,22 @@ public class TokenService {
         List<TokenEntity> tokens =
             tokenRepository.findAllByUserIdAndTypeAndUsed(userId,
                 TokenType.REFRESH, false).stream().toList();
+        for (TokenEntity token : tokens) {
+            token.setUsed(true);
+            token.setExpiresAt(new Timestamp(System.currentTimeMillis()));
+        }
+        if (!tokens.isEmpty()) {
+            tokenRepository.saveAll(tokens);
+        }
+    }
+    
+    /**
+     * Invalidate all refresh tokens for the given tokenEntities.
+     *
+     * @param tokens the list of tokens.
+     */
+    @Transactional
+    protected void invalidateAllRefreshToken(List<TokenEntity> tokens) {
         for (TokenEntity token : tokens) {
             token.setUsed(true);
             token.setExpiresAt(new Timestamp(System.currentTimeMillis()));
