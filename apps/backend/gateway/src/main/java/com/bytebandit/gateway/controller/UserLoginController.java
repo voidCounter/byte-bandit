@@ -133,7 +133,7 @@ public class UserLoginController {
             );
     }
     
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Boolean>> logout(HttpServletRequest request,
                                                        HttpServletResponse response) {
         return ResponseEntity.ok().body(userLoginService.logout(request, response));
