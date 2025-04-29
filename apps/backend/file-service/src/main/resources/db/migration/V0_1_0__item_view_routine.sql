@@ -21,7 +21,7 @@ create or replace function get_file_item(p_item_id uuid)
                       output_updated_at timestamp,
                       output_item_type text,
                       output_name text,
-                      output_s3url text,
+                      output_s3Url text,
                       output_mime_type text,
                       output_parent_id uuid
                   ) AS '
@@ -157,7 +157,7 @@ create or replace function item_view(
                 output_is_starred text,
                 output_parent_id uuid,
                 output_permission text,
-                output_children child[]
+                output_children jsonb
             ) as '
 declare
     basic_record record;
@@ -175,6 +175,11 @@ begin
     into basic_record
     from file_system_items
     where id = input_item_id;
+
+    if basic_record.id is null then
+        raise exception ''Item not found with ID %'', input_item_id
+            using errcode = ''P0002'';
+    end if;
 
     -- Set fields
     output_item_id := basic_record.id;
@@ -202,7 +207,7 @@ begin
     output_permission := get_permission_recursive(input_item_id, input_user_id);
 
     -- Children
-    output_children := get_children(input_item_id, input_user_id);
+    output_children := to_jsonB(get_children(input_item_id, input_user_id));
 
     return next;
 end;

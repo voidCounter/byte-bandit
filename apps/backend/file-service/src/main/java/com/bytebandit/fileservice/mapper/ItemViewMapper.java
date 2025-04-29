@@ -2,12 +2,20 @@ package com.bytebandit.fileservice.mapper;
 
 import com.bytebandit.fileservice.dto.ChildResponse;
 import com.bytebandit.fileservice.dto.ItemViewResponse;
-import com.bytebandit.fileservice.projection.ChildProjection;
 import com.bytebandit.fileservice.projection.ItemViewProjection;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ItemViewMapper {
+
+
+    private ItemViewMapper() {
+
+    }
 
     /**
      * Maps an ItemViewProjection to an ItemViewResponse.
@@ -20,15 +28,24 @@ public class ItemViewMapper {
             return null;
         }
 
-        List<ChildResponse> children = null;
-        if (projection.getOutputChildren() != null) {
-            children = projection.getOutputChildren()
-                .stream()
-                .map(ItemViewMapper::mapChild)
-                .collect(Collectors.toList());
+        ItemViewResponse response = new ItemViewResponse();
+
+        String rawChildrenJson = projection.getOutputChildren();
+        if (rawChildrenJson != null) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                List<ChildResponse> children = objectMapper.readValue(
+                    rawChildrenJson,
+                    new TypeReference<>() {}
+                );
+                response.setChildren(children);
+            } catch (JsonProcessingException e) {
+                log.info("Failed to process child response {}", e.getMessage());
+            }
         }
 
-        ItemViewResponse response = new ItemViewResponse();
+        log.info("Child items after mapping: {}", response.getChildren());
+
         response.setItemId(projection.getOutputItemId());
         response.setCreatedAt(projection.getOutputCreatedAt());
         response.setUpdatedAt(projection.getOutputUpdatedAt());
@@ -37,31 +54,12 @@ public class ItemViewMapper {
         response.setItemType(projection.getOutputItemType());
         response.setIsItemPasswordProtected(projection.getOutputIsItemPasswordProtected());
         response.setName(projection.getOutputName());
-        response.setS3Url(projection.getOutputS3url());
+        response.setS3Url(projection.getOutputS3Url());
         response.setMimeType(projection.getOutputMimeType());
         response.setIsStarred(projection.getOutputIsStarred());
         response.setParentId(projection.getOutputParentId());
         response.setPermission(projection.getOutputPermission());
-        response.setChildren(children);
 
         return response;
-    }
-
-    private static ChildResponse mapChild(ChildProjection childProjection) {
-        ChildResponse child = new ChildResponse();
-        child.setItemId(childProjection.getItemId());
-        child.setCreatedAt(childProjection.getCreatedAt());
-        child.setUpdatedAt(childProjection.getUpdatedAt());
-        child.setOwnerEmail(childProjection.getOwnerEmail());
-        child.setSharedByEmail(childProjection.getSharedByEmail());
-        child.setItemType(childProjection.getItemType());
-        child.setIsItemPasswordProtected(childProjection.getIsItemPasswordProtected());
-        child.setName(childProjection.getName());
-        child.setS3Url(childProjection.getS3Url());
-        child.setMimeType(childProjection.getMimeType());
-        child.setIsStarred(childProjection.getIsStarred());
-        child.setParentId(childProjection.getParentId());
-        child.setPermission(childProjection.getPermission());
-        return child;
     }
 }

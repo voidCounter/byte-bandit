@@ -8,8 +8,11 @@ import com.bytebandit.fileservice.projection.ItemViewProjection;
 import com.bytebandit.fileservice.repository.FileSystemItemRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemViewService {
@@ -36,12 +39,18 @@ public class ItemViewService {
         if (permission.equals("NO_ACCESS")) {
             throw new ItemViewException("You do not have access to this item.");
         }
-        ItemViewProjection response = fileSystemItemRepository.viewItems(
-            UUID.fromString(itemViewRequest.getItemId()),
-            userId,
-            permission
-        ).orElseThrow(() -> new ItemViewException("Item not found"));
 
-        return ItemViewMapper.mapToResponse(response);
+        try {
+            ItemViewProjection response = fileSystemItemRepository.viewItems(
+                UUID.fromString(itemViewRequest.getItemId()),
+                userId,
+                permission
+            );
+            log.info("Item view response childs: {}", response.getOutputItemId());
+            return ItemViewMapper.mapToResponse(response);
+        } catch (DataAccessException e) {
+            throw new ItemViewException("Error accessing item with id: {}"
+                + itemViewRequest.getItemId());
+        }
     }
 }

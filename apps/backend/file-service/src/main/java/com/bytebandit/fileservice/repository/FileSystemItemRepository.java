@@ -35,14 +35,14 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
      * Get the permission of a file system item.
      */
     @Query(
-        value = "select * from view_items("
+        value = "select * from item_view("
             + ":input_item_id, "
             + ":input_user_id, "
             + ":input_user_permission"
             + ")",
         nativeQuery = true
     )
-    Optional<ItemViewProjection> viewItems(
+    ItemViewProjection viewItems(
         @Param("input_item_id") UUID itemId,
         @Param("input_user_id") UUID userId,
         @Param("input_user_permission") String permission

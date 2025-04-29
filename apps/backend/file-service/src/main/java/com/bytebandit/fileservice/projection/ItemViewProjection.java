@@ -21,7 +21,7 @@ public interface ItemViewProjection {
 
     String getOutputName();
 
-    String getOutputS3url();
+    String getOutputS3Url();
 
     String getOutputMimeType();
 
@@ -31,5 +31,5 @@ public interface ItemViewProjection {
 
     String getOutputPermission();
 
-    List<ChildProjection> getOutputChildren();
+    String getOutputChildren();
 }
