@@ -8,4 +8,5 @@
 export interface AuthenticatedUser {
     fullName: string,
     email: string,
+    avatarUrl: ""
 }

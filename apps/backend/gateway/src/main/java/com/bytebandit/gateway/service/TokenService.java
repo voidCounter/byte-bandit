@@ -29,13 +29,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TokenService {
-
+    
     @Value("${jwt.secret}")
     private String secretKey;
-
+    
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
-
+    
     /**
      * This method generates a JWT token for the given user with the specified expiration time.
      */
@@ -48,7 +48,7 @@ public class TokenService {
             .stream()
             .map(GrantedAuthority::getAuthority)
             .toList();
-
+        
         return Jwts.builder()
             .setSubject(user.getUsername())
             .claim("userid", userId)
@@ -60,10 +60,10 @@ public class TokenService {
             .signWith(getSignInKey())
             .compact();
     }
-
+    
     /**
-     * This method generates a Refresh token for the given user
-     * with the specified expiration time and access token.
+     * This method generates a Refresh token for the given user with the specified expiration time
+     * and access token.
      */
     @Transactional
     public void generateAndSaveRefreshToken(
@@ -75,22 +75,22 @@ public class TokenService {
         if (userId == null) {
             throw new InvalidTokenException("Token is invalid");
         }
-
+        
         TokenEntity tokenEntity = tokenRepository.findByUserIdAndType(
-                userId,
-                TokenType.REFRESH
-            ).orElseThrow(() -> new InvalidTokenException("Refresh token not found for user"));
-
+            userId,
+            TokenType.REFRESH
+        ).orElseThrow(() -> new InvalidTokenException("Refresh token not found for user"));
+        
         tokenEntity.setTokenHash(generateToken(user, expirationTimeInSeconds, userId));
         tokenEntity.setExpiresAt(
             new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000)
         );
         tokenRepository.save(tokenEntity);
     }
-
+    
     /**
-     * This method generates a Refresh token for the given user
-     * with the specified expiration time and user ID.
+     * This method generates a Refresh token for the given user with the specified expiration time
+     * and user ID.
      */
     @Transactional
     public void generateAndSaveRefreshToken(
@@ -100,7 +100,7 @@ public class TokenService {
     ) {
         UserEntity userEntity = userRepository.findById(userId)
             .orElseThrow(() -> new InvalidTokenException("User not found"));
-
+        
         TokenEntity tokenEntity = new TokenEntity();
         tokenEntity.setType(TokenType.REFRESH);
         tokenEntity.setTokenHash(generateToken(user, expirationTimeInSeconds, userId));
@@ -108,10 +108,10 @@ public class TokenService {
             new Timestamp(System.currentTimeMillis() + expirationTimeInSeconds * 1000)
         );
         tokenEntity.setUser(userEntity);
-
+        
         tokenRepository.save(tokenEntity);
     }
-
+    
     /**
      * This method extracts the username from the JWT token.
      */
@@ -120,29 +120,33 @@ public class TokenService {
         return (username.equals(user.getUsername())
             && !isTokenExpired(token));
     }
-
+    
+    public boolean isExpiredToken(String token) {
+        return extractAllClaims(token).getExpiration().before(new Date());
+    }
+    
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
+    
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
         final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
-
+    
     /**
      * This method extracts all claims from the JWT token.
      */
     public Claims extractAllClaims(String token) {
         try {
             return Jwts.parserBuilder()
-            .setSigningKey(getSignInKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
         } catch (ExpiredJwtException e) {
-            throw new InvalidTokenException("Token has expired");
+            return e.getClaims();
         } catch (SecurityException | MalformedJwtException e) {
             throw new InvalidTokenException("Invalid token signature");
         } catch (UnsupportedJwtException e) {
@@ -151,7 +155,7 @@ public class TokenService {
             throw new InvalidTokenException("JWT claims string is empty");
         }
     }
-
+    
     /**
      * This method extracts the user ID from the JWT token.
      */
@@ -161,11 +165,11 @@ public class TokenService {
             claims -> UUID.fromString(claims.get("userid", String.class))
         );
     }
-
+    
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
-
+    
     public boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }

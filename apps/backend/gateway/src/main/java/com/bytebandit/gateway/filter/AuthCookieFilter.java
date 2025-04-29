@@ -38,7 +38,7 @@ public class AuthCookieFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
     private final CustomUserDetailsService userDetailsService;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
-
+    
     @Value("${app.access-token-expiration}")
     private long accessTokenExpirationTime;
     
