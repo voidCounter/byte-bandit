@@ -2,6 +2,7 @@ package com.bytebandit.fileservice.controller;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -569,6 +570,55 @@ class ItemViewControllerIT extends AbstractPostgresContainer {
             .statusCode(HttpStatus.NOT_FOUND.value())
             .body("errorCode", equalTo("ITEM-02"))
             .body("message", containsString("Error occurred while viewing the item."));
+    }
+
+    /**
+     * This test verifies that the item view request returns an error when the user does not have
+     * access to the item.
+     */
+    @Test
+    void shouldReturnItemsSharedWithMeSuccessfully() {
+        userSnapshotRepository.save(new UserSnapshotEntity(ownerId, "owner@example.com"));
+        userSnapshotRepository.save(new UserSnapshotEntity(anotherUserId,
+            "shared-user@example.com"));
+
+        FileSystemItemEntity fileItem = new FileSystemItemEntity();
+        fileItem.setName("Shared File.pdf");
+        fileItem.setType(FileSystemItemType.FILE);
+        fileItem.setMimeType("application/pdf");
+        fileItem.setSize(1024L);
+        fileItem.setS3Url("s3://bucket/Shared File.pdf");
+        fileItem.setCreatedAt(Timestamp.from(Instant.now()));
+        fileItem.setUpdatedAt(Timestamp.from(Instant.now()));
+        fileItem.setStatus(UploadStatus.UPLOADED);
+        fileItem.setOwner(ownerId);
+
+        fileSystemItemRepository.save(fileItem);
+
+        SharedItemsPrivateEntity share = new SharedItemsPrivateEntity();
+        share.setItem(fileItem);
+        share.setUserId(ownerId);
+        share.setSharedWith(anotherUserId);
+        share.setPermission(FileSystemPermission.VIEWER);
+
+        sharedItemsPrivateRepository.save(share);
+
+        requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), anotherUserId.toString())
+            .when()
+            .get("/view/shared-with-me")
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("status", equalTo(HttpStatus.OK.value()))
+            .body("message", equalTo("Retrieved all items shared with the user successfully"))
+            .body("data.size()", greaterThan(0))
+            .body("data[0].name", equalTo(fileItem.getName()))
+            .body("data[0].itemId", equalTo(fileItem.getId().toString()))
+            .body("data[0].ownerEmail", equalTo("owner@example.com"))
+            .body("data[0].sharedByEmail", equalTo("owner@example.com"))
+            .body("data[0].mimeType", equalTo("application/pdf"))
+            .body("data[0].permission", equalTo("VIEWER"))
+            .body("data[0].children", notNullValue());
     }
 
     private FileSystemItemEntity createAFolder(UUID ownerId, String folderName) {
