@@ -32,7 +32,10 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui
-  info:
-    title: Gateway APIs
-    description: APIs for user authentication and session management.
-    version: 0.0.1
+    urls:
+      - name: Gateway
+        url: http://localhost:8084/v3/api-docs
+      - name: User Service
+        url: http://localhost:8083/api/v1/user/v3/api-docs
+      - name: File Service
+        url: http://localhost:8081/api/v1/file/v3/api-docs
