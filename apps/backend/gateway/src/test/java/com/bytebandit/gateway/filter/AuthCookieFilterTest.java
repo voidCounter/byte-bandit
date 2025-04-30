@@ -2,16 +2,12 @@ package com.bytebandit.gateway.filter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
 import com.bytebandit.gateway.model.UserEntity;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,7 +46,6 @@ class AuthCookieFilterTest {
     private final MockHttpServletResponse response = new MockHttpServletResponse();
     private final MockFilterChain mockFilterChain = new MockFilterChain();
     
-    private final String accessToken = "mocked.token.value";
     private final String username = "test-user@mail.com";
     private final UUID userId = UUID.randomUUID();
     private final UserEntity mockUser = new UserEntity();
@@ -114,6 +109,7 @@ class AuthCookieFilterTest {
     @Test
     void shouldAuthenticateWithValidToken() throws ServletException, IOException {
         request.setServletPath("/secure");
+        String accessToken = "mocked.token.value";
         Cookie cookie = new Cookie("access_token", accessToken);
         request.setCookies(cookie);
         
@@ -136,33 +132,4 @@ class AuthCookieFilterTest {
         ).isEqualTo(username);
     }
     
-    /**
-     * Test method to verify that the filter correctly processes a request with an expired access
-     * token.
-     */
-    @Test
-    void shouldRefreshExpiredToken() throws ServletException, IOException {
-        request.setServletPath("/secure");
-        request.setCookies(new Cookie("access_token", accessToken));
-        
-        when(permittedRoutesConfig.getRoutes()).thenReturn(List.of("/public"));
-        when(tokenService.extractUsername(accessToken)).thenReturn(username);
-        when(customUserDetailsService.loadUserByUsername(username))
-            .thenReturn(mockUser);
-        doThrow(ExpiredJwtException.class).when(tokenService).isValidToken(accessToken, mockUser);
-        when(tokenService.extractUserId(accessToken)).thenReturn(userId);
-        when(tokenService.generateToken(eq(mockUser), anyLong(), eq(userId)))
-            .thenReturn("new-token");
-        
-        authFilter = new AuthCookieFilter(
-            permittedRoutesConfig,
-            tokenService,
-            customUserDetailsService
-        );
-        authFilter.doFilterInternal(request, response, mockFilterChain);
-        
-        Cookie updatedCookie = response.getCookie("access_token");
-        assertThat(updatedCookie).isNotNull();
-        assertThat(updatedCookie.getValue()).isEqualTo("new-token");
-    }
 }

@@ -14,6 +14,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -41,6 +42,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -326,5 +328,48 @@ public class UserLoginService {
             new UsernamePasswordAuthenticationToken(userDetails, null,
                 userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+    
+    /**
+     * Handles the logout process by invalidating the user's session and clearing cookies.
+     *
+     * @param request  the HTTP request
+     * @param response the HTTP response
+     *
+     * @return ApiResponse indicating success or failure
+     */
+    public ApiResponse<Boolean> logout(HttpServletRequest request, HttpServletResponse response) {
+        String accessToken = CookieUtil.getCookieValue(request, CookieKey.ACCESS_TOKEN.getKey());
+        if (accessToken != null) {
+            try {
+                String username = tokenService.extractUsername(accessToken);
+                // Invalidate the refresh token associated with the user
+                UUID userId = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found")).getId();
+                tokenService.invalidateAllRefreshToken(userId);
+            } catch (Exception e) {
+                log.warn("Error during logout: {}", e.getMessage());
+            }
+        }
+        
+        CookieUtil.setCookie(
+            response,
+            CookieKey.ACCESS_TOKEN.getKey(),
+            "",
+            true,
+            0,
+            "/",
+            true
+        );
+        
+        SecurityContextHolder.clearContext();
+        
+        return
+            ApiResponse.<Boolean>builder()
+                .status(HttpStatus.OK.value())
+                .message("Logout successful")
+                .data(Boolean.TRUE)
+                .timestamp(String.valueOf(System.currentTimeMillis()))
+                .path("/api/v1/auth/logout").build();
     }
 }

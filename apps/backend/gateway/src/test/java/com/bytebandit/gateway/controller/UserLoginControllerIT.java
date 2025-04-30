@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -16,7 +17,9 @@ import static org.mockito.Mockito.when;
 import com.bytebandit.gateway.clients.UserServiceClient;
 import com.bytebandit.gateway.configurer.AbstractPostgresContainer;
 import com.bytebandit.gateway.dto.GoogleTokenResponse;
+import com.bytebandit.gateway.model.TokenEntity;
 import com.bytebandit.gateway.model.UserEntity;
+import com.bytebandit.gateway.repository.TokenRepository;
 import com.bytebandit.gateway.repository.UserRepository;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
@@ -31,6 +34,7 @@ import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.UUID;
 import lib.core.events.UserEvent;
+import lib.user.enums.TokenType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -67,6 +71,9 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     private PasswordEncoder passwordEncoder;
     
     @Autowired
+    private TokenRepository tokenRepository;
+    
+    @Autowired
     private UserRepository userRepository;
     
     @MockBean
@@ -89,6 +96,7 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
     private static final String ME_PATH = "/api/v1/auth/me";
     private static final String CSRF_PATH = "/api/v1/auth/csrf";
     private static final String GOOGLE_CALLBACK_PATH = "/api/v1/auth/google/callback";
+    private static final String LOGOUT_PATH = "/api/v1/auth/logout";
     private final UUID regularUserId = UUID.randomUUID();
     private final String regularUserEmail = "test@example.com";
     private final String regularUserPassword = "ValidPass$1";
@@ -435,5 +443,62 @@ class UserLoginControllerIT extends AbstractPostgresContainer {
         
         verify(restTemplate).postForEntity(eq(googleTokenEndpoint), any(HttpEntity.class),
             eq(GoogleTokenResponse.class));
+    }
+    
+    /**
+     * Tests the /logout endpoint. It should clear the access_token cookie and mark the refresh
+     * token as used.
+     */
+    @Test
+    @DisplayName("POST /logout - Success with valid token")
+    void logout_shouldSucceedWithValidToken() {
+        // Login to get access_token cookie
+        String jsonBody = String.format("""
+            {
+                "email": "%s",
+                "password": "%s"
+            }
+            """, regularUserEmail, regularUserPassword);
+        
+        Response loginResponse = requestSpecification()
+            .body(jsonBody)
+            .when()
+            .post(LOGIN_PATH)
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .cookie("access_token", notNullValue())
+            .extract()
+            .response();
+        
+        Map<String, String> cookies = loginResponse.getCookies();
+        
+        // Create a refresh token in the database
+        TokenEntity refreshToken = TokenEntity.builder()
+            .user(userRepository.findByEmail(regularUserEmail).orElseThrow())
+            .type(TokenType.REFRESH)
+            .used(false)
+            .tokenHash(UUID.randomUUID().toString())
+            .expiresAt(new java.sql.Timestamp(System.currentTimeMillis() + 604800 * 1000))
+            .build();
+        tokenRepository.save(refreshToken);
+        
+        // Call logout
+        requestSpecification()
+            .cookies(cookies)
+            .when()
+            .post(LOGOUT_PATH)
+            .then()
+            .log().ifValidationFails()
+            .statusCode(HttpStatus.OK.value())
+            .body("status", equalTo(200))
+            .body("message", equalTo("Logout successful"))
+            .body("data", equalTo(true))
+            .body("timestamp", notNullValue())
+            .body("path", equalTo(LOGOUT_PATH))
+            .cookie("access_token", is("")); // Cookie should be cleared
+        
+        TokenEntity updatedToken = tokenRepository.findById(refreshToken.getId()).orElse(null);
+        assertTrue(updatedToken != null && updatedToken.isUsed(),
+            "Refresh token should be marked as used");
     }
 }
