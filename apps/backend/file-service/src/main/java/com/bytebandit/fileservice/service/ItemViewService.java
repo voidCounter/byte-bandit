@@ -4,6 +4,7 @@ import com.bytebandit.fileservice.dto.ItemViewRequest;
 import com.bytebandit.fileservice.dto.ItemViewResponse;
 import com.bytebandit.fileservice.exception.ItemViewException;
 import com.bytebandit.fileservice.mapper.ItemViewMapper;
+import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.projection.ItemViewProjection;
 import com.bytebandit.fileservice.repository.FileSystemItemRepository;
 import java.util.UUID;
@@ -66,6 +67,23 @@ public class ItemViewService {
         } catch (DataAccessException e) {
             throw new ItemViewException("Error accessing item with id: {}"
                 + itemViewRequest.getItemId());
+        }
+    }
+
+
+    /**
+     * Retrieves all items of a user.
+     *
+     * @param userId The ID of the user.
+     * @return An ItemViewResponse containing the details of the user's items.
+     */
+    public ItemViewResponse getUserItems(String userId) {
+        try {
+            return ItemViewMapper.mapToResponse(
+                fileSystemItemRepository.userItems(UUID.fromString(userId))
+            );
+        } catch (DataAccessException e) {
+            throw new ItemViewException("Error accessing user items");
         }
     }
 }

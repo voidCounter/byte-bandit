@@ -5,6 +5,8 @@ import com.bytebandit.userservice.exception.EmailVerificationExpiredException;
 import com.bytebandit.userservice.exception.InvalidEmailVerificationLinkException;
 import com.bytebandit.userservice.service.TokenVerificationService;
 import com.bytebandit.userservice.service.UserRegistrationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Email Verification", description = "Email verification related endpoints.")
 public class EmailVerificationController {
 
     private final TokenVerificationService tokenVerificationService;
@@ -41,6 +44,10 @@ public class EmailVerificationController {
      * @return ResponseEntity with a redirect to the email verification confirmation page.
      */
 
+    @Operation(
+        summary = "Verify email",
+        description = "Verifies the email address of a user using the provided token and user ID."
+    )
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(
         @RequestParam("token") @NotNull String token,
@@ -91,6 +98,10 @@ public class EmailVerificationController {
      *
      * @return ResponseEntity with the status of the resend operation.
      */
+    @Operation(
+        summary = "Resend verification email",
+        description = "Resends the verification email to the user."
+    )
     @PostMapping("/resend-verification")
     public ResponseEntity<String> resendVerificationEmail(
         @RequestBody ResendVerificationRequest resendVerificationRequest
