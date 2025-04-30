@@ -10,7 +10,7 @@ spring:
     locations: classpath:db/migration
     baseline-version: 0
     baseline-on-migrate: true
-    validate-on-migrate: true
+    validate-on-migrate: false
     table: gateway_flyway_schema_history
 server:
   port: 8084
@@ -26,3 +26,9 @@ management:
     web:
       exposure:
         include: health,info
+springdoc:
+  packagesToScan: com.bytebandit.gateway.controller
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui

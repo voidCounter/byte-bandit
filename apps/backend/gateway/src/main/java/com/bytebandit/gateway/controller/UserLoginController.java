@@ -4,9 +4,14 @@ import com.bytebandit.gateway.dto.AuthenticatedUserDto;
 import com.bytebandit.gateway.dto.LoginRequest;
 import com.bytebandit.gateway.exception.GoogleLoginException;
 import com.bytebandit.gateway.service.UserLoginService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lib.core.dto.response.ApiResponse;
+import lib.core.dto.response.ErrorResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +46,78 @@ public class UserLoginController {
     
     @Value("${client.host.uri}")
     private String clientHostUri;
-    
+
+    @Operation(
+        summary = "User login",
+        description = "Authenticates a user based on their email or user ID and password. Returns "
+            + "a success indicator and sets an authentication token in the response cookies."
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "200",
+        description = "Login successful, access token set in cookies",
+        content = @Content(
+            schema = @Schema(implementation = ApiResponse.class),
+            examples = @ExampleObject(
+                name = "Successful Login",
+                value = "{\"status\": 200, \"message\": \"Login successful\", \"data\": true, "
+                    + "\"timestamp\": \"2025-04-30T12:00:00Z\", \"path\": \"/login\"}"
+            )
+        )
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Internal server error during login",
+        content = @Content(
+            examples = @ExampleObject(
+                name = "Server Error",
+                value = "{\"status\": 500, \"message\": \"Internal server error\", "
+                    + "\"data\": false, \"timestamp\": \"2025-04-30T12:00:00Z\", "
+                    + "\"path\": \"/login\"}"
+            )
+        )
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "400",
+        description = "Invalid login credentials or malformed request",
+        content = @Content(
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = @ExampleObject(
+                name = "Invalid Input",
+                value = "{\"status\": 400, \"error\": \"Bad Request\", \"message\": \"Invalid "
+                    + "email format\", \"code\": \"INVALID_INPUT_FORMAT\", \"details\": "
+                    + "\"Email must be a valid address\", \"path\": \"/login\", "
+                    + "\"uuid\": \"123e4567-e89b-12d3-a456-426614174000\"}"
+            )
+        )
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "401",
+        description = "User authentication failed",
+        content = @Content(
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = @ExampleObject(
+                name = "Authentication Failure",
+                value = "{\"status\": 401, \"error\": \"Unauthorized\", \"message\": "
+                    + "\"Invalid email or password\", \"code\": \"USER_NOT_AUTHENTICATED\", "
+                    + "\"details\": \"Credentials do not match any user\", \"path\": "
+                    + "\"/login\", \"uuid\": \"123e4567-e89b-12d3-a456-426614174000\"}"
+            )
+        )
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+        responseCode = "500",
+        description = "Internal server error during login",
+        content = @Content(
+            schema = @Schema(implementation = ErrorResponse.class),
+            examples = @ExampleObject(
+                name = "Server Error",
+                value = "{\"status\": 500, \"error\": \"Internal Server Error\", \"message\": "
+                    + "\"Unexpected error occurred\", \"code\": \"SERVER_ERROR\", \"details\": "
+                    + "\"Contact support\", \"path\": \"/login\", \"uuid\": "
+                    + "\"123e4567-e89b-12d3-a456-426614174000\"}"
+            )
+        )
+    )
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Boolean>> login(
         @Valid @RequestBody LoginRequest loginRequest,
