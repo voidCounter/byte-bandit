@@ -58,6 +58,7 @@ public class ItemViewMapper {
         response.setName(projection.getOutputName());
         response.setS3Url(projection.getOutputS3Url());
         response.setMimeType(projection.getOutputMimeType());
+        response.setSize(projection.getOutputSize());
         response.setIsStarred(projection.getOutputIsStarred());
         response.setParentId(projection.getOutputParentId());
         response.setPermission(projection.getOutputPermission());
