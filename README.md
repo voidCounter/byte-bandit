@@ -120,6 +120,7 @@ Oakcan is a robust microservice-based file management platform designed for scal
 <br>and many more...
 
 ### 🗺️ System Architecture
-![System Architecture](public/images/system-architecture.png)
+![system-architecture drawio](https://github.com/user-attachments/assets/dbaa0278-5832-4d5f-972a-fcff0713a5ac)
+
 
 
