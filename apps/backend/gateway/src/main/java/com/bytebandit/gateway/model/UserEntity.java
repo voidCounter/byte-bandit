@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 import lib.user.model.UserEntityTemplate;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Table(name = "users")
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class UserEntity extends UserEntityTemplate {
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

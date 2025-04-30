@@ -38,3 +38,11 @@ api:
 client:
   host:
     uri: ${DEV_CLIENT_HOST_URI:http://localhost:3000}
+management:
+  endpoint:
+    web:
+      exposure:
+        include: health,info
+  security:
+    enabled: false
+
