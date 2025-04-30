@@ -3,6 +3,7 @@ import {cookies} from "next/headers";
 import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
 import {AppSidebar} from "@/app/app/app-sidebar";
 import AppTopNav from "@/app/components/app-top-nav";
+import {GlobalDialog} from "@/app/components/GlobalDialog";
 
 export default async function AppLayout({
                                             children,
@@ -17,6 +18,7 @@ export default async function AppLayout({
                 <SidebarProvider defaultOpen={defaultOpen}>
                     <AppSidebar/>
                     <SidebarTrigger/>
+                    <GlobalDialog/>
                     <main className={"w-full pr-8"}>
                         <AppTopNav/>
                         {children}

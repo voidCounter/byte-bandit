@@ -10,6 +10,7 @@ const variants = {
     hidden: {opacity: 0, y: -20, scale: 1.2, filter: 'blur(10px)'},
     visible: {opacity: 1, y: 0, scale: 1, filter: 'blur(0px)'}
 };
+
 function NavigationBar() {
     return (
         <motion.div
@@ -26,8 +27,8 @@ function NavigationBar() {
                     <h1 className={"text-base font-bold"}>Oakcan</h1>
                 </Link>
                 <div className={"flex flex-row gap-4 text-foreground/55 text-sm"}>
-                    <Link href={"/docs"}>Docs</Link>
-                    <Link href={"/pricing"}>Pricing</Link>
+                    <Link href={"https://head.oakcan-docs.pages.dev/"}>Docs</Link>
+                    <Link href={"https://github.com/Learnathon-By-Geeky-Solutions/byte-bandit"}>Github</Link>
                 </div>
                 <Link href="/login" className={"flex gap-4"}>
                     <Button className={"text-foreground"} variant="link">Log in</Button>

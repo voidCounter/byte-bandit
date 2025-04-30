@@ -46,4 +46,6 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
         @Param("input_user_id") UUID userId,
         @Param("input_user_permission") String permission
     );
+    
+    boolean existsByOwnerAndParentIsNull(UUID userId);
 }

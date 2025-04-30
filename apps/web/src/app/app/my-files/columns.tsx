@@ -1,49 +1,23 @@
-"use client";
+'use client';
 
-import {ColumnDef} from "@tanstack/react-table";
-import {MoreVertical, Folder, File, Trash2, Download, Share2, Edit} from "lucide-react"; // Example icons
-import {Button} from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {formatBytes} from "@/utils/size-formatter"
-import {formatDate} from "@/utils/date-formatter";
-import {FileSystemItem} from "@/types/Files/FileSystemItem"; // Adjust import path
-
-const handleRename = (item: FileSystemItem) => {
-    console.log("Rename", item.name);
-};
-
-const handleDelete = (item: FileSystemItem) => {
-    console.log("Delete", item.name);
-};
-
-const handleDownload = (item: FileSystemItem) => {
-    console.log("Download", item.name);
-};
-
-const handleShare = (item: FileSystemItem) => {
-    console.log("Share", item.name);
-};
-
+import {ColumnDef} from '@tanstack/react-table';
+import {Folder, File} from 'lucide-react';
+import {formatBytes} from '@/utils/size-formatter';
+import {FileSystemItem} from '@/types/Files/FileSystemItem';
+import {FileActions} from "@/app/components/FileActions";
 
 export const columns: ColumnDef<FileSystemItem>[] = [
     {
-        accessorKey: "name",
-        header: "Name",
+        accessorKey: 'name',
+        header: 'Name',
         cell: ({row}) => {
             const item = row.original;
             return (
                 <div className="flex items-center">
-                    {item.type === 'folder' ? (
-                        <Folder className="h-4 w-4 mr-2"/> // Folder icon
+                    {item.type === 'FOLDER' ? (
+                        <Folder className="h-4 w-4 mx-2"/>
                     ) : (
-                        <File className="h-4 w-4 mr-2"/> // File icon
+                        <File className="h-4 w-4 mx-2"/>
                     )}
                     {item.name}
                 </div>
@@ -51,63 +25,30 @@ export const columns: ColumnDef<FileSystemItem>[] = [
         },
     },
     {
-        accessorKey: "owner",
-        header: "Owner",
+        accessorKey: 'owner',
+        header: 'Owner',
     },
     {
-        accessorKey: "size",
-        header: "Size",
+        accessorKey: 'updatedAt',
+        header: 'Last Modified',
+    },
+    {
+        accessorKey: 'size',
+        header: 'File Size',
         cell: ({row}) => {
             const item = row.original;
-            return item.type === 'file' ? formatBytes(item.size) : `${item.itemCount} items`;
+            return item.type === 'FILE'
+                ? item.size
+                    ? item.size
+                    : 'N/A'
+                : item.itemCount
+                    ? `${item.itemCount} items`
+                    : '_';
         },
     },
     {
-        accessorKey: "lastModified",
-        header: "Last Modified",
-        cell: ({row}) => {
-            const item = row.original;
-            return formatDate(item.lastModified);
-        },
-    },
-    {
-        id: "actions",
+        id: 'actions',
         enableHiding: false,
-        cell: ({row}) => {
-            const item = row.original;
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreVertical className="h-4 w-4"/>
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onClick={() => handleRename(item)}>
-                            <Edit className="h-4 w-4 mr-2"/>
-                            Rename
-                        </DropdownMenuItem>
-                        {item.type === 'file' && ( // Only show download for files
-                            <DropdownMenuItem onClick={() => handleDownload(item)}>
-                                <Download className="h-4 w-4 mr-2"/>
-                                Download
-                            </DropdownMenuItem>
-                        )}
-                        <DropdownMenuItem onClick={() => handleShare(item)}>
-                            <Share2 className="h-4 w-4 mr-2"/>
-                            Share
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuItem onClick={() => handleDelete(item)} className="text-destructive-foreground">
-                            <Trash2 className="h-4 w-4 mr-2"/>
-                            Delete
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
-        },
+        cell: ({row}) => <FileActions item={row.original}/>,
     },
 ];

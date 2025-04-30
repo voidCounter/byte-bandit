@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bytebandit.fileservice.repository.FileSystemItemRepository;
 import com.bytebandit.fileservice.repository.UserSnapshotRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,12 +22,15 @@ class UserEventHandlersTest {
     @Mock
     private UserSnapshotRepository userSnapshotRepository;
     
+    @Mock
+    private FileSystemItemRepository fileSystemItemRepository;
+    
     private UserEventHandlers userEventHandlers;
     
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userEventHandlers = new UserEventHandlers(userSnapshotRepository);
+        userEventHandlers = new UserEventHandlers(userSnapshotRepository, fileSystemItemRepository);
     }
     
     /**
