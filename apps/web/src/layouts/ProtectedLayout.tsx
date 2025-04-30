@@ -22,7 +22,7 @@ export default function ProtectedLayout({
 
     if (!authenticatedUser) {
         return (
-            <div className="flex flex-col h-screen justify-center items-center">
+            <div className="flex flex-col w-full h-screen justify-center items-center">
                 <SessionExpiredCard/>
             </div>
         );

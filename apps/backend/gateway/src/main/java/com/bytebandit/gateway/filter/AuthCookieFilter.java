@@ -2,9 +2,9 @@ package com.bytebandit.gateway.filter;
 
 import com.bytebandit.gateway.config.PermittedRoutesConfig;
 import com.bytebandit.gateway.enums.CookieKey;
+import com.bytebandit.gateway.exception.InvalidTokenException;
 import com.bytebandit.gateway.service.CustomUserDetailsService;
 import com.bytebandit.gateway.service.TokenService;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -92,17 +92,33 @@ public class AuthCookieFilter extends OncePerRequestFilter {
         return CookieUtil.getCookieValue(request, CookieKey.ACCESS_TOKEN.getKey());
     }
     
-    private UUID processToken(String accessToken, UserDetails user, HttpServletRequest request,
-                              HttpServletResponse response) {
+    /**
+     * Processes the access token to authenticate the user and handle token expiration.
+     *
+     * @param accessToken the access token to process
+     * @param user        the user details
+     * @param request     the HTTP request
+     * @param response    the HTTP response
+     *
+     * @return the user ID extracted from the token
+     */
+    UUID processToken(String accessToken, UserDetails user, HttpServletRequest request,
+                      HttpServletResponse response) {
         try {
-            tokenService.isValidToken(accessToken, user);
-            setAuthentication(user, request);
-            return tokenService.extractUserId(accessToken);
-        } catch (ExpiredJwtException e) {
-            logger.warn("Expired JWT, generating new token");
-            UUID userId = handleExpiredToken(accessToken, user, response);
-            setAuthentication(user, request);
-            return userId;
+            UUID userId = tokenService.extractUserId(accessToken);
+            if (tokenService.isValidToken(accessToken, user)) {
+                setAuthentication(user, request);
+                return userId;
+            }
+            
+            if (tokenService.isTokenExpired(accessToken)) {
+                userId = handleExpiredToken(accessToken, user, response);
+                setAuthentication(user, request);
+                return userId;
+            }
+            throw new InvalidTokenException("Invalid token");
+        } catch (InvalidTokenException e) {
+            throw new InvalidTokenException(e.getMessage());
         }
     }
     

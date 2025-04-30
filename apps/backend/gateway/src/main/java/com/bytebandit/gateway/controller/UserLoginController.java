@@ -6,6 +6,7 @@ import com.bytebandit.gateway.exception.GoogleLoginException;
 import com.bytebandit.gateway.service.UserLoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lib.core.dto.response.ApiResponse;
@@ -154,5 +155,11 @@ public class UserLoginController {
                     .path("/api/v1/auth/google/callback")
                     .build()
             );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<Boolean>> logout(HttpServletRequest request,
+                                                       HttpServletResponse response) {
+        return ResponseEntity.ok().body(userLoginService.logout(request, response));
     }
 }
