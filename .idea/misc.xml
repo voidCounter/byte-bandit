@@ -11,6 +11,11 @@
         <option value="$PROJECT_DIR$/apps/backend/common/core/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/apps/backend/sync-service/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="ProjectResources">
     <resource url="https://checkstyle.org/dtds/suppressions_1_2.dtd" location="$PROJECT_DIR$/apps/backend/" />

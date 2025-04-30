@@ -5,7 +5,7 @@ set -e  # Exit on error
 COMPOSE_FILE="docker-compose.apps.yml"
 INFRA_SERVICES="user-dev-db file-dev-db mailhog kafka zookeeper"
 INFRA_TEST_SERVICES="test-db kafka-test zookeeper-test"
-BACKEND_SERVICES="discovery-server config-server gateway user-service file-service sync-service"
+BACKEND_SERVICES="discovery-server config-server gateway user-service file-service"
 FRONTEND_SERVICE="client"
 DOCS_SERVICE="docs"
 ALL_SERVICES="$BACKEND_SERVICES $FRONTEND_SERVICE $DOCS_SERVICE $INFRA_SERVICES"

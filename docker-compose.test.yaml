@@ -65,16 +65,6 @@ services:
       - SPRING_PROFILES_ACTIVE=test
       - KAFKA_BOOTSTRAP_SERVERS=kafka-test:9093
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-  sync-service:
-    image: oakcan/sync-service:latest
-    container_name: oakcan-sync-service-test
-    profiles:
-      - core
-    ports:
-      - "9005:8082"
-    environment:
-      - SPRING_PROFILES_ACTIVE=test
-      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
   user-service:
     image: oakcan/user-service:latest
     container_name: oakcan-user-service-test
