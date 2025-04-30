@@ -24,3 +24,9 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
     register-with-eureka: true
+springdoc:
+  packagesToScan: com.bytebandit.fileservice.controller,com.bytebandit.fileservice.exception
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui

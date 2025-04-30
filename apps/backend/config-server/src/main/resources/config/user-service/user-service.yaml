@@ -31,4 +31,8 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui
+  info:
+    title: User Service APIs
+    description: APIs for user management and user registration
+    version: 0.0.1
 
