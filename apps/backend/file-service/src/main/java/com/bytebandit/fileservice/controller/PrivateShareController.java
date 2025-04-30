@@ -5,6 +5,8 @@ import static com.bytebandit.fileservice.utils.HttpHeaderUtils.getUserIdHeader;
 import com.bytebandit.fileservice.dto.ItemSharePrivateRequest;
 import com.bytebandit.fileservice.dto.ItemSharePrivateResponse;
 import com.bytebandit.fileservice.service.PrivatePermissionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -22,6 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/share/private")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(
+    name = "Private Share",
+    description = "Private share operations"
+)
 public class PrivateShareController {
 
     private final PrivatePermissionService privatePermissionService;
@@ -29,6 +35,10 @@ public class PrivateShareController {
     /**
      * Share item with private permission.
      */
+    @Operation(
+        summary = "Share item with private permission",
+        description = "Handles the request to share an item with private permission."
+    )
     @PostMapping
     public ResponseEntity<ApiResponse<ItemSharePrivateResponse>> sharePrivate(
         @Valid @RequestBody ItemSharePrivateRequest request,
