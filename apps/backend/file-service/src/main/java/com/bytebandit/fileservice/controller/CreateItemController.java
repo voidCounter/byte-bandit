@@ -5,6 +5,8 @@ import static com.bytebandit.fileservice.utils.HttpHeaderUtils.getUserIdHeader;
 import com.bytebandit.fileservice.dto.CreateItemRequest;
 import com.bytebandit.fileservice.dto.CreateItemResponse;
 import com.bytebandit.fileservice.service.CreateItemService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/create")
 @RequiredArgsConstructor
+@Tag(
+    name = "Create Item",
+    description = "Create item operations"
+)
 public class CreateItemController {
 
     private final CreateItemService createItemService;
@@ -27,6 +33,10 @@ public class CreateItemController {
     /**
      * Creates a new file system item.
      */
+    @Operation(
+        summary = "Create item",
+        description = "Handles the request to create a new file system item."
+    )
     @PostMapping
     public ResponseEntity<ApiResponse<CreateItemResponse>> createItem(
         @Valid @RequestBody CreateItemRequest request,

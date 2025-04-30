@@ -2,6 +2,7 @@ package com.bytebandit.fileservice.controller;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -570,7 +571,7 @@ class ItemViewControllerIT extends AbstractPostgresContainer {
             .body("errorCode", equalTo("ITEM-02"))
             .body("message", containsString("Error occurred while viewing the item."));
     }
-
+    
     private FileSystemItemEntity createAFolder(UUID ownerId, String folderName) {
         return FileSystemItemEntity.builder()
             .name(folderName)
