@@ -30,7 +30,7 @@ public class RoutingConfig {
     
     @Bean
     public RouterFunction<ServerResponse> fileServiceRouterFunction() {
-        return createServiceRoute("file-service", "/api/v1/files/**");
+        return createServiceRoute("file-service", "/api/v1/file/**");
     }
     
     @Bean

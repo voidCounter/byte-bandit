@@ -1,5 +1,6 @@
 package com.bytebandit.fileservice.projection;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -31,4 +32,6 @@ public interface ItemViewProjection {
     String getOutputPermission();
 
     String getOutputChildren();
+
+    BigInteger getOutputSize();
 }
