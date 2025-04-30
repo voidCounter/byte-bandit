@@ -6,6 +6,7 @@ import com.bytebandit.fileservice.exception.ItemViewException;
 import com.bytebandit.fileservice.mapper.ItemViewMapper;
 import com.bytebandit.fileservice.projection.ItemViewProjection;
 import com.bytebandit.fileservice.repository.FileSystemItemRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +67,41 @@ public class ItemViewService {
         } catch (DataAccessException e) {
             throw new ItemViewException("Error accessing item with id: {}"
                 + itemViewRequest.getItemId());
+        }
+    }
+
+
+    /**
+     * Retrieves all items of a user.
+     *
+     * @param userId The ID of the user.
+     * @return An ItemViewResponse containing the details of the user's items.
+     */
+    public ItemViewResponse getUserItems(String userId) {
+        try {
+            return ItemViewMapper.mapToResponse(
+                fileSystemItemRepository.userItems(UUID.fromString(userId))
+            );
+        } catch (DataAccessException e) {
+            throw new ItemViewException("Error accessing user items");
+        }
+    }
+
+    /**
+     * Retrieves all items shared with a user.
+     *
+     * @param userId The ID of the user.
+     * @return A list of ItemViewResponse containing the details of the shared items.
+     */
+    public List<ItemViewResponse> getSharedWithMe(String userId) {
+        try {
+            List<ItemViewProjection> projections = fileSystemItemRepository.sharedWithUser(
+                UUID.fromString(userId));
+            return projections.stream()
+                .map(ItemViewMapper::mapToResponse)
+                .toList();
+        } catch (DataAccessException e) {
+            throw new ItemViewException("Error accessing shared items");
         }
     }
 }

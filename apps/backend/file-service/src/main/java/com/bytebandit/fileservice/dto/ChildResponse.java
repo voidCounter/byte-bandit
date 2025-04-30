@@ -1,6 +1,7 @@
 package com.bytebandit.fileservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -47,6 +48,9 @@ public class ChildResponse {
 
     @JsonProperty("parent_id")
     private UUID parentId;
+
+    @JsonProperty("size")
+    private BigInteger size;
 
     @JsonProperty("permission")
     private String permission;

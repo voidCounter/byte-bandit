@@ -1,5 +1,6 @@
 package com.bytebandit.fileservice.dto;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
@@ -26,5 +27,6 @@ public class ItemViewResponse {
     private String isStarred;
     private UUID parentId;
     private String permission;
+    private BigInteger size;
     private List<ChildResponse> children;
 }

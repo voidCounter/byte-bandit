@@ -18,8 +18,8 @@ cors:
   allowed_origins: ${CORS_ALLOWED_ORIGINS}
 app:
   permitted:
-    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/resend-verification,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*,/api/v1/auth/refresh-token,/api/v1/auth/logout,/api/v1/user/forgot-password,/api/v1/auth/google,/api/v1/auth/google/callback
-  access-token-expiration: 60
+    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/resend-verification,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*,/api/v1/auth/refresh-token,/api/v1/auth/logout,/api/v1/user/forgot-password,/api/v1/auth/google,/api/v1/auth/google/callback,/swagger-ui/**,/v3/api-docs*/**,/swagger-ui.html,/favicon.ico
+  access-token-expiration: 3600
   refresh-token-expiration: 86400
 logging:
   level:

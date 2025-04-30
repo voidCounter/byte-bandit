@@ -6,6 +6,7 @@ import com.bytebandit.fileservice.projection.ItemViewProjection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,6 +57,7 @@ public class ItemViewMapper {
         response.setName(projection.getOutputName());
         response.setS3Url(projection.getOutputS3Url());
         response.setMimeType(projection.getOutputMimeType());
+        response.setSize(projection.getOutputSize());
         response.setIsStarred(projection.getOutputIsStarred());
         response.setParentId(projection.getOutputParentId());
         response.setPermission(projection.getOutputPermission());

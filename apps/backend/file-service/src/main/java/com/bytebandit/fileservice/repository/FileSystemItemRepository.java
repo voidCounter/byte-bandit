@@ -2,6 +2,7 @@ package com.bytebandit.fileservice.repository;
 
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.projection.ItemViewProjection;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -48,4 +49,34 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
     );
     
     boolean existsByOwnerAndParentIsNull(UUID userId);
+
+    /**
+     * Get all items of a user.
+     *
+     * @param userId the ID of the user
+     * @return the list of items
+     */
+    @Query(
+        value = "select * from user_items("
+            + ":input_user_id"
+            + ")",
+        nativeQuery = true
+    )
+    ItemViewProjection userItems(
+        @Param("input_user_id") UUID userId
+    );
+
+    /**
+     * Get all items shared with a user.
+     *
+     * @param uuid the ID of the user
+     * @return the list of items
+     */
+    @Query(
+        value = "select * from shared_with_user("
+            + ":input_user_id"
+            + ")",
+        nativeQuery = true
+    )
+    List<ItemViewProjection> sharedWithUser(@Param("input_user_id") UUID uuid);
 }

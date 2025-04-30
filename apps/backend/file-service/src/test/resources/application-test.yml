@@ -20,3 +20,9 @@ spring:
     validate-on-migrate: true
     table: file_service_flyway_schema_history
     baseline-version: 0
+aws:
+  s3:
+    bucket: oakcan-bucket
+  sqs:
+    queue-url: queue-url
+  region: us-east-1

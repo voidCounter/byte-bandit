@@ -4,6 +4,8 @@ import com.bytebandit.fileservice.dto.PublicShareRequest;
 import com.bytebandit.fileservice.dto.PublicShareResponse;
 import com.bytebandit.fileservice.exception.UnauthenticatedException;
 import com.bytebandit.fileservice.service.PublicShareService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -19,6 +21,10 @@ import org.springframework.web.client.HttpClientErrorException;
 
 @RestController
 @RequestMapping("/share")
+@Tag(
+    name = "Public Share",
+    description = "Public share operations"
+)
 public class PublicShareController {
     private final PublicShareService shareService;
     
@@ -34,6 +40,10 @@ public class PublicShareController {
      *
      * @return ResponseEntity with ApiResponse containing the public share response.
      */
+    @Operation(
+        summary = "Share item with public permission",
+        description = "Handles the request to share an item with public permission."
+    )
     @PostMapping("/public")
     ResponseEntity<ApiResponse<PublicShareResponse>> sharePublic(
         @Valid @RequestBody PublicShareRequest request,

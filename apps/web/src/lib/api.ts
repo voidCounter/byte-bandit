@@ -16,7 +16,7 @@ export const fetchFolderContents = async (itemId: string, password: string | nul
 
         const endpoint = isPublic ? `/public/folders/${itemId}` : `/api/v1/file/view`;
 
-        const response = await AxiosInstance.post(endpoint, itemViewRequest);
+        const response = await AxiosInstance.get(endpoint);
 
         return response.data;
     } catch (error) {
