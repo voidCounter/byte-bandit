@@ -76,7 +76,7 @@ export function AppSidebar() {
                             {
                                 items.map((item: NavItem) => (
                                     <SidebarMenuItem key={item.title}
-                                                     className={`${pathname === item.link && "bg-primary text-background dark:text-foreground rounded-md"}`}>
+                                                     className={`${pathname.startsWith(item.link) && "bg-primary text-background dark:text-foreground rounded-md"}`}>
                                         <SidebarMenuButton asChild>
                                             <Link href={item.link}>
                                                 {item.icon}

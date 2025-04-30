@@ -9,7 +9,7 @@ export default function ProtectedLayout({
                                         }: {
     children: React.ReactNode;
 }) {
-    const {data, isLoading} = useSession();
+    const {isLoading} = useSession();
     const {authenticatedUser} = useAuthStore();
 
     if (isLoading) {
