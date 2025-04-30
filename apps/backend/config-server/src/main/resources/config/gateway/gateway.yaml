@@ -32,3 +32,7 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui
+  info:
+    title: Gateway APIs
+    description: APIs for user authentication and session management.
+    version: 0.0.1

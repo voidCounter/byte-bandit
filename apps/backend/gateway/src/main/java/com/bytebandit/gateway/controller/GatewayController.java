@@ -1,5 +1,7 @@
 package com.bytebandit.gateway.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@Tag(name = "Internal", description = "APIs for csrf token and test")
 public class GatewayController {
     /**
      * Handles a GET request to retrieve a response containing csrf token in the cookies. The CSRF
@@ -18,6 +21,12 @@ public class GatewayController {
      *
      * @return ResponseEntity with a successful HTTP status.
      */
+    @Operation(
+        summary = "CSRF token",
+        description = "Returns the CSRF token. The CSRF token is automatically set in "
+            + "the XSRF-TOKEN "
+            + "cookie by Spring Security's CsrfFilter when this endpoint is accessed."
+    )
     @GetMapping("/csrf")
     public ResponseEntity<String> csrf(
         @RequestAttribute(name = "_csrf", required = false) CsrfToken csrfToken) {
