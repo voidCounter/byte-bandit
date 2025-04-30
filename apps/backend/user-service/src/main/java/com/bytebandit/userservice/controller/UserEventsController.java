@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/events")
 @Tag(
-    name = "User event that is reponsible for sending user events to Kafka"
+    description = "User event that is reponsible for sending user events to Kafka"
     + "which in turn inserts the data into snapshot table of the file service"
     + "or wherever a user snapshot is needed",
-    description = "APIs for user events"
+    name = "APIs for user events"
 )
 public class UserEventsController {
     private final UserEventProducer userEventProducer;
