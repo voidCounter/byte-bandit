@@ -1,5 +1,6 @@
 package com.bytebandit.fileservice.service;
 
+import com.bytebandit.fileservice.exception.InvalidFileNameException;
 import java.time.Instant;
 import lib.core.dto.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,12 +38,7 @@ public class S3FileService {
      */
     public ApiResponse<String> generateUploadPresignedUrl(String fileName) {
         if (fileName == null || fileName.trim().isEmpty()) {
-            return ApiResponse.<String>builder()
-                .status(400)
-                .message("File name cannot be empty")
-                .timestamp(Instant.now().toString())
-                .path("/api/v1/files/upload/presigned-url")
-                .build();
+            throw new InvalidFileNameException("File name cannot be empty");
         }
         
         // sanitize file name

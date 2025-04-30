@@ -14,23 +14,34 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
-
+    
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex,
                                                                HttpServletRequest request) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.UNKNOWN_ERROR, request,
             ex.getMessage());
     }
-
+    
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity<ErrorResponse> handleDataAccessException(
         DataAccessException ex, HttpServletRequest request) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.DATABASE_ERROR, request,
             ex.getMessage());
     }
-
+    
+    
+    /**
+     * Handles InvalidFileNameException and returns a ResponseEntity with an error response.
+     */
+    @ExceptionHandler(InvalidFileNameException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidFileNameException(
+        InvalidFileNameException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_INPUT_FORMAT, request,
+            ex.getMessage());
+    }
+    
     /**
      * Handles PublicShareException and returns a ResponseEntity with an error response.
      *
@@ -46,7 +57,7 @@ public class GlobalExceptionHandler {
             request,
             ex.getMessage());
     }
-
+    
     /**
      * Handles ItemPasswordVerificationFailedException and returns a ResponseEntity with an error
      * response.
@@ -62,7 +73,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.UNAUTHORIZED, ErrorCode.HEADER_MISSING, request,
             ex.getMessage());
     }
-
+    
     /**
      * Handles ItemPasswordVerificationFailedException and returns a ResponseEntity with an error
      * response.
@@ -78,7 +89,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.FORBIDDEN, ErrorCode.PERMISSION_DENIED, request,
             ex.getMessage());
     }
-
+    
     /**
      * Handles ItemPasswordVerificationFailedException and returns a ResponseEntity with an error
      * response.
@@ -94,7 +105,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.ITEM_NOT_FOUND, request,
             ex.getMessage());
     }
-
+    
     /**
      * Handles ItemPasswordVerificationFailedException and returns a ResponseEntity with an error
      * response.
@@ -110,7 +121,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.USER_NOT_FOUND, request,
             ex.getMessage());
     }
-
+    
     /**
      * Handles ItemPasswordVerificationFailedException and returns a ResponseEntity with an error
      * response.
@@ -126,7 +137,7 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ErrorCode.ITEM_VIEW_ERROR, request,
             ex.getMessage());
     }
-
+    
     /**
      * Handles ItemPasswordVerificationFailedException and returns a ResponseEntity with an error
      * response.
@@ -143,7 +154,7 @@ public class GlobalExceptionHandler {
             request,
             ex.getMessage());
     }
-
+    
     /**
      * Handles ItemPasswordVerificationFailedException and returns a ResponseEntity with an error
      * response.
@@ -160,7 +171,7 @@ public class GlobalExceptionHandler {
             request,
             ex.getMessage());
     }
-
+    
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode,
                                                         HttpServletRequest request,
                                                         String details) {

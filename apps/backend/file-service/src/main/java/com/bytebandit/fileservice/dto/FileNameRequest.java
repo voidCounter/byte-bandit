@@ -1,8 +1,10 @@
 package com.bytebandit.fileservice.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class FileNameRequest {
-    public String fileName;
+    private String fileName;
 }
