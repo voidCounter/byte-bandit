@@ -2,6 +2,8 @@ package com.bytebandit.fileservice.mapper;
 
 import com.bytebandit.fileservice.dto.ChildResponse;
 import com.bytebandit.fileservice.dto.ItemViewResponse;
+import com.bytebandit.fileservice.exception.ItemViewException;
+import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.projection.ItemViewProjection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

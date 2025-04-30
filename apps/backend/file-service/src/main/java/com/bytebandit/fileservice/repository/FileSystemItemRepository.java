@@ -46,4 +46,21 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
         @Param("input_user_id") UUID userId,
         @Param("input_user_permission") String permission
     );
+
+    /**
+     * Get all items of a user.
+     *
+     * @param userId the ID of the user
+     * @return the list of items
+     */
+    @Query(
+        value = "select * from user_items("
+            + ":input_user_id"
+            + ")",
+        nativeQuery = true
+    )
+    ItemViewProjection userItems(
+        @Param("input_user_id") UUID userId
+    );
+
 }

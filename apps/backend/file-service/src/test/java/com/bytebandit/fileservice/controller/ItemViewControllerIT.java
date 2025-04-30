@@ -498,6 +498,79 @@ class ItemViewControllerIT extends AbstractPostgresContainer {
             .body("data.permission", equalTo("EDITOR"));
     }
 
+    /**
+     * This test verifies that the item view request returns an error when the user does not have.
+     * access to the item.
+     */
+    @Test
+    void shouldReturnUserRootItemSuccessfully() {
+        UUID testUserId = UUID.randomUUID();
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(testUserId, "test-user@domain.com")
+        );
+
+        FileSystemItemEntity rootItem = new FileSystemItemEntity();
+        rootItem.setName("My Items");
+        rootItem.setType(FileSystemItemType.FOLDER);
+        rootItem.setOwner(testUserId);
+        rootItem.setStatus(UploadStatus.NOT_UPLOADED);
+        rootItem = fileSystemItemRepository.save(rootItem);
+
+        FileSystemItemEntity childItem1 = new FileSystemItemEntity();
+        childItem1.setName("Child - 1");
+        childItem1.setType(FileSystemItemType.FOLDER);
+        childItem1.setOwner(testUserId);
+        childItem1.setStatus(UploadStatus.NOT_UPLOADED);
+        childItem1.setParent(rootItem);
+        fileSystemItemRepository.save(childItem1);
+
+        FileSystemItemEntity childItem2 = new FileSystemItemEntity();
+        childItem2.setName("Child - 2");
+        childItem2.setType(FileSystemItemType.FOLDER);
+        childItem2.setOwner(testUserId);
+        childItem2.setStatus(UploadStatus.NOT_UPLOADED);
+        childItem2.setParent(rootItem);
+        fileSystemItemRepository.save(childItem2);
+
+        requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), testUserId)
+            .when()
+            .get("/view")
+            .then()
+            .statusCode(HttpStatus.OK.value())
+            .body("data.name", equalTo("My Items"))
+            .body("data.itemType", equalTo("FOLDER"))
+            .body("data.itemId", equalTo(rootItem.getId().toString()))
+            .body("data.ownerEmail", equalTo("test-user@domain.com"))
+            .body("data.children.size()", equalTo(2));
+    }
+
+    /**
+     * This test verifies that the item view request returns an error when the user does not have.
+     * access to the item.
+     */
+    @Test
+    void shouldReturnNotFoundWhenUserHasNoRootItem() {
+        UUID testUserId = UUID.randomUUID();
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(testUserId, "test-user@domain.com")
+        );
+
+        UUID noRootUserId = UUID.randomUUID();
+        userSnapshotRepository.save(
+            new UserSnapshotEntity(noRootUserId, "empty-user@domain.com")
+        );
+
+        requestSpecification()
+            .header(CustomHttpHeader.USER_ID.getValue(), noRootUserId)
+            .when()
+            .get("/view")
+            .then()
+            .statusCode(HttpStatus.NOT_FOUND.value())
+            .body("errorCode", equalTo("ITEM-02"))
+            .body("message", containsString("Error occurred while viewing the item."));
+    }
+
     private FileSystemItemEntity createAFolder(UUID ownerId, String folderName) {
         return FileSystemItemEntity.builder()
             .name(folderName)
