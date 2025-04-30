@@ -4,6 +4,8 @@ import com.bytebandit.gateway.dto.AuthenticatedUserDto;
 import com.bytebandit.gateway.dto.LoginRequest;
 import com.bytebandit.gateway.exception.GoogleLoginException;
 import com.bytebandit.gateway.service.UserLoginService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -27,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "User Authentication", description = "APIs for user authentication and session "
+    + "management")
 public class UserLoginController {
     
     private final UserLoginService userLoginService;
@@ -42,7 +46,12 @@ public class UserLoginController {
     
     @Value("${client.host.uri}")
     private String clientHostUri;
-    
+
+    @Operation(
+        summary = "User login",
+        description = "Authenticates a user based on their email or user ID and password. Returns "
+            + "a success indicator and sets an authentication token in the response cookies."
+    )
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Boolean>> login(
         @Valid @RequestBody LoginRequest loginRequest,
@@ -56,6 +65,11 @@ public class UserLoginController {
      *
      * @return ResponseEntity with a successful HTTP status.
      */
+    @Operation(
+        summary = "Get authenticated user",
+        description = "Retrieves the information of the currently authenticated user. Returns "
+            + "user details such as email, user ID, and roles."
+    )
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<AuthenticatedUserDto>> getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -67,6 +81,11 @@ public class UserLoginController {
      *
      * @return ResponseEntity with a successful HTTP status.
      */
+    @Operation(
+        summary = "Google login",
+        description = "Initiates Google login by generating an authorization URL. The user is "
+            + "redirected to this URL to authorize the application."
+    )
     @GetMapping("/google")
     public ResponseEntity<ApiResponse<String>> initiateGoogleLogin() {
         String authUrl = String.format(
@@ -96,6 +115,11 @@ public class UserLoginController {
      *
      * @return ResponseEntity with a successful ApiResponse.
      */
+    @Operation(
+        summary = "Google login callback",
+        description = "Handles the callback from Google after user authorization. Exchanges the "
+            + "authorization code for an access token and logs in the user."
+    )
     @GetMapping("/google/callback")
     public ResponseEntity<ApiResponse<Boolean>> handleGoogleCallback(
         @RequestParam(value = "code", required = false) String code,
@@ -132,7 +156,7 @@ public class UserLoginController {
                     .build()
             );
     }
-    
+
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<Boolean>> logout(HttpServletRequest request,
                                                        HttpServletResponse response) {
