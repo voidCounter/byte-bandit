@@ -3,6 +3,7 @@ package com.bytebandit.fileservice.repository;
 import com.bytebandit.fileservice.model.FileSystemItemEntity;
 import com.bytebandit.fileservice.projection.ItemViewProjection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,12 +12,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEntity, UUID> {
-
+    
     /**
      * Get the permission of a file system item recursively.
      *
      * @param inputItemId the ID of the item
      * @param inputUserId the ID of the user
+     *
      * @return the permission string
      */
     @Query(
@@ -30,7 +32,7 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
         @Param("input_item_id") UUID inputItemId,
         @Param("input_user_id") UUID inputUserId
     );
-
+    
     /**
      * Get the permission of a file system item.
      */
@@ -49,11 +51,12 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
     );
     
     boolean existsByOwnerAndParentIsNull(UUID userId);
-
+    
     /**
      * Get all items of a user.
      *
      * @param userId the ID of the user
+     *
      * @return the list of items
      */
     @Query(
@@ -65,11 +68,12 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
     ItemViewProjection userItems(
         @Param("input_user_id") UUID userId
     );
-
+    
     /**
      * Get all items shared with a user.
      *
      * @param uuid the ID of the user
+     *
      * @return the list of items
      */
     @Query(
@@ -79,4 +83,9 @@ public interface FileSystemItemRepository extends JpaRepository<FileSystemItemEn
         nativeQuery = true
     )
     List<ItemViewProjection> sharedWithUser(@Param("input_user_id") UUID uuid);
+    
+    
+    Optional<FileSystemItemEntity> findByOwnerAndParent(UUID owner, FileSystemItemEntity parent);
+    
+    Optional<FileSystemItemEntity> findByOwnerAndParentIsNull(UUID owner);
 }
