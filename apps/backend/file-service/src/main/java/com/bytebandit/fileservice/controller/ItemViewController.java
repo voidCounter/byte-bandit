@@ -108,4 +108,18 @@ public class ItemViewController {
         );
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<String>> getUserHomeParent(
+        @NotNull HttpServletRequest servletRequest
+    ) {
+        final String userId = HttpHeaderUtils.getUserIdHeader(servletRequest);
+        return ResponseEntity.ok(
+            ApiResponse.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("Retrieved user home parent successfully")
+                .data(itemViewService.getUserHomeParent(userId))
+                .timestamp(String.valueOf(System.currentTimeMillis()))
+                .build()
+        );
+    }
 }

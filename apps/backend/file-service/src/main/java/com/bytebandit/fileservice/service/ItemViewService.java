@@ -104,4 +104,16 @@ public class ItemViewService {
             throw new ItemViewException("Error accessing shared items");
         }
     }
+
+    /**
+     * Retrieves the parent directory of a user's home directory.
+     *
+     * @param userId The ID of the user.
+     * @return The ID of the user's home parent directory.
+     */
+    public String getUserHomeParent(String userId) {
+        return fileSystemItemRepository.getReferenceById(
+            UUID.fromString(userId)
+        ).getId().toString();
+    }
 }
