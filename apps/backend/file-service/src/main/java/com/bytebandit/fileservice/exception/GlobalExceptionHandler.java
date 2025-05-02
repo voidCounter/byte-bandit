@@ -173,7 +173,15 @@ public class GlobalExceptionHandler {
             request,
             ex.getMessage());
     }
-    
+
+    @ExceptionHandler(MoveItemFailedException.class)
+    public ResponseEntity<ErrorResponse> handleMoveItemFailedException(
+        MoveItemFailedException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ErrorCode.MOVE_ITEM_FAILED,
+            request,
+            ex.getMessage());
+    }
+
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode,
                                                         HttpServletRequest request,
                                                         String details) {

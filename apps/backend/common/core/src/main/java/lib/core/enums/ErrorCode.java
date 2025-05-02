@@ -22,7 +22,8 @@ public enum ErrorCode {
     ITEM_PROTECTED_WITH_PASSWORD("ITEM-03","Trying to access protected item"
         + " without providing password."),
     ITEM_WRONG_PASSWORD("ITEM-04", "Wrong password provided for the item."),
-    
+    MOVE_ITEM_FAILED("MOVE-01", "Failed to move the item."),
+
     DATABASE_ERROR("DB-02", "Database error occurred."),
     
     USER_NOT_FOUND("USER-01", "User not found."),
