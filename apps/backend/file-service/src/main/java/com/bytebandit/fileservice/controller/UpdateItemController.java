@@ -1,5 +1,6 @@
 package com.bytebandit.fileservice.controller;
 
+import com.bytebandit.fileservice.dto.CopyItemRequest;
 import com.bytebandit.fileservice.dto.MoveItemRequest;
 import com.bytebandit.fileservice.dto.UpdateItemRequest;
 import com.bytebandit.fileservice.service.UpdateItemService;
@@ -75,4 +76,32 @@ public class UpdateItemController {
                 .build()
         );
     }
+
+    /**
+     * Handles the request to copy an item.
+     *
+     * @param request the request containing the item ID and new location
+     * @param servletRequest the HTTP servlet request
+     *
+     * @return a response entity containing the result of the copy operation
+     */
+    @PostMapping("/copy")
+    public ResponseEntity<ApiResponse<String>> moveItem(
+        @Valid @RequestBody CopyItemRequest request,
+        @NotNull HttpServletRequest servletRequest
+    ) {
+        final String userId = HttpHeaderUtils.getUserIdHeader(servletRequest);
+
+        return ResponseEntity.ok(
+            ApiResponse.<String>builder()
+                .status(200)
+                .message("Moved item successfully")
+                .data(updateItemService.copyItem(request, userId))
+                .timestamp(String.valueOf(System.currentTimeMillis()))
+                .path("/update/move")
+                .build()
+        );
+    }
+
+
 }
