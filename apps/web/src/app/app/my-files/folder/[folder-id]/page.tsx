@@ -14,7 +14,6 @@ export default function FolderPage() {
     const params = useParams();
     const [parent, setParent] = useState<{ name: string, id: string } | null>(null);
     const folderId = params['folder-id'];
-    console.log(`Folder ID: ${folderId}`);
 
     type RawFileSystemItem = {
         item_id: string;
@@ -35,6 +34,7 @@ export default function FolderPage() {
         queryKey: ['folder', folderId],
         queryFn: async () => {
             const response = await fetchFolderContents(folderId as string, null, false);
+            console.log(response);
             setParent({
                 name: response.data.name,
                 id: folderId as string,

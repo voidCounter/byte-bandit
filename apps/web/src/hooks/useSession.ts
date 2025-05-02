@@ -26,7 +26,7 @@ export default function useSession() {
     const homeFolderQuery = useQuery<APISuccessResponse<string>, AxiosError>({
         queryKey: ["homeFolder"],
         queryFn: async () => {
-            const response = await AxiosInstance.get("/api/v1/file/home");
+            const response = await AxiosInstance.get("/api/v1/file/view/me");
             return response.data;
         },
         enabled: authQuery.isSuccess, // Only run if authQuery succeeds
