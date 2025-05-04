@@ -7,6 +7,9 @@ Once the Oakcan services are up and running, you can interact with the applicati
 
 ### 1. Access the Frontend
 - Open your browser and navigate to [http://localhost:3000](http://localhost:3000).
+
+![landing_page.png](../assets/landing_page.png)
+
 - The main web application should load, displaying the Oakcan user interface.
 - **Sign Up or Log In**:
     - Use the "Sign Up" option to create a new account. You can register using an email and password or via Google OAuth (if configured in the `.env` file).
