@@ -38,7 +38,7 @@ import {toast} from "sonner";
 
 export function NavUser() {
     const {isMobile} = useSidebar()
-    const {authenticatedUser} = useAuthStore();
+    const {authenticatedUser, deleteAuthenticatedUser} = useAuthStore();
     const user = {
         name: authenticatedUser?.fullName,
         email: authenticatedUser?.email,
@@ -48,6 +48,7 @@ export function NavUser() {
         mutationFn: (data) => AxiosInstance.post("/api/v1/auth/logout", data),
         onSuccess: data => {
             window.location.href = "/login";
+            deleteAuthenticatedUser();
         },
         onError: error => {
             toast.error("Logout failed. Please try again.");

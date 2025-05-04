@@ -6,15 +6,17 @@ import {faGoogle} from '@fortawesome/free-brands-svg-icons'
 import {AxiosInstance} from "@/utils/AxiosInstance";
 import {useMutation} from "@tanstack/react-query";
 import {APISuccessResponse} from "@/types/APISuccessResponse";
+import {useAuthStore} from "@/store/AuthStore";
 
 function SignInWithGoogle() {
-
+    const {deleteAuthenticatedUser} = useAuthStore();
     const {mutate: fetchGoogleSignInUrl, isPending} = useMutation({
         mutationFn: async () => {
             const response: AxiosResponse = await AxiosInstance.get("/api/v1/auth/google");
             return response.data; // Assuming the URL is in the response body
         },
         onSuccess: (data: APISuccessResponse<string>) => {
+            deleteAuthenticatedUser();
             window.location.href = data.data;
         },
         onError: (error) => {

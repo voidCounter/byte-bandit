@@ -71,7 +71,7 @@ export function GlobalDialog() {
                             <DialogTitle>Add New File</DialogTitle>
                             <DialogDescription>Upload a new file to the current folder.</DialogDescription>
                         </DialogHeader>
-                        <UploadForm onSubmit={handleUpload} onCancel={closeDialog}/>
+                        <UploadForm folderId={folderId as string} onSubmit={handleUpload} onCancel={closeDialog}/>
                     </>
                 )}
                 {type === 'CREATE_FOLDER' && (
