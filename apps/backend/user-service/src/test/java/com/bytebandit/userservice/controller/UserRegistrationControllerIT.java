@@ -53,11 +53,11 @@ class UserRegistrationControllerIT extends AbstractPostgresContainer {
 
     private RequestSpecification requestSpecification() {
         return RestAssured.given()
-            .contentType(ContentType.JSON);
+                .contentType(ContentType.JSON);
     }
 
     /**
-     * Test for invalid user registration with missing fields.
+     * Test for successful registration.
      */
     @Test
     void register_shouldSucceedWithValidData() {
@@ -70,12 +70,16 @@ class UserRegistrationControllerIT extends AbstractPostgresContainer {
                 """;
 
         requestSpecification()
-            .body(requestBody)
-            .when()
-            .post(requestPath)
-            .then()
-            .statusCode(HttpStatus.OK.value())
-            .body(equalTo("User registered successfully"));
+                .body(requestBody)
+                .when()
+                .post(requestPath)
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("status", equalTo(200))
+                .body("message", equalTo("User registered successfully"))
+                .body("data.email", equalTo("newuser@example.com"))
+                .body("timestamp", notNullValue())
+                .body("data.fullName", equalTo("Test User"));
     }
 
     /**
@@ -98,18 +102,18 @@ class UserRegistrationControllerIT extends AbstractPostgresContainer {
                 """;
 
         requestSpecification()
-            .body(requestBody)
-            .when()
-            .post(requestPath)
-            .then()
-            .statusCode(HttpStatus.CONFLICT.value())
-            .body("status", equalTo(409))
-            .body("error", equalTo("Conflict"))
-            .body("errorCode", equalTo("USER-02"))
-            .body("message", equalTo("User already exists."))
-            .body("details", containsString("User with provided email already exists."))
-            .body("path", equalTo(requestPath))
-            .body("timestamp", notNullValue());
+                .body(requestBody)
+                .when()
+                .post(requestPath)
+                .then()
+                .statusCode(HttpStatus.CONFLICT.value())
+                .body("status", equalTo(409))
+                .body("error", equalTo("Conflict"))
+                .body("errorCode", equalTo("USER-02"))
+                .body("message", equalTo("User already exists."))
+                .body("details", containsString("User with provided email already exists."))
+                .body("path", equalTo(requestPath))
+                .body("timestamp", notNullValue());
     }
 
     /**
@@ -118,25 +122,25 @@ class UserRegistrationControllerIT extends AbstractPostgresContainer {
     @Test
     void register_shouldFailWithInvalidEmailFormat() {
         String requestBody = """
-            {
-                "fullName": "Test User",
-                "email": "not-an-email",
-                "password": "ValidPass$1"
-            }
-            """;
+                {
+                    "fullName": "Test User",
+                    "email": "not-an-email",
+                    "password": "ValidPass$1"
+                }
+                """;
 
         requestSpecification()
-            .body(requestBody)
-            .when()
-            .post(requestPath)
-            .then()
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body("status", equalTo(400))
-            .body("error", equalTo("Bad Request"))
-            .body("errorCode", equalTo("SEC-01"))
-            .body("message", containsString("Invalid email address provided."))
-            .body("path", equalTo(requestPath))
-            .body("timestamp", notNullValue());
+                .body(requestBody)
+                .when()
+                .post(requestPath)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("status", equalTo(400))
+                .body("error", equalTo("Bad Request"))
+                .body("errorCode", equalTo("SEC-01"))
+                .body("message", containsString("Invalid email address provided."))
+                .body("path", equalTo(requestPath))
+                .body("timestamp", notNullValue());
     }
 
     /**
@@ -145,26 +149,26 @@ class UserRegistrationControllerIT extends AbstractPostgresContainer {
     @Test
     void register_shouldFailWithWeakPassword() {
         String requestBody = """
-            {
-                "fullName": "Test User",
-                "email": "user@example.com",
-                "password": "weak-password"
-            }
-            """;
+                {
+                    "fullName": "Test User",
+                    "email": "user@example.com",
+                    "password": "weak-password"
+                }
+                """;
 
         requestSpecification()
-            .body(requestBody)
-            .when()
-            .post(requestPath)
-            .then()
-            .statusCode(HttpStatus.BAD_REQUEST.value())
-            .body("status", equalTo(400))
-            .body("error", equalTo("Bad Request"))
-            .body("errorCode", equalTo("SEC-04"))
-            .body("message",
-                containsString("Password must be at least 8 characters."))
-            .body("path", equalTo(requestPath))
-            .body("timestamp", notNullValue());
+                .body(requestBody)
+                .when()
+                .post(requestPath)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("status", equalTo(400))
+                .body("error", equalTo("Bad Request"))
+                .body("errorCode", equalTo("SEC-04"))
+                .body("message",
+                        containsString("Password must be at least 8 characters."))
+                .body("path", equalTo(requestPath))
+                .body("timestamp", notNullValue());
     }
 
 }

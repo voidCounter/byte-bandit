@@ -24,13 +24,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 @RequiredArgsConstructor
 public class UserRegistrationService {
-
+    
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TransactionTemplate transactionTemplate;
     private final RegistrationEmailService registrationEmailService;
-
+    
     /**
      * Registers a new user by creating user and token entries, sending a verification email, and
      * returning a response containing user details.
@@ -38,8 +38,7 @@ public class UserRegistrationService {
      * @param registrationRequest the user registration request including email, password, and full
      *                            name.
      *
-     * @return a UserRegistrationResponse containing user details such as ID, full name, email,
-     *     verification status, and creation timestamp.
+     * @return a UserRegistrationResponse containing user details such as full name and email.
      * @throws UserAlreadyExistsException if a user with the provided email already exists.
      * @throws IllegalStateException      if the user registration process fails.
      */
@@ -50,7 +49,7 @@ public class UserRegistrationService {
         UUID token = UUID.randomUUID();
         String tokenHash = passwordEncoder.encode(token.toString());
         Timestamp tokenExpiresAt = Timestamp.from(Instant.now().plus(24, ChronoUnit.HOURS));
-
+        
         try {
             CreateUserAndTokenProjection userAndToken = transactionTemplate.execute(
                 result -> userRepository.createUserAndToken(
@@ -70,17 +69,14 @@ public class UserRegistrationService {
                 token.toString()
             );
             return new UserRegistrationResponse(
-                userAndToken.getId(),
                 userAndToken.getFullName(),
-                userAndToken.getEmail(),
-                userAndToken.getVerified(),
-                userAndToken.getCreatedAt()
+                userAndToken.getEmail()
             );
         } catch (DataIntegrityViolationException e) {
             throw new UserAlreadyExistsException("User with provided email already exists.", e);
         }
     }
-
+    
     private void sendEmail(
         CreateUserAndTokenProjection user,
         String token
@@ -92,7 +88,7 @@ public class UserRegistrationService {
             user.getId()
         );
     }
-
+    
     /**
      * Resends the verification email to the user with the provided email address.
      *
@@ -111,11 +107,11 @@ public class UserRegistrationService {
         tokenRepository.invalidateAllForUserAndType(
             user, TokenType.EMAIL_VERIFICATION
         );
-
+        
         UUID token = UUID.randomUUID();
         String tokenHash = passwordEncoder.encode(token.toString());
         Timestamp tokenExpiresAt = Timestamp.from(Instant.now().plus(24, ChronoUnit.HOURS));
-
+        
         TokenEntity tokenEntity = TokenEntity.builder()
             .type(TokenType.EMAIL_VERIFICATION)
             .tokenHash(tokenHash)
@@ -123,7 +119,7 @@ public class UserRegistrationService {
             .user(user)
             .expiresAt(tokenExpiresAt).build();
         tokenRepository.save(tokenEntity);
-
+        
         registrationEmailService.sendEmail(user.getEmail(), user.getFullName(), token.toString(),
             user.getId());
     }

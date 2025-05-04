@@ -18,14 +18,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
+    
     private static final Supplier<UUID> uuidSupplier = UUID::randomUUID;
-
+    
     /**
      * Handles BadCredentialsException thrown by Spring Security.
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status UNAUTHORIZED
      */
     @ExceptionHandler(BadCredentialsException.class)
@@ -41,12 +42,13 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
     }
-
+    
     /**
      * Handles InvalidTokenException thrown by the application.
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status UNAUTHORIZED
      */
     @ExceptionHandler(InvalidTokenException.class)
@@ -59,12 +61,13 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
     }
-
+    
     /**
      * Handles UsernameNotFoundException thrown by Spring Security.
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status NOT_FOUND
      */
     @ExceptionHandler(UsernameNotFoundException.class)
@@ -80,12 +83,13 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
     }
-
+    
     /**
      * Handles IllegalArgumentException thrown by the application.
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status BAD_REQUEST
      */
     @ExceptionHandler(IllegalArgumentException.class)
@@ -101,12 +105,13 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
     }
-
+    
     /**
      * Handles MethodArgumentNotValidException thrown by Spring MVC.
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status BAD_REQUEST
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -118,7 +123,7 @@ public class GlobalExceptionHandler {
         String details = ex.getBindingResult().getAllErrors().stream()
             .map(DefaultMessageSourceResolvable::getDefaultMessage)
             .collect(Collectors.joining("; "));
-
+        
         return buildError(
             HttpStatus.BAD_REQUEST,
             ErrorCode.REQUEST_VALIDATION_FAILED,
@@ -127,12 +132,33 @@ public class GlobalExceptionHandler {
             details
         );
     }
-
+    
+    /**
+     * Handles GoogleLoginException thrown by UserLoginService.
+     *
+     * @param ex      GoogleLoginException object.
+     * @param request HttpServlet Request.
+     *
+     * @return ErrorResponse.
+     */
+    @ExceptionHandler(GoogleLoginException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGoogleLoginException(GoogleLoginException ex,
+                                                    HttpServletRequest request) {
+        return buildError(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            ErrorCode.GOOGLE_OAUTH_ERROR,
+            ex.getMessage(),
+            request.getRequestURI()
+        );
+    }
+    
     /**
      * Handles DataIntegrityViolationException thrown by Spring Data JPA.
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status CONFLICT
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -149,12 +175,13 @@ public class GlobalExceptionHandler {
             ex.getMessage()
         );
     }
-
+    
     /**
      * Handles all uncaught exceptions.
      *
      * @param ex      the exception
      * @param request the HTTP request
+     *
      * @return an ErrorResponse with status INTERNAL_SERVER_ERROR
      */
     @ExceptionHandler(Exception.class)
@@ -167,7 +194,51 @@ public class GlobalExceptionHandler {
             request.getRequestURI()
         );
     }
-
+    
+    /**
+     * Handles EmailAlreadyUsedWithGoogleAccountException thrown by the application.
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     *
+     * @return an ErrorResponse with status CONFLICT
+     */
+    @ExceptionHandler(EmailAlreadyUsedWithGoogleAccountException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleEmailAlreadyUsedWithGoogleAccount(
+        EmailAlreadyUsedWithGoogleAccountException ex,
+        HttpServletRequest request
+    ) {
+        return buildError(
+            HttpStatus.CONFLICT,
+            ErrorCode.AUTH_EMAIL_USED_WITH_GOOGLE,
+            ex.getMessage(),
+            request.getRequestURI()
+        );
+    }
+    
+    /**
+     * Handles UserNotAuthenticatedException thrown by the application.
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     *
+     * @return an ErrorResponse with status UNAUTHORIZED
+     */
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUserNotAuthenticated(
+        UserNotAuthenticatedException ex,
+        HttpServletRequest request
+    ) {
+        return buildError(
+            HttpStatus.UNAUTHORIZED,
+            ErrorCode.USER_NOT_AUTHENTICATED,
+            ex.getMessage(),
+            request.getRequestURI()
+        );
+    }
+    
     private ErrorResponse buildError(
         HttpStatus status,
         ErrorCode code,
@@ -184,7 +255,7 @@ public class GlobalExceptionHandler {
             uuidSupplier
         );
     }
-
+    
     private ErrorResponse buildError(
         HttpStatus status,
         ErrorCode code,

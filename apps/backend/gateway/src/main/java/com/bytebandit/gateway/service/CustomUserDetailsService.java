@@ -17,6 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * Loads a user by their email address.
      *
      * @param email the email address of the user to load
+     *
      * @return the UserEntity object representing the user
      * @throws UsernameNotFoundException if the user is not found
      */

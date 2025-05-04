@@ -1,5 +1,6 @@
 package com.bytebandit.gateway.config;
 
+import com.bytebandit.gateway.filter.AuthCookieFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
@@ -26,12 +28,15 @@ import org.springframework.util.StringUtils;
 @EnableWebSecurity
 public class SecurityFilterChainConfig {
     private final List<String> permittedRoutes;
-
+    private final AuthCookieFilter authCookieFilter;
+    
     @Autowired
-    public SecurityFilterChainConfig(PermittedRoutesConfig permittedRoutesConfig) {
+    public SecurityFilterChainConfig(PermittedRoutesConfig permittedRoutesConfig,
+                                     AuthCookieFilter authCookieFilter) {
         this.permittedRoutes = permittedRoutesConfig.getRoutes();
+        this.authCookieFilter = authCookieFilter;
     }
-
+    
     /**
      * This method sets up the security configuration by customizing the CSRF protection mechanism,
      * defining authorization rules, and managing session policies. It includes the following:
@@ -54,24 +59,24 @@ public class SecurityFilterChainConfig {
             .cors(Customizer.withDefaults())
             .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new SpaCsrfTokenRequestHandler()))
-            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(
                 req -> req.requestMatchers(getAllPermittedRoutes(permittedRoutes)).permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).build();
+                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(authCookieFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
-
+    
     private RequestMatcher getAllPermittedRoutes(List<String> permittedRoutes) {
         List<RequestMatcher> matchers =
             permittedRoutes.stream().map(AntPathRequestMatcher::new).collect(Collectors.toList());
         return new OrRequestMatcher(matchers);
     }
-
+    
     private static final class SpaCsrfTokenRequestHandler implements CsrfTokenRequestHandler {
         private final CsrfTokenRequestHandler plain = new CsrfTokenRequestAttributeHandler();
         private final CsrfTokenRequestHandler xor = new XorCsrfTokenRequestAttributeHandler();
-
+        
         /**
          * Handles the CSRF token for the incoming request and response by employing BREACH
          * protection using the {@link XorCsrfTokenRequestAttributeHandler} to securely process and
@@ -98,7 +103,7 @@ public class SecurityFilterChainConfig {
              */
             csrfToken.get();
         }
-
+        
         /**
          * Resolves the CSRF token value from the provided request, using the appropriate strategy
          * based on whether the token is present in the request header or as a parameter.

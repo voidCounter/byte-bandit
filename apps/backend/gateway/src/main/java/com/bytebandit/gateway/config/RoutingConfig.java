@@ -13,7 +13,7 @@ import org.springframework.web.servlet.function.ServerResponse;
 
 @Configuration
 public class RoutingConfig {
-
+    
     private RouterFunction<ServerResponse> createServiceRoute(String serviceName,
                                                               String pathPattern) {
         return GatewayRouterFunctions.route(serviceName)
@@ -22,17 +22,17 @@ public class RoutingConfig {
             .before(BeforeFilterFunctions.stripPrefix(3))
             .build();
     }
-
+    
     @Bean
     public RouterFunction<ServerResponse> userServiceRouterFunction() {
         return createServiceRoute("user-service", "/api/v1/user/**");
     }
-
+    
     @Bean
     public RouterFunction<ServerResponse> fileServiceRouterFunction() {
         return createServiceRoute("file-service", "/api/v1/file/**");
     }
-
+    
     @Bean
     public RouterFunction<ServerResponse> syncServiceRouterFunction() {
         return createServiceRoute("sync-service", "/api/v1/sync/**");

@@ -17,18 +17,19 @@ import {toast} from "sonner";
 import {useRouter} from "next/navigation";
 import {APIErrorResponse} from "@/types/APIErrorResponse";
 import {FormStatus} from "@/app/components/ui/status";
+import {UserRegistrationResponse} from "@/types/User/UserRegistrationResponse";
+import {APISuccessResponse} from "@/types/APISuccessResponse";
+import SignInWithGoogle from "@/app/components/ui/sign-in-google";
 
 const registerSchema = z.object({
     fullName: z.string().min(1, {message: "Must have at least 1 character."}).regex(/^[A-Za-z]+[A-Za-z\s]*$/, {message: "Name must contain only letters and spaces(e.g. Jane Doe)."}),
     email: z.string().email(),
-    password: z.string().min(8, {
-        message: "Password length must be greater" +
-            " than 7."
-    }).max(16, {message: "Password length must be less than 17."}),
+    password: z.string()
 });
 const fieldErrorMap: Record<string, keyof z.infer<typeof registerSchema>> = {
     'USER-02': 'email',
     'USER-03': 'email',
+    'SEC-04': 'password'
 }
 export default function Register() {
     const router = useRouter();
@@ -46,8 +47,9 @@ export default function Register() {
     const {mutate: register, isPending} = useMutation({
         mutationFn: (data: z.infer<typeof registerSchema>) => AxiosInstance.post("/api/v1/user/register", data),
         onSuccess: response => {
+            const apiResponse = response.data as APISuccessResponse<UserRegistrationResponse>;
             toast.success("User registered successfully.");
-            setPendingVerificationEmail("user10@gmail.com");
+            setPendingVerificationEmail(apiResponse.data.email);
             router.push("/verify-email");
         },
         /**
@@ -64,6 +66,7 @@ export default function Register() {
                 } else {
                     setErrorMessage(apiError.details || 'Registration failed. Please try again.');
                 }
+                setPendingVerificationEmail(null);
             }
         }
     })
@@ -104,7 +107,7 @@ export default function Register() {
                                                    placeholder={"Name"} {...field}/>
                                            </FormControl>
                                            <FormMessage
-                                               className={"text-destructive text-sm rounded-md" +
+                                               className={"text-destructive text-xs rounded-md" +
                                                    " font-normal"}/>
                                        </FormItem>
                                    )}>
@@ -119,7 +122,7 @@ export default function Register() {
                                                    placeholder={"Email"} {...field}/>
                                            </FormControl>
                                            <FormMessage
-                                               className={"text-destructive text-sm rounded-md" +
+                                               className={"text-destructive text-xs rounded-md" +
                                                    " font-normal"}/>
                                        </FormItem>
                                    )}>
@@ -136,7 +139,7 @@ export default function Register() {
                                                />
                                            </FormControl>
                                            <FormMessage
-                                               className={"text-destructive text-sm rounded-md" +
+                                               className={"text-destructive text-xs rounded-md" +
                                                    " font-normal"}/>
                                        </FormItem>
                                    )}>
@@ -149,7 +152,14 @@ export default function Register() {
                         </div>
                     </form>
                 </Form>
-
+                <div>
+                    <div className="flex flex-row my-2 justify-center items-center">
+                        <hr className="flex-1 border border-foreground/20"/>
+                        <span className="px-2 text-sm text-foreground/20">or</span>
+                        <hr className="flex-1 border border-foreground/20"/>
+                    </div>
+                    <SignInWithGoogle/>
+                </div>
                 <Link
                     href={"/login"}
                     className={"mt-6 hover:underline active:underline"}>{`Already have an account? `}<span

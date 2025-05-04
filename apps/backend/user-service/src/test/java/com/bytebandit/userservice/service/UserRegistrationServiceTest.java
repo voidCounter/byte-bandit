@@ -25,22 +25,22 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-public class UserRegistrationServiceTest {
+class UserRegistrationServiceTest {
     @Mock
     private UserRepository userRepository;
-
+    
     @Mock
     private TokenRepository tokenRepository;
-
+    
     @Mock
     private RegistrationEmailService registrationEmailService;
-
+    
     @Mock
     private PasswordEncoder passwordEncoder;
-
+    
     @InjectMocks
     private UserRegistrationService userRegistrationService;
-
+    
     /**
      * Test to verify that the resend verification email functionality works as expected.
      */
@@ -53,18 +53,18 @@ public class UserRegistrationServiceTest {
         user.setVerified(false);
         user.setId(userId);
         user.setFullName("Test User");
-
+        
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
         when(passwordEncoder.encode(anyString())).thenReturn("hashed-token");
-
+        
         userRegistrationService.resendVerificationEmail(email);
-
+        
         verify(tokenRepository).invalidateAllForUserAndType(user, TokenType.EMAIL_VERIFICATION);
         verify(tokenRepository).save(any(TokenEntity.class));
         verify(registrationEmailService).sendEmail(eq(email), eq("Test User"), anyString(),
             eq(userId));
     }
-
+    
     /**
      * Test to verify that an exception is thrown when the user is already verified.
      */
@@ -73,20 +73,20 @@ public class UserRegistrationServiceTest {
         UserEntity user = new UserEntity();
         user.setEmail("test@example.com");
         user.setVerified(true);
-
+        
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-
+        
         assertThrows(EmailAlreadyVerifiedException.class,
             () -> userRegistrationService.resendVerificationEmail("test@example.com"));
     }
-
+    
     /**
      * Test to verify that an exception is thrown when the user does not exist in the database.
      */
     @Test
     void givenNonexistentUser_whenResendVerificationEmail_thenThrowsGenericException() {
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-
+        
         assertThrows(IllegalArgumentException.class,
             () -> userRegistrationService.resendVerificationEmail("notfound@example.com"));
     }

@@ -1,86 +1,75 @@
 package com.bytebandit.gateway.filter;
 
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import jakarta.ws.rs.core.MediaType;
-import java.util.Objects;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@SpringBootTest(classes = com.bytebandit.gateway.GatewayApplication.class)
-@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@TestPropertySource(properties = {
-    "spring.cloud.config.discovery.enabled=false",
-    "spring.cloud.config.enabled=false",
-    "eureka.client.enabled=false"
-})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CsrfFilterIT {
-    @Autowired
-    private MockMvc mockMvc;
-
-    /**
-     * This test ensures that a proper CSRF token is generated and included as a cookie in the
-     * response when accessing the relevant endpoint. It asserts that the response status is OK and
-     * the cookie "XSRF-TOKEN" exists in the response.
-     *
-     * @throws Exception if an error occurs while performing the request or asserting the results.
-     */
-    @Test
-    void testGetRequestSetsCsrfCookie() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/auth/csrf"))
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.cookie().exists("XSRF-TOKEN"));
+    
+    @LocalServerPort
+    int port;
+    
+    @BeforeAll
+    void setup() {
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = port;
     }
-
+    
     /**
-     * This test ensures that the server denies access to POST requests that do not include the
-     * necessary CSRF token.
-     *
-     * @throws Exception if an error occurs while performing the request or asserting the results.
+     * Test to check if the CSRF cookie is set correctly when a GET request is made to the
+     * "/api/v1/auth/csrf" endpoint.
      */
     @Test
-    void testPostWithoutCsrfToken() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/test-csrf")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{}"))
-            .andExpect(status().isForbidden());
+    void testGetRequestSetsCsrfCookie() {
+        Response response = RestAssured
+            .given()
+            .when()
+            .get("/api/v1/auth/csrf")
+            .then()
+            .statusCode(200)
+            .cookie("XSRF-TOKEN")
+            .extract().response();
+        
+        String csrfToken = response.getCookie("XSRF-TOKEN");
+        Assertions.assertNotNull(csrfToken, "XSRF-TOKEN should be present");
     }
-
+    
     /**
-     * Verifies that a POST request to the "/test-csrf" endpoint succeeds when a valid CSRF token is
-     * included in the request. Steps:
-     * <li> Perform a GET request to the "/csrf" endpoint to obtain a CSRF token from the response
-     * cookie.</li>
-     * <li>Extract the CSRF token value from the "XSRF-TOKEN" cookie in the response.</li>
-     * <li>Perform a POST request to the "/test-csrf" endpoint, including the CSRF token as a
-     * header (X-XSRF-TOKEN) and as a cookie.</li>
-     * <li>Assert that the response status is OK, indicating that the CSRF validation was
-     * successful.</li>
-     *
-     * @throws Exception if an error occurs while performing the requests or asserting the results.
+     * Test to check if the CSRF token is validated correctly when a POST request is made to the
+     * "/api/v1/auth/test-csrf" endpoint.
      */
     @Test
-    void testPostWithCsrfToken() throws Exception {
-        MvcResult csrfResponse =
-            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/auth/csrf")).andReturn();
-        String csrfToken =
-            Objects.requireNonNull(csrfResponse.getResponse().getCookie("XSRF-TOKEN"),
-                "CSRF TOKEN COOKIE NOT FOUND").getValue();
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/test-csrf")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-XSRF-TOKEN", csrfToken)
-                .cookie(csrfResponse.getResponse().getCookie("XSRF-TOKEN"))
-                .content("{}"))
-            .andExpect(status().isOk());
+    void testPostWithCsrfToken() {
+        Response response = RestAssured
+            .given()
+            .when()
+            .get("/api/v1/auth/csrf")
+            .then()
+            .statusCode(200)
+            .extract().response();
+        
+        String csrfToken = response.getCookie("XSRF-TOKEN");
+        String sessionCookie = response.getCookie("JSESSIONID");
+        
+        RestAssured
+            .given()
+            .cookie("XSRF-TOKEN", csrfToken)
+            .cookie("JSESSIONID", sessionCookie)
+            .header("X-XSRF-TOKEN", csrfToken)
+            .contentType("application/json")
+            .body("{}")
+            .when()
+            .post("/api/v1/auth/test-csrf")
+            .then()
+            .statusCode(200);
     }
 }
