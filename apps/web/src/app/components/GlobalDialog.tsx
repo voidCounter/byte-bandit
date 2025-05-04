@@ -5,7 +5,7 @@ import {useParams} from 'next/navigation';
 import {useDialogStore} from '@/store/DialogStore';
 import {FileSystemItem} from '@/types/Files/FileSystemItem';
 import {dialogTypes} from '@/utils/dialogUtils';
-import {useFileMutations} from '@/utils/mutations';
+import {useFileMutations, useItemRenameMutation} from '@/utils/mutations';
 import {RenameForm} from "@/components/dialogForms/renameForms";
 import {ShareForm} from "@/components/dialogForms/shareForm";
 import {UploadForm} from "@/components/dialogForms/uploadForm";
@@ -19,9 +19,13 @@ export function GlobalDialog() {
     const params = useParams();
     const folderId = params['folder-id'];
     const {createFolder, createFolder: {isPending: creatingFolder}} = useFileMutations(folderId, closeDialog);
+    const {renameItem} = useItemRenameMutation(folderId, closeDialog);
 
     const handleRename = (item: FileSystemItem, data: { name: string }) => {
-        console.log(`Rename ${item.name} to ${data.name}`);
+        renameItem.mutate({
+            data: {name: data.name},
+            itemId: item.id,
+        });
         closeDialog();
     };
 
@@ -67,7 +71,7 @@ export function GlobalDialog() {
                             <DialogTitle>Add New File</DialogTitle>
                             <DialogDescription>Upload a new file to the current folder.</DialogDescription>
                         </DialogHeader>
-                        <UploadForm onSubmit={handleUpload} onCancel={closeDialog}/>
+                        <UploadForm folderId={folderId as string} onSubmit={handleUpload} onCancel={closeDialog}/>
                     </>
                 )}
                 {type === 'CREATE_FOLDER' && (

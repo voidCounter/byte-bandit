@@ -1,6 +1,6 @@
+// ProtectedLayout.tsx
 "use client";
 import useSession from "@/hooks/useSession";
-import {useAuthStore} from "@/store/AuthStore";
 import Loading from "@/components/ui/loading";
 import SessionExpiredCard from "@/app/components/session-expired-card";
 
@@ -9,8 +9,7 @@ export default function ProtectedLayout({
                                         }: {
     children: React.ReactNode;
 }) {
-    const {isLoading} = useSession();
-    const {authenticatedUser} = useAuthStore();
+    const {isSuccess, isLoading, isError} = useSession();
 
     if (isLoading) {
         return (
@@ -20,7 +19,7 @@ export default function ProtectedLayout({
         );
     }
 
-    if (!authenticatedUser) {
+    if (isError) {
         return (
             <div className="flex flex-col w-full h-screen justify-center items-center">
                 <SessionExpiredCard/>
@@ -28,10 +27,5 @@ export default function ProtectedLayout({
         );
     }
 
-    return (
-        <>
-            {children}
-        </>
-
-    );
+    return <>{children}</>;
 }
