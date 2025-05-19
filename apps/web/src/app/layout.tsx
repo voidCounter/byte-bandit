@@ -3,6 +3,7 @@ import "./globals.css";
 import {ThemeProvider} from "next-themes";
 import {dmSans} from "@/app/fonts";
 import QueryProvider from "@/layouts/QueryProvider";
+import {Toaster} from "@/components/ui/Toaster";
 
 
 export const metadata: Metadata = {
@@ -18,11 +19,13 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning={true}>
         <body
-            className={`${dmSans.className} antialiased flex flex-col justify-center items-center`}
+            className={`${dmSans.className} antialiased`}
         >
         <ThemeProvider attribute={"class"} defaultTheme={"system"} enableSystem={true} disableTransitionOnChange={true}>
-            <div className={"max-w-full md:max-w-3xl lg:max-w-4xl"}>
+            <div
+                className={"w-full"}>
                 <QueryProvider>
+                    <Toaster/>
                     {children}
                 </QueryProvider>
             </div>

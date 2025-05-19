@@ -1,5 +1,4 @@
 "use client";
-import {ModeToggle} from "@/components/theme-toggler";
 import {Button} from "@/components/ui/button";
 import NavigationBar from "@/app/components/navigation-bar";
 import {motion} from "framer-motion";
@@ -9,10 +8,10 @@ import Link from "next/link";
 
 export default function Home() {
     return (
-        <div className="h-screen w-full">
+        <div className="h-screen w-full flex flex-col items-center bg-background">
             <NavigationBar/>
             <motion.section
-                className={'flex flex-col text-center justify-center items-center gap-4 w-full h-[75vh]'}
+                className={'flex flex-col text-center justify-center items-center gap-4 w-full md:w-[90vw] lg:w-[1000px] h-[75vh]'}
                 initial={{opacity: 0, y: 20, filter: 'blur(10px)'}}
                 animate={{opacity: 1, y: 0, filter: 'blur(0px)'}}
                 transition={{duration: 0.5, ease: "easeInOut"}}
@@ -42,7 +41,6 @@ export default function Home() {
                     </motion.div>
                 </Link>
             </motion.section>
-            <ModeToggle className={"hidden sm:flex absolute right-0 top-0 m-2"}/>
         </div>
     );
 }

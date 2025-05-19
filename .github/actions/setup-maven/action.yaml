@@ -3,11 +3,6 @@ description: 'Sets up JDK 17 and caches Maven packages'
 runs:
   using: 'composite'
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:

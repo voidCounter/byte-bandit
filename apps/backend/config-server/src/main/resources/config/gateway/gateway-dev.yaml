@@ -4,8 +4,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+    defer-datasource-initialization: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${USER_DEV_DB_URL}
@@ -13,8 +14,29 @@ spring:
     password: ${POSTGRES_PASSWORD}
 jwt:
   secret: ${JWT_SECRET}
+cors:
+  allowed_origins: ${CORS_ALLOWED_ORIGINS}
 app:
   permitted:
-    routes: /api/v1/user/login,/api/v1/user/register,/api/v1/user/verify,/csrf,/test-csrf,/actuator/*
+    routes: /api/v1/auth/login,/api/v1/user/register,/api/v1/user/resend-verification,/api/v1/user/verify,/api/v1/auth/csrf,/api/v1/auth/test-csrf,/actuator/*,/api/v1/auth/refresh-token,/api/v1/auth/logout,/api/v1/user/forgot-password,/api/v1/auth/google,/api/v1/auth/google/callback,/swagger-ui/**,/v3/api-docs*/**,/swagger-ui.html,/favicon.ico
   access-token-expiration: 3600
   refresh-token-expiration: 86400
+logging:
+  level:
+    com.bytebandit.gateway: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.boot.autoconfigure.security.servlet: DEBUG
+    org.springframework.boot.autoconfigure.web.servlet.error: DEBUG
+google:
+  oauth:
+    client-id: ${GOOGLE_OAUTH_CLIENT_ID}
+    client-secret: ${GOOGLE_OAUTH_CLIENT_SECRET}
+    redirect-uri: ${GOOGLE_OAUTH_REDIRECT_URI}
+    scope: profile email
+    token-endpoint: ${GOOGLE_OAUTH_TOKEN_ENDPOINT}
+    userinfo-endpoint: ${GOOGLE_OAUTH_USERINFO_ENDPOINT}
+client:
+  host:
+    uri: ${DEV_CLIENT_HOST_URI:http://localhost:3000}

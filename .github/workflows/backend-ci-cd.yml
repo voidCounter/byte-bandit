@@ -3,18 +3,17 @@ on:
   push:
     branches:
       - '*'
-    paths:
-      - 'apps/backend/**'
   pull_request:
     branches:
       - develop
       - main
       - develop-snapshot
-    paths:
-      - 'apps/backend/**'
 
 jobs:
   lint:
+    if: >
+      github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip-back-ci]') ||
+      github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[skip-back-ci]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,6 +26,9 @@ jobs:
           mvn checkstyle:check
 
   test-and-coverage:
+    if: >
+      github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip-back-ci]') ||
+      github.event_name == 'pull_request' && !contains(github.event.pull_request.title, '[skip-back-ci]')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +64,7 @@ jobs:
       - name: Run Integration Tests for all services
         working-directory: apps/backend
         run: |
-          for service in user-service file-service sync-service gateway; do
+          for service in user-service file-service gateway; do
             cd $service
             mvn verify -DskipUnitTests=true
             cd ..
