@@ -88,6 +88,8 @@ services:
         condition: service_healthy
       config-server:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
   user-service:
     image: oakcan/user-service:latest
     container_name: oakcan-user-service

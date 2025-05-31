@@ -21,6 +21,3 @@ This documentation is structured into key sections:
 - **[Deployment](design/deployment/deployment-overview.md)** – Deployment instructions and strategies.
 - **[Security](design/security/security-overview.md)** – Security considerations and measures.
 
-!!! Important
-    **For user-facing documentation**, refer to the **[Get Started](../get-started/usage.md)** section.
-    This documentation is **technical** and assumes familiarity with different aspects of software development.

@@ -39,7 +39,7 @@ export const columns: ColumnDef<FileSystemItem>[] = [
             const item = row.original;
             return item.type === 'FILE'
                 ? item.size
-                    ? item.size
+                    ? formatBytes(item.size)
                     : 'N/A'
                 : item.itemCount
                     ? `${item.itemCount} items`
