@@ -50,3 +50,18 @@ dead endpoints.
 
 - **Decoupling**: Services don’t need to know each other’s exact locations, reducing tight coupling and simplifying 
 maintenance.
+
+
+## Why We Used "spring-cloud-starter-netflix-eureka-server"
+
+We opted for "spring-cloud-starter-netflix-eureka-server" because it integrates smoothly with Spring Boot, 
+making it simple to set up a service registry. Eureka, developed by Netflix, is mature and widely used, 
+providing features like service registration, discovery, and health checks. Its high availability through 
+clustering and ease of use, especially with Spring Boot’s auto-configuration, made it a reliable choice 
+for our microservices.
+
+### Alternatives to Eureka
+
+- [**Consul**](https://docs.spring.io/spring-cloud-consul/reference/discovery.html): Offers service discovery and configuration, ideal for language-agnostic setups.
+- [**Apache ZooKeeper**](https://docs.spring.io/spring-cloud-zookeeper/reference/discovery.html): Good for distributed systems but more complex to configure.
+- [**Kubernetes Service Discovery**](https://docs.spring.io/spring-cloud-kubernetes/reference/spring-cloud-kubernetes-discoveryserver.html): Built-in for Kubernetes environments, using DNS for discovery.
