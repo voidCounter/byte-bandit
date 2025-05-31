@@ -37,7 +37,7 @@ manual updates whenever a service’s location changed.
 Service discovery act as a dynamic directory for microservices. Instead of relying 
 on static addresses or manual updates, service discovery allows services to register their locations and query 
 for the locations of other services in real time.
-
+![Service Discovery](../assets/service-discovery.png)
 Service discovery solves several critical problems:
 
 - **Dynamic Updates**: Services can register their current network locations (IP and port) when they start and 
@@ -60,8 +60,23 @@ providing features like service registration, discovery, and health checks. Its 
 clustering and ease of use, especially with Spring Boot’s auto-configuration, made it a reliable choice 
 for our microservices.
 
+## Introduction to Spring Cloud Netflix Eureka
+
+In the original service discovery pattern, there are two types of discovery, 
+
+1. Client-side Discovery 
+2. Server-side Discovery
+
+Below, is the flow diagram for both is given, 
+![Service Discovery Types](../assets/service-discovery-types.png)
+
 ### Alternatives to Eureka
 
 - [**Consul**](https://docs.spring.io/spring-cloud-consul/reference/discovery.html): Offers service discovery and configuration, ideal for language-agnostic setups.
 - [**Apache ZooKeeper**](https://docs.spring.io/spring-cloud-zookeeper/reference/discovery.html): Good for distributed systems but more complex to configure.
 - [**Kubernetes Service Discovery**](https://docs.spring.io/spring-cloud-kubernetes/reference/spring-cloud-kubernetes-discoveryserver.html): Built-in for Kubernetes environments, using DNS for discovery.
+
+
+## References
+1. [Pattern: Service registry](https://microservices.io/patterns/service-registry.html)
+2. [Service Discovery in Microservices](https://www.baeldung.com/cs/service-discovery-microservices)
