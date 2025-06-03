@@ -119,6 +119,25 @@ Oakcan is a robust microservice-based file management platform designed for scal
 
 <br>and many more...
 
+## Getting Started
+To get Oakcan up and running on your local machine, follow the setup instructions in our documentation. This will guide you through the necessary prerequisites and steps to configure your development environment.
+
+[➡️ Go to Local Setup Instructions](docs/mkdocs/get-started/local-setup.md)
+
+## Contributing
+We welcome contributions to Oakcan! If you're interested in helping improve the project, please take a look at our contribution guidelines. These include information on our development process, coding standards, and how to submit pull requests.
+
+Before you start, please check out:
+*   Our [issue templates](.github/ISSUE_TEMPLATE) for bug reports and feature requests.
+*   The [pull request template](.github/pull_request_template.md) for submitting your changes.
+*   [Branching Strategy](docs/mkdocs/developers/branching-strategy.md) documentation.
+*   [Code Style Guide](docs/mkdocs/developers/code-style.md) documentation.
+
+We appreciate your help in making Oakcan better!
+
+## License
+Currently, a top-level `LICENSE` file is not available in this repository. For information about the project's license and terms of use, please contact the project maintainers.
+
 ### 🗺️ System Architecture
 ![system-architecture drawio](https://github.com/user-attachments/assets/dbaa0278-5832-4d5f-972a-fcff0713a5ac)
 
