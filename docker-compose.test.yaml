@@ -76,7 +76,7 @@ services:
       - SPRING_PROFILES_ACTIVE=test
       - KAFKA_BOOTSTRAP_SERVERS=kafka-test:9093
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
-      - TEST_DB_URL=jdbc:postgresql://user-test-db:5432/test-db
+      - TEST_DB_URL=jdbc:postgresql://test-db:5432/test-db
       - POSTGRES_USERNAME=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - TEST_MAIL_HOST=mailhog

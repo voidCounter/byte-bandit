@@ -173,7 +173,15 @@ public class GlobalExceptionHandler {
             request,
             ex.getMessage());
     }
-
+    
+    /**
+     * Handles MoveItemFailedException.
+     *
+     * @param ex      the MoveItemFailedException to handle
+     * @param request the HTTPServletRequest object
+     *
+     * @return a ResponseEntity with an error response.
+     */
     @ExceptionHandler(MoveItemFailedException.class)
     public ResponseEntity<ErrorResponse> handleMoveItemFailedException(
         MoveItemFailedException ex, HttpServletRequest request) {
@@ -181,7 +189,7 @@ public class GlobalExceptionHandler {
             request,
             ex.getMessage());
     }
-
+    
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, ErrorCode errorCode,
                                                         HttpServletRequest request,
                                                         String details) {
