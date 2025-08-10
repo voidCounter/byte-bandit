@@ -1,3 +1,4 @@
+// useSession.ts
 import {useAuthStore} from "@/store/AuthStore";
 import {AxiosInstance} from "@/utils/AxiosInstance";
 import {useQuery} from "@tanstack/react-query";
@@ -7,11 +8,8 @@ import {useEffect} from "react";
 import {APISuccessResponse} from "@/types/APISuccessResponse";
 
 export default function useSession() {
-    const {
-        setAuthenticatedUser,
-        setHome,
-        deleteAuthenticatedUser
-    } = useAuthStore();
+    const {setAuthenticatedUser, setHome, deleteAuthenticatedUser} =
+        useAuthStore();
 
     const authQuery = useQuery<APISuccessResponse<AuthenticatedUser>, AxiosError>({
         queryKey: ["authenticatedUser"],
@@ -19,28 +17,41 @@ export default function useSession() {
             const response = await AxiosInstance.get("/api/v1/auth/me");
             return response.data;
         },
-        enabled: true,
-        staleTime: 5 * 60 * 1000,
+        retry: 1, // Retry once on failure
+        staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
     });
 
     const homeFolderQuery = useQuery<APISuccessResponse<string>, AxiosError>({
         queryKey: ["homeFolder"],
         queryFn: async () => {
-            const response = await AxiosInstance.get("/api/v1/file/home");
+            const response = await AxiosInstance.get("/api/v1/file/view/me");
             return response.data;
         },
-        enabled: authQuery.isSuccess, // Only run if authQuery succeeds
-        staleTime: 5 * 60 * 1000,
+        enabled: authQuery.isSuccess,
     });
 
     useEffect(() => {
-        if (authQuery.isSuccess && homeFolderQuery.isSuccess) {
+        if (authQuery.isSuccess) {
             setAuthenticatedUser(authQuery.data.data);
-            setHome(homeFolderQuery.data.data)
         } else if (authQuery.isError) {
             deleteAuthenticatedUser();
         }
-    }, [authQuery.status, homeFolderQuery.status]);
+
+        if (homeFolderQuery.isSuccess) {
+            setHome(homeFolderQuery.data.data);
+        } else {
+            setHome("");
+        }
+    }, [
+        authQuery.isSuccess,
+        authQuery.isError,
+        authQuery.data,
+        homeFolderQuery.isSuccess,
+        homeFolderQuery.data,
+        setAuthenticatedUser,
+        deleteAuthenticatedUser,
+        setHome,
+    ]);
 
     return authQuery;
 }

@@ -26,7 +26,7 @@ const loginSchema = z.object({
 });
 
 export default function Login() {
-    const {setAuthenticatedUser} = useAuthStore();
+    const {deleteAuthenticatedUser} = useAuthStore();
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     const router = useRouter();
     const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -43,6 +43,7 @@ export default function Login() {
         onSuccess: data => {
             const response: AxiosResponse<APISuccessResponse<boolean>> = data;
             if (response.data.data) {
+                deleteAuthenticatedUser();
                 router.push("/app");
             }
         },

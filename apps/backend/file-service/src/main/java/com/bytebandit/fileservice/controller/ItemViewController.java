@@ -26,13 +26,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/view")
 @Tag(name = "Item View", description = "Item view operations")
 public class ItemViewController {
-
+    
     private final ItemViewService itemViewService;
-
+    
     /**
      * Handles the item view request and returns the item view response.
      *
-     * @param request the item view request
+     * @param request        the item view request
      * @param servletRequest the HTTP servlet request
      *
      * @return the item view response
@@ -51,15 +51,15 @@ public class ItemViewController {
             request,
             UUID.fromString(userId)
         );
-
+        
         return ResponseEntity.ok(ApiResponse.<ItemViewResponse>builder()
-                .status(HttpStatus.OK.value())
-                .message("Viewed item successfully")
-                .data(response)
-                .timestamp(String.valueOf(System.currentTimeMillis()))
-                .build());
+            .status(HttpStatus.OK.value())
+            .message("Viewed item successfully")
+            .data(response)
+            .timestamp(String.valueOf(System.currentTimeMillis()))
+            .build());
     }
-
+    
     /**
      * Handles the request to get all items of a user.
      *
@@ -83,7 +83,7 @@ public class ItemViewController {
                 .build()
         );
     }
-
+    
     /**
      * Handles the request to get all items shared with the user.
      *
@@ -107,5 +107,26 @@ public class ItemViewController {
                 .build()
         );
     }
-
+    
+    /**
+     * Handles the request to get the id of the user's parent directory .
+     *
+     * @param servletRequest the HTTPServlet request object
+     *
+     * @return a ResponseEntity with the id of the user's parent directory
+     */
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<String>> getUserHomeParent(
+        @NotNull HttpServletRequest servletRequest
+    ) {
+        final String userId = HttpHeaderUtils.getUserIdHeader(servletRequest);
+        return ResponseEntity.ok(
+            ApiResponse.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("Retrieved user home parent successfully")
+                .data(itemViewService.getUserHomeParent(userId))
+                .timestamp(String.valueOf(System.currentTimeMillis()))
+                .build()
+        );
+    }
 }

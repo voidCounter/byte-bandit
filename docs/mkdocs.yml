@@ -39,7 +39,7 @@ theme:
 nav:
   - Home: index.md
   - Get Started:
-      - Local Setup: get-started/local-setup.md
+      - Running Locally: get-started/local-setup.md
       - Usage: get-started/usage.md
   - Documentation:
       - Introduction: documentation/introduction.md
@@ -77,10 +77,12 @@ nav:
               - Monitoring: documentation/design/deployment/monitoring.md
               - Logging: documentation/design/deployment/logging.md
   - API:
-      - Overview: api/api.md
+      - Overview: api/overview.md
       - Authentication: api/authentication.md
-      - Rate Limiting: api/rate-limiting.md
-      - Reference: api/swagger.md
+      - Reference:
+          - Gateway: api/reference/gateway.md
+          - User Service: api/reference/user-service.md
+          - File Service: api/reference/file-service.md
   - For Developers:
       - Before You Start: developers/before-you-start.md
       - Starting Development: developers/starting-development.md
@@ -109,3 +111,7 @@ markdown_extensions:
 plugins:
   - glightbox
   - git-authors
+  - swagger-ui-tag:
+        docExpansion: none
+        filter: ""
+        syntaxHighlightTheme: monokai

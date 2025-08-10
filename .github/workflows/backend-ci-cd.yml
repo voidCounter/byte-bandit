@@ -75,7 +75,11 @@ jobs:
           mvn jacoco:report-aggregate -DskipTests=true
       - name: SonarCloud Scan
         run: |
-          mvn sonar:sonar -DskipTests=true -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          mvn sonar:sonar \
+          -DskipTests=true \
+          -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+          -Dsonar.organization=${{ secrets.SONAR_ORG }} \
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
       - name: Stop Infrastructure
         run: |
           docker compose -f docker-compose.test.yaml --profile infra down
