@@ -41,6 +41,7 @@ nav:
   - Get Started:
       - Running Locally: get-started/local-setup.md
       - Usage: get-started/usage.md
+      - Screenshots: get-started/screenshots.md
   - Documentation:
       - Introduction: documentation/introduction.md
       - Requirements:
