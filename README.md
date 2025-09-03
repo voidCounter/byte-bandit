@@ -222,11 +222,11 @@ We welcome contributions! Please read our development guidelines before contribu
 5. Open a Pull Request
 
 **Development Resources:**
-- **[Code Style Guidelines](https://oakcan-docs.pages.dev/for-developers/code-style/)** - Follow our coding standards and conventions
-- **[Project Structure](https://oakcan-docs.pages.dev/for-developers/project-structure/)** - Understand how the project is organized
-- **[Branching Strategy](https://oakcan-docs.pages.dev/for-developers/branching-strategy/)** - Learn our Git workflow
-- **[Before You Start](https://oakcan-docs.pages.dev/for-developers/before-you-start/)** - Essential information for new contributors
-- **[Starting Development](https://oakcan-docs.pages.dev/for-developers/starting-development/)** - Step-by-step guide to get started
+- **[Code Style Guidelines](https://oakcan-docs.pages.dev/developers/code-style/)** - Follow our coding standards and conventions
+- **[Project Structure](https://oakcan-docs.pages.dev/developers/project-structure/)** - Understand how the project is organized
+- **[Branching Strategy](https://oakcan-docs.pages.dev/developers/branching-strategy/)** - Learn our Git workflow
+- **[Before You Start](https://oakcan-docs.pages.dev/developers/before-you-start/)** - Essential information for new contributors
+- **[Starting Development](https://oakcan-docs.pages.dev/developers/starting-development/)** - Step-by-step guide to get started
 
 ### Code Quality
 
