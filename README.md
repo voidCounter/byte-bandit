@@ -17,13 +17,11 @@ Oakcan is a microservice-based file management platform prototype built for lear
 
 ## Quick Links
 
-- [📚 Documentation](https://oakcan-docs.pages.dev/) - Comprehensive project documentation
-- [🚀 Local Setup](https://oakcan-docs.pages.dev/get-started/local-setup/) - How to run the project locally
-- [📋 GitHub Projects](https://github.com/orgs/Learnathon-By-Geeky-Solutions/projects/14) - Project management and tracking
-- [🔍 SonarCloud Analysis](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit) - Code quality metrics
-- [📋 Functional Requirements](https://oakcan-docs.pages.dev/documentation/requirements/functional-requirements/) - Detailed feature specifications
-- [⚡ Non-Functional Requirements](https://oakcan-docs.pages.dev/documentation/requirements/non-functional-requirements/) - Performance and quality standards
-- [🖼️ Application Screenshots](https://oakcan-docs.pages.dev/documentation/screenshots/) - Visual interface showcase
+- [Documentation](https://oakcan-docs.pages.dev/) - Comprehensive project documentation
+- [Local Setup](https://oakcan-docs.pages.dev/get-started/local-setup/) - How to run the project locally
+- [GitHub Projects](https://github.com/orgs/Learnathon-By-Geeky-Solutions/projects/14) - Project management and tracking
+- [SonarCloud Analysis](https://sonarcloud.io/summary/new_code?id=Learnathon-By-Geeky-Solutions_byte-bandit) - Code quality metrics
+- [Application Screenshots](https://oakcan-docs.pages.dev/documentation/screenshots/) - Visual interface showcase
 
 ## Architecture
 
